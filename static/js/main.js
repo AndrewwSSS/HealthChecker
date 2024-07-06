@@ -63,7 +63,7 @@ function update_user_form_handle(){
 
 function show_toast(msg, type) {
     let toast = document.createElement('div')
-    toast.classList.add("toast");
+    toast.classList.add("toastElement");
     toast.innerHTML = msg
     let toastBox = document.getElementById("toastBox");
     toastBox.appendChild(toast);
@@ -126,8 +126,11 @@ function show_toast(msg, type) {
 
     let btn_change_password = document.getElementById("change-password-btn");
     let btn_update_user = document.getElementById("changeUserBtn");
-    btn_change_password.addEventListener("click", chane_password_form_handle);
-    btn_update_user.addEventListener("click", update_user_form_handle);
+    if(btn_change_password && btn_update_user){
+        btn_change_password.addEventListener("click", chane_password_form_handle);
+        btn_update_user.addEventListener("click", update_user_form_handle);
+    }
+
 
 
 
@@ -393,6 +396,7 @@ function show_toast(msg, type) {
     if (mainContainer) {
         setTimeout(() => {
             new ResizeObserver(function() {
+                console.log("aboba")
                 select('.echart', true).forEach(getEchart => {
                     echarts.getInstanceByDom(getEchart).resize();
                 })

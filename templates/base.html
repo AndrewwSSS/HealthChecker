@@ -20,6 +20,9 @@
   <link href="{% static "vendor/simple-datatables/style.css" %}" rel="stylesheet">
 
   <link href="{% static "css/style.css" %}" type="text/css" rel="stylesheet">
+
+  {% block addition_js %}
+  {% endblock %}
 </head>
 
 <body>
@@ -744,8 +747,7 @@
 <!-- Template Main JS File -->
 <script src="{% static "js/main.js" %}"></script>
 
-{% block addition_js %}
-{% endblock %}
+
 
 </body>
 </html>
