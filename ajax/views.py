@@ -1,10 +1,12 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import HttpRequest, JsonResponse
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 
 from ajax.forms import UserUpdateForm
-from main.models import User, Exercise, Approach, PowerTrainingExercise
+from main.models import (Exercise,
+                         Approach,
+                         PowerTrainingExercise)
 
 INVALID_METHOD_RESPONSE = JsonResponse(
     {
