@@ -56,3 +56,4 @@ def update_user(request: HttpRequest) -> JsonResponse:
             "errors": form.errors,
         }
     )
+

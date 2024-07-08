@@ -13,8 +13,9 @@ class Exercise(models.Model):
 
 class Training(models.Model):
     user = ForeignKey("User", on_delete=models.CASCADE)
-    start = models.DateField(auto_now_add=False)
-    end = models.DateField()
+    start = models.DateTimeField()
+    end = models.DateTimeField(null=True)
+    description = models.TextField(blank=True)
 
     class Meta:
         abstract = True
@@ -40,10 +41,19 @@ class CyclingTraining(Training):
 class SwimmingTraining(Training):
     average_speed = models.FloatField()
     distance = models.FloatField()
-    duration = models.TimeField()
 
 
-class Category(models.Model):
+class Walk(Training):
+    average_speed = models.FloatField()
+    distance = models.FloatField()
+
+
+class Jogging(Training):
+    average_speed = models.FloatField()
+    distance = models.FloatField()
+
+
+class FoodCategory(models.Model):
     name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -52,7 +62,7 @@ class Category(models.Model):
 
 class Dish(models.Model):
     name = models.CharField(max_length=255)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(FoodCategory, on_delete=models.CASCADE)
     calories = models.FloatField()
     protein = models.FloatField()
     carbohydrates = models.FloatField()

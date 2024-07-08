@@ -1,3 +1,7 @@
+const SUCCESSES_ICON = '<i class="bi bi-check-circle-fill"></i>'
+const ERROR_ICON = '<i class="bi bi-x-circle-fill"></i>'
+const TOAST_SHOW_DURATION = 5000
+
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== "") {
@@ -31,6 +35,13 @@ function chane_password_form_handle(){
         },
         dataType: "json",
     }).done(function (data) {
+        console.log(data);
+        if (data.status === "error") {
+            show_toast("Error. Invalid input", "error")
+        }
+        else if (data.status === "success") {
+            show_toast("Password change successfully", "success")
+        }
 
     })
 }
@@ -54,9 +65,11 @@ function update_user_form_handle(){
             "X-CSRFToken": getCookie("csrftoken")
         },
         dataType: "json",
-    }).done(function (data, log) {
-        if(log === "success"){
+    }).done(function (data) {
+        if(data.status === "success"){
             show_toast("User updated successfully.", "success");
+        } else if(data.status === "error") {
+            show_toast("User update error. Invalid input", "error");
         }
     })
 }
@@ -64,12 +77,20 @@ function update_user_form_handle(){
 function show_toast(msg, type) {
     let toast = document.createElement('div')
     toast.classList.add("toastElement");
-    toast.innerHTML = msg
+    toast.innerHTML = SUCCESSES_ICON + msg
     let toastBox = document.getElementById("toastBox");
     toastBox.appendChild(toast);
+
+    if(type === "success") {
+        toast.classList.add("success");
+    }
+    else if (type === "error") {
+        toast.classList.add("error");
+    }
+
     setTimeout(function () {
             toast.remove();
-        },10000);
+        },TOAST_SHOW_DURATION);
 
 }
 
@@ -120,7 +141,7 @@ function show_toast(msg, type) {
             e.target.classList.add('disabled')
             setTimeout(function () {
                 e.target.classList.remove('disabled')
-            }, 2000)
+            }, TOAST_SHOW_DURATION)
         })
     })
 
@@ -396,7 +417,6 @@ function show_toast(msg, type) {
     if (mainContainer) {
         setTimeout(() => {
             new ResizeObserver(function() {
-                console.log("aboba")
                 select('.echart', true).forEach(getEchart => {
                     echarts.getInstanceByDom(getEchart).resize();
                 })
