@@ -1262,3 +1262,9 @@ h6 {
 .component-nav i {
   font-size: 30px;
 }
+
+.card-title-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

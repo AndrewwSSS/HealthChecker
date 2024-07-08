@@ -21,14 +21,19 @@ class Training(models.Model):
         abstract = True
 
 
-class Approach(models.Model):
-    date = models.DateField(auto_now_add=True)
+class PowerTrainingExercise(models.Model):
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    approaches = models.ManyToManyField("Approach")
+
+
+class Approach(models.Model):
     weight = models.FloatField()
+    repeats = models.IntegerField(default=0)
 
 
 class PowerTraining(Training):
-    approaches = models.ManyToManyField(Approach)
+    user = ForeignKey("User", on_delete=models.CASCADE, related_name="power_trainings")
+    approaches = models.ManyToManyField(PowerTrainingExercise)
 
 
 class CyclingTraining(Training):

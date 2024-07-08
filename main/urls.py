@@ -1,6 +1,7 @@
 from django.urls import path
 
-from main.views import HomePageView, CreateUserView, logout_view, UserProfileView, CreateTrainingView,PowerTrainingsListView
+from main.views import HomePageView, CreateUserView, logout_view, UserProfileView, CreateTrainingView, \
+    PowerTrainingsListView, ExercisesListView, ExerciseUpdateView, ExerciseCreateView
 from django.contrib.auth.views import LoginView
 
 urlpatterns = [
@@ -12,6 +13,9 @@ urlpatterns = [
     path("accounts/login", LoginView.as_view(), name="login"),
     path("accounts/logout", logout_view, name="logout"),
     path("accounts/user-profile", UserProfileView.as_view(), name="user-profile"),
+    path("exercises/", ExercisesListView.as_view(), name="exercises-list"),
+    path("exercise/<int:pk>", ExerciseUpdateView.as_view(), name="exercise-update"),
+    path("exercises/create/", ExerciseCreateView.as_view(), name="create-exercise"),
 ]
 
 app_name = "main"

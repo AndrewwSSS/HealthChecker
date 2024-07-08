@@ -6,8 +6,8 @@ from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.shortcuts import render
 from django.views import generic
 
-from main.forms import UserCreateForm, TrainingCreateForm
-from main.models import User, PowerTraining
+from main.forms import UserCreateForm, TrainingCreateForm, ExerciseForm
+from main.models import User, PowerTraining, Exercise
 
 
 class HomePageView(LoginRequiredMixin, generic.TemplateView):
@@ -64,6 +64,27 @@ class CreateTrainingView(LoginRequiredMixin, generic.TemplateView):
 class PowerTrainingsListView(LoginRequiredMixin, generic.TemplateView):
     model = PowerTraining
     template_name = "main/power-trainings-list.html"
+
+
+class ExercisesListView(LoginRequiredMixin, generic.ListView):
+    model = Exercise
+    template_name = "main/exercises-list.html"
+
+    paginate_by = 30
+
+
+class ExerciseUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Exercise
+    template_name = "main/exercise-form.html"
+    success_url = "/exercises/"
+    form_class = ExerciseForm
+
+
+class ExerciseCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Exercise
+    template_name = "main/exercise-form.html"
+    form_class = ExerciseForm
+    success_url = "/exercises/"
 
 
 def logout_view(request: HttpRequest) -> HttpResponse:
