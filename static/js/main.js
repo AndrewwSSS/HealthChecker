@@ -47,6 +47,32 @@ function chane_password_form_handle(){
     })
 }
 
+
+function delete_exercise(event) {
+    let elementToRemove = event.target.parentElement.parentElement
+    let formData = {
+        exercise_id: elementToRemove.getAttribute("data-exercise-id"),
+    }
+    $.ajax({
+        type: "POST",
+        url: "/api/delete_exercise",
+        data: formData,
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        dataType: "json",
+    }).done(function (data) {
+        console.log(data)
+        elementToRemove.remove();
+        show_toast("Exercise successfully deleted", "success")
+    }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
+        show_toast(`${textStatus}. ${errorThrown}`, "error")
+    })
+
+}
+
+
 function add_exercise_to_power_training() {
     let select_item = document.getElementById("select_exercise")
 
@@ -65,26 +91,22 @@ function add_exercise_to_power_training() {
         },
         dataType: "json",
     }).done(function (response) {
-        if (response.status === "success") {
-            console.log(response)
-            let card = document.getElementById("card_update_power_training")
-            let exercise_name = select_item.options[select_item.selectedIndex].name
+        let card = document.getElementById("card_update_power_training")
+        let exercise_name = select_item.options[select_item.selectedIndex].name
 
-            let noExerciseMessage = document.getElementById("no-exercises-message")
-            if (noExerciseMessage) {
-                noExerciseMessage.remove()
-            }
-
-            let template = `<div><div class="card-title-container"><span>f{exercise_name}</span></div><ul class="list-group"></ul></div>`
-            card.append(template)
-
-            show_toast("Exercise added successfully", "success")
-        } else {
-            show_toast("Error to add new exercise", "error")
+        let noExerciseMessage = document.getElementById("no-exercises-message")
+        if (noExerciseMessage) {
+            noExerciseMessage.remove()
         }
+        let div = document.createElement("div")
+        div.innerHTML = `<div><div class="card-title-container"><span>f{exercise_name}</span></div><ul class="list-group" id="${exercise_name}_list"></ul></div>`
+        card.appendChild(div)
+
+        show_toast("Exercise added successfully", "success")
+    }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
+        show_toast(`${textStatus}. ${errorThrown}`, "error")
     })
 }
-
 
 function add_approach_to_exercises() {
     let select_item = document.getElementById("select_exercise")
@@ -117,7 +139,6 @@ function add_approach_to_exercises() {
         }
     })
 }
-
 
 function update_user_form_handle(){
     let formData = {
@@ -161,9 +182,8 @@ function show_toast(msg, type) {
     }
 
     setTimeout(function () {
-            toast.remove();
-        },TOAST_SHOW_DURATION);
-
+        toast.remove();
+    },TOAST_SHOW_DURATION);
 }
 
 (function() {
@@ -211,6 +231,11 @@ function show_toast(msg, type) {
     if (add_exercise_btn) {
         on("click", "#addExercise", add_exercise_to_power_training)
     }
+
+    if(select(".deleteExercise")) {
+        on("click", ".deleteExercise", delete_exercise)
+    }
+
 
     let buttonsSendForm = select(".formSendButton", true)
     buttonsSendForm.forEach(button => {

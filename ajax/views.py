@@ -6,7 +6,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from ajax.forms import UserUpdateForm
 from main.models import (Exercise,
                          Approach,
-                         PowerTrainingExercise)
+                         PowerTrainingExercise, Training)
 
 INVALID_METHOD_RESPONSE = JsonResponse(
     {
@@ -50,7 +50,7 @@ def change_password(request: HttpRequest) -> JsonResponse:
         {
             "status": "error",
             "errors": form.errors,
-        }
+        }, status=422
     )
 
 
@@ -87,6 +87,12 @@ def add_power_exercise(request: HttpRequest) -> JsonResponse:
     except Exercise.DoesNotExist:
         return NOT_FOUND_RESPONSE
 
+    try:
+        PowerTrainingExercise.objects.get(pk=training_id, exercise=exercise)
+        return INVALID_DATA_RESPONSE
+    except PowerTrainingExercise.DoesNotExist:
+        pass
+
     PowerTrainingExercise.objects.create(exercise=exercise,
                                          power_training_id=training_id)
     return SUCCESS_RESPONSE
@@ -119,17 +125,18 @@ def add_approach(request: HttpRequest) -> JsonResponse:
     return SUCCESS_RESPONSE
 
 
+@login_required
 def delete_exercise(request: HttpRequest) -> JsonResponse:
     if request.method != "POST":
         return INVALID_METHOD_RESPONSE
 
     exercise_id = request.POST.get("exercise_id", default=None)
 
-    if exercise_id is None:
+    if not exercise_id:
         return INVALID_DATA_RESPONSE
 
     try:
-        exercise = Exercise.objects.get(pk=exercise_id)
+        exercise = PowerTrainingExercise.objects.get(pk=exercise_id)
         exercise.delete()
         return SUCCESS_RESPONSE
     except Exercise.DoesNotExist:
@@ -141,7 +148,7 @@ def delete_approach(request: HttpRequest) -> JsonResponse:
         return INVALID_METHOD_RESPONSE
 
     approach_id = request.POST.get("approach_id", default=None)
-    if approach_id is None:
+    if not approach_id:
         return INVALID_DATA_RESPONSE
 
     try:

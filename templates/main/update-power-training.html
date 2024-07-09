@@ -53,11 +53,14 @@
                     </div>
                   </div>
                   {% for exercise in powertraining.exercises.all %}
-                    <div>
+                    <div data-exercise-id="{{ exercise.id }}">
                       <div class="card-title-container">
                         <span>
                           {{ exercise.exercise.name }}
                         </span>
+                        <button class="btn btn-danger deleteExercise">
+                          Delete
+                        </button>
                       </div>
                        <ul class="list-group" id="{{ exercise.name }}_list">
                        {% for approach in exercise.approaches.all %}
