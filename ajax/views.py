@@ -88,7 +88,8 @@ def add_power_exercise(request: HttpRequest) -> JsonResponse:
         return NOT_FOUND_RESPONSE
 
     try:
-        PowerTrainingExercise.objects.get(pk=training_id, exercise=exercise)
+        lst = list(PowerTrainingExercise.objects.all())
+        PowerTrainingExercise.objects.get(power_training_id=training_id, exercise_id=exercise_id)
         return INVALID_DATA_RESPONSE
     except PowerTrainingExercise.DoesNotExist:
         pass

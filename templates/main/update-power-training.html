@@ -38,12 +38,12 @@
               </div>
           
               <div class="card" style="border: #0d120a 2px solid">
-                <div class="card-body" id="card_update_power_training">
-                  <div class="card-title-container">
+                <div class="card-body gap-3" id="card_update_power_training">
+                  <div class="card-title-container mb-3">
                      <h5 class="card-title">
                       Exercises
                     </h5>
-                    <div class="d-flex">
+                    <div class="card-title-container gap-3">
                       <select class="form-select" id="select_exercise">
                         {% for exercise in exercises %}
                           <option value="{{ exercise.id }}">{{ exercise.name }}</option>
@@ -58,13 +58,18 @@
                         <span>
                           {{ exercise.exercise.name }}
                         </span>
-                        <button class="btn btn-danger deleteExercise">
-                          Delete
-                        </button>
+                        <div class="card-title-container gap-2">
+                          <button class="btn btn-primary addApproach">
+                            Add approach
+                          </button>
+                          <button class="btn btn-danger deleteExercise">
+                            Delete
+                          </button>
+                       </div>
                       </div>
                        <ul class="list-group" id="{{ exercise.name }}_list">
                        {% for approach in exercise.approaches.all %}
-                        <li class="list-group-item">
+                        <li class="list-group-item" data-approach-id="{{ approach.id }}">
                           {% if approach.weight != 0 %}{{ approach.weight }} x {% endif %}
                           {{ approach.repeats }}
                         </li>
@@ -75,8 +80,8 @@
                     <h6 class="card-title" id="no-exercises-message">
                       No exercises
                     </h6>
-                    <input type="hidden" value="{{ powertraining.id }}" id="training_id">
                   {% endfor %}
+                  <input type="hidden" value="{{ powertraining.id }}" id="training_id">
                 </div>
               </div>
             </div>

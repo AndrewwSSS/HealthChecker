@@ -47,12 +47,12 @@ function chane_password_form_handle(){
     })
 }
 
-
 function delete_exercise(event) {
-    let elementToRemove = event.target.parentElement.parentElement
+    let elementToRemove = event.target.parentElement.parentElement.parentElement
     let formData = {
         exercise_id: elementToRemove.getAttribute("data-exercise-id"),
     }
+    console.log(elementToRemove);
     $.ajax({
         type: "POST",
         url: "/api/delete_exercise",
