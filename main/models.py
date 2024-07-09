@@ -14,8 +14,9 @@ class Training(models.Model):
 
 
 class Approach(models.Model):
-    weight = models.FloatField()
-    repeats = models.IntegerField(default=0)
+    weight = models.FloatField(default=0)
+    repeats = models.IntegerField()
+    training = models.ForeignKey("PowerTrainingExercise", on_delete=models.CASCADE, related_name="approaches")
 
 
 class Exercise(models.Model):
@@ -28,7 +29,6 @@ class Exercise(models.Model):
 
 class PowerTrainingExercise(models.Model):
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
-    approaches = models.ManyToManyField("Approach")
     power_training = models.ForeignKey("PowerTraining", related_name="exercises", on_delete=models.CASCADE, null=True)
 
 

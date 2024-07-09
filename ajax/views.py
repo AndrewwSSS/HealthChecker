@@ -115,17 +115,20 @@ def add_approach(request: HttpRequest) -> JsonResponse:
     if not exercise_id:
         return INVALID_DATA_RESPONSE
 
-    if not weight or not repeats:
+    if not repeats:
         return INVALID_DATA_RESPONSE
 
     try:
-        exercise = PowerTrainingExercise.objects.get(pk=exercise_id)
+        power_exercise = PowerTrainingExercise.objects.get(pk=exercise_id)
     except (Exercise.DoesNotExist, Approach.DoesNotExist):
         return NOT_FOUND_RESPONSE
 
-    approach = Approach.objects.create(weight=weight,
-                                       repeats=repeats)
-    exercise.approaches.add(approach)
+    approach = Approach(training_id=power_exercise.id,
+                        repeats=repeats)
+    if weight:
+        approach.weight = weight
+
+    approach.save()
 
     return SUCCESS_RESPONSE
 

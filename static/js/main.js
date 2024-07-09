@@ -2,52 +2,6 @@ const SUCCESSES_ICON = '<i class="bi bi-check-circle-fill"></i>'
 const ERROR_ICON = '<i class="bi bi-x-circle-fill"></i>'
 const TOAST_SHOW_DURATION = 5000
 
-const select = (el, all = false) => {
-    el = el.trim()
-    if (all) {
-        return [...document.querySelectorAll(el)]
-    } else {
-        return document.querySelector(el)
-    }
-}
-
-/**
- * Easy event listener function
- */
-const on = (type, el, listener, all = false) => {
-    if (all) {
-        select(el, all).forEach(e => e.addEventListener(type, listener))
-    } else {
-        select(el, all).addEventListener(type, listener)
-    }
-}
-
-/**
- * Easy on scroll event listener
- */
-const onscroll = (el, listener) => {
-    el.addEventListener('scroll', listener)
-}
-
-
-function add_approach_form(event) {
-    let elem = event.target.parentElement.parentElement.parentElement;
-    let list_group = elem.querySelector(".list-group");
-
-    let li = document.createElement("li");
-    li.classList.add("list-group-item");
-    li.innerHTML = `<div class="d-flex">
-                      <div class="card-title-container gap-2 justify-content-between">
-                          <span>Weight</span>
-                          <input type="number" class="form-control" name="weight"/>
-                          <span>Repeats</span>
-                          <input type="number" class="form-control" name="repeats"/>
-                          <button class="btn btn-primary">Save</button>
-                      </div>
-                    </div>`
-    list_group.appendChild(li);
-}
-
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== "") {
@@ -64,61 +18,81 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function chane_password_form_handle(){
-    let formData = {
-        old_password: $("#currentPassword").val(),
-        new_password1: $("#newPassword").val(),
-        new_password2: $("#renewPassword").val(),
-    };
-
-    $.ajax({
-        type: "POST",
-        url: "/api/change_password",
-        data: formData,
-        headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            "X-CSRFToken": getCookie("csrftoken")
-        },
-        dataType: "json",
-    }).done(function (data) {
-        console.log(data);
-        if (data.status === "error") {
-            show_toast("Error. Invalid input", "error")
-        }
-        else if (data.status === "success") {
-            show_toast("Password change successfully", "success")
-        }
-
-    })
+const select = (el, all = false) => {
+    el = el.trim()
+    if (all) {
+        return [...document.querySelectorAll(el)]
+    } else {
+        return document.querySelector(el)
+    }
 }
 
-function delete_exercise(event) {
-    console.log("1")
-    let elementToRemove = event.target.parentElement.parentElement.parentElement
-    let formData = {
-        exercise_id: elementToRemove.getAttribute("data-exercise-id"),
+const on = (type, el, listener, all = false) => {
+    if (all) {
+        let elements = select(el, all)
+        if (elements.length > 0) {
+            elements.forEach(e => e.addEventListener(type, listener))
+        }
+    } else {
+        let element = select(el, all)
+        if (element) {
+            element.addEventListener(type, listener)
+        }
     }
-    console.log(elementToRemove);
+}
+
+const onscroll = (el, listener) => {
+    el.addEventListener('scroll', listener)
+}
+
+
+function add_approach_form(event) {
+    console.log("Add approach form")
+    let elem = event.target.parentElement.parentElement.parentElement;
+    let list_group = elem.querySelector(".list-group");
+
+    let li = document.createElement("li");
+    li.classList.add("list-group-item");
+    li.innerHTML = `<div class="d-flex">
+                      <div class="card-title-container gap-2 justify-content-between">
+                          <span>Weight</span>
+                          <input type="number" class="form-control" name="weight"/>
+                          <span>Repeats</span>
+                          <input type="number" class="form-control" name="repeats"/>
+                          <button class="btn btn-primary addApproach">Save</button>
+                      </div>
+                    </div>`
+    list_group.appendChild(li);
+    li.querySelector(".addApproach").addEventListener("click", add_approach_to_exercises);
+}
+
+function add_approach_to_exercises(event) {
+    let li_item = event.target.parentElement.parentElement.parentElement
+
+    let formData = {
+        weight: li_item.querySelector("input[name='weight']").value,
+        repeats: li_item.querySelector("input[name='repeats']").value,
+        power_training_exercise_id: li_item.parentElement.parentElement.getAttribute("data-exercise-id"),
+    }
+
     $.ajax({
         type: "POST",
-        url: "/api/delete_exercise",
+        url: "/api/add_approach",
         data: formData,
         headers: {
             "X-Requested-With": "XMLHttpRequest",
             "X-CSRFToken": getCookie("csrftoken")
         },
         dataType: "json",
-    }).done(function (data) {
-        console.log(data)
-        elementToRemove.remove();
-        show_toast("Exercise successfully deleted", "success")
+    }).done(function (response) {
+        show_toast("Approach successfully added.", "success")
     }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
         show_toast(`${textStatus}. ${errorThrown}`, "error")
     })
-
 }
 
 function add_exercise_to_power_training() {
+    console.log("Add exercise")
     let select_item = document.getElementById("select_exercise")
 
     let formData = {
@@ -153,10 +127,12 @@ function add_exercise_to_power_training() {
                                   <button class="btn btn-danger deleteExercise">Delete</button>
                               </div>
                           </div>
-                          <ul class="list-group"></ul>`)
+                          <ul class="list-group mb-3"></ul>`)
         card.appendChild(div)
-        card.querySelector(".deleteExercise").addEventListener("click", delete_exercise);
-        card.querySelector(".addApproach").addEventListener("click", add_approach_form);
+        on("click", ".addApproach", add_approach_form, true)
+        on("click", ".deleteExercise", delete_exercise, true)
+        // card.querySelector(".deleteExercise").addEventListener('click', delete_exercise);
+        // card.querySelector(".addApproach").addEventListener('click', add_approach_form);
 
         show_toast("Exercise added successfully", "success")
     }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
@@ -164,17 +140,39 @@ function add_exercise_to_power_training() {
     })
 }
 
-function add_approach_to_exercises() {
-    let select_item = document.getElementById("select_exercise")
-
+function delete_exercise(event) {
+    let elementToRemove = event.target.parentElement.parentElement.parentElement
     let formData = {
-        training_id: $("#training_id").val(),
-        exercise_id: select_item.options[select_item.selectedIndex].value,
+        exercise_id: elementToRemove.getAttribute("data-exercise-id"),
     }
-
     $.ajax({
         type: "POST",
-        url: "/api/add_power_training_exercise",
+        url: "/api/delete_exercise",
+        data: formData,
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        dataType: "json",
+    }).done(function (data) {
+        console.log(data)
+        elementToRemove.remove();
+        show_toast("Exercise successfully deleted", "success")
+    }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
+        show_toast(`${textStatus}. ${errorThrown}`, "error")
+    })
+}
+
+function delete_approach(event) {
+    console.log("Delete approach")
+    let li = event.target.parentElement.parentElement
+    let id = li.getAttribute("data-approach-id")
+    let formData = {
+        approach_id: id
+    }
+    $.ajax({
+        type: "POST",
+        url: "/api/delete_approach",
         data: formData,
         headers: {
             "X-Requested-With": "XMLHttpRequest",
@@ -182,17 +180,38 @@ function add_approach_to_exercises() {
         },
         dataType: "json",
     }).done(function (response) {
-        if (response.status === "success") {
-            let list_group = document.getElementById(select_item.options[select_item.selectedIndex].text + "_list")
-            if (list_group) {
-                let newElem = document.createElement("li");
-                newElem.classList.add("list-group-item")
-                list_group.appendChild(newElem)
-            }
-            show_toast("Exercise added successfully", "success")
-        } else {
+        li.remove()
+        show_toast("Approach successfully added.", "success")
+    }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
+        show_toast(`${textStatus}. ${errorThrown}`, "error")
+    })
+}
 
+function chane_password_form_handle(){
+    let formData = {
+        old_password: $("#currentPassword").val(),
+        new_password1: $("#newPassword").val(),
+        new_password2: $("#renewPassword").val(),
+    };
+
+    $.ajax({
+        type: "POST",
+        url: "/api/change_password",
+        data: formData,
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        dataType: "json",
+    }).done(function (data) {
+        console.log(data);
+        if (data.status === "error") {
+            show_toast("Error. Invalid input", "error")
         }
+        else if (data.status === "success") {
+            show_toast("Password change successfully", "success")
+        }
+
     })
 }
 
@@ -245,26 +264,16 @@ function show_toast(msg, type) {
 (function() {
     "use strict";
 
-    /**
-     * Sidebar toggle
-     */
-    if(select(".addApproach")) {
-        on("click", ".addApproach", add_approach_form)
-    }
+    on("click", ".deleteApproach", delete_approach, true);
+    on("click", ".addApproach", add_approach_form, true)
+    on("click", "#addExercise", add_exercise_to_power_training, true)
+    on("click", ".deleteExercise", delete_exercise, true)
+
 
     if (select('.toggle-sidebar-btn')) {
         on('click', '.toggle-sidebar-btn', function(e) {
             select('body').classList.toggle('toggle-sidebar')
         })
-    }
-
-    let add_exercise_btn = select("#addExercise")
-    if (add_exercise_btn) {
-        on("click", "#addExercise", add_exercise_to_power_training)
-    }
-
-    if(select(".deleteExercise")) {
-        on("click", ".deleteExercise", delete_exercise)
     }
 
 

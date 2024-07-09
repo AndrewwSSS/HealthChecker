@@ -29,8 +29,7 @@
                      id="inputEndDate"
                      name="end"
                      class="form-control"
-                     value="{{ powertraining.end }}"
-              >
+                     value="{{ powertraining.end }}">
             </div>
             <div class="row mb-3">
               <label for="addDescription" class="col-md-4 col-lg-3 col-form-label">
@@ -71,11 +70,23 @@
                         </button>
                      </div>
                     </div>
-                     <ul class="list-group" style="margin-left: 40px">
+                     <ul class="list-group mb-3" style="margin-left: 40px">
                      {% for approach in exercise.approaches.all %}
                       <li class="list-group-item" data-approach-id="{{ approach.id }}">
-                        {% if approach.weight != 0 %}{{ approach.weight }} x {% endif %}
-                        <span>{{ approach.repeats }}</span>
+                        <div class="card-title-container">
+                          <div class="">
+                              <span>
+                              {% if approach.weight != 0 %}
+                                Weight: {{ approach.weight }}
+                              {% endif %}
+                              </span>
+                              <span>
+                                Repeats: {{ approach.repeats }}
+                              </span>
+                          </div>
+                          <button class="btn btn-danger deleteApproach">Delete</button>
+                        </div>
+                        
                       </li>
                      {% endfor %}
                      </ul>
