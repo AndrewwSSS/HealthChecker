@@ -3,14 +3,6 @@ from django.db import models
 from django.db.models import ForeignKey
 
 
-class Exercise(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
-    
-    def __str__(self):
-        return self.name
-
-
 class Training(models.Model):
     user = ForeignKey("User", on_delete=models.CASCADE)
     start = models.DateTimeField()
@@ -21,19 +13,27 @@ class Training(models.Model):
         abstract = True
 
 
-class PowerTrainingExercise(models.Model):
-    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
-    approaches = models.ManyToManyField("Approach")
-
-
 class Approach(models.Model):
     weight = models.FloatField()
     repeats = models.IntegerField(default=0)
 
 
+class Exercise(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    
+    def __str__(self):
+        return self.name
+
+
+class PowerTrainingExercise(models.Model):
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    approaches = models.ManyToManyField("Approach")
+    power_training = models.ForeignKey("PowerTraining", related_name="exercises", on_delete=models.CASCADE, null=True)
+
+
 class PowerTraining(Training):
-    user = ForeignKey("User", on_delete=models.CASCADE, related_name="power_trainings")
-    approaches = models.ManyToManyField(PowerTrainingExercise)
+    pass
 
 
 class CyclingTraining(Training):

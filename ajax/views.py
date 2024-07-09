@@ -72,12 +72,14 @@ def update_user(request: HttpRequest) -> JsonResponse:
     )
 
 
+@login_required
 def add_power_exercise(request: HttpRequest) -> JsonResponse:
     if request.method != "POST":
         return INVALID_METHOD_RESPONSE
 
     exercise_id = request.POST.get("exercise_id", default=None)
-    if exercise_id is None:
+    training_id = request.POST.get("training_id", default=None)
+    if not exercise_id or not training_id:
         return INVALID_DATA_RESPONSE
 
     try:
@@ -85,7 +87,8 @@ def add_power_exercise(request: HttpRequest) -> JsonResponse:
     except Exercise.DoesNotExist:
         return NOT_FOUND_RESPONSE
 
-    PowerTrainingExercise.objects.create(exercise=exercise)
+    PowerTrainingExercise.objects.create(exercise=exercise,
+                                         power_training_id=training_id)
     return SUCCESS_RESPONSE
 
 

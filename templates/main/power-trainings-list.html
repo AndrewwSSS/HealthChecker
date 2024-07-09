@@ -1,4 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
-
+  <section class="section">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title-container">
+              <h5 class="card-title">
+                Power trainings
+              </h5>
+              <div class="d-flex h-50">
+                <a class="btn btn-primary" href="{% url "main:create-training" %}">
+                  Create training
+                </a>
+              </div>
+            </div>
+            {% for powerTraining in powertraining_list %}
+              <a href="{% url "main:update-power-training" powerTraining.id %}">
+                <div class="alert alert-primary fade show">
+                    <span>
+                      {{ powerTraining.start }}
+                    </span>
+                </div>
+              </a>
+            {% empty %}
+              <h6 class="card-title">
+                No power trainings yet
+              </h6>
+            {% endfor %}
+            {% include "includes/pagination.html" %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 {% endblock %}

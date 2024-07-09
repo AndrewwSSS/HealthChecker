@@ -6,7 +6,7 @@ from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.shortcuts import render
 from django.views import generic
 
-from main.forms import UserCreateForm, TrainingCreateForm, ExerciseForm
+from main.forms import UserCreateForm, PowerTrainingForm, ExerciseForm
 from main.models import User, PowerTraining, Exercise
 
 
@@ -50,7 +50,7 @@ class CreateTrainingView(LoginRequiredMixin, generic.TemplateView):
         return render(request, "main/create-training.html", context=self.get_context_data(**kwargs))
 
     def post(self, request, *args, **kwargs):
-        form = TrainingCreateForm(request.POST)
+        form = PowerTrainingForm(request.POST)
         context = self.get_context_data(**kwargs)
         if form.is_valid():
             form.save()
@@ -61,7 +61,7 @@ class CreateTrainingView(LoginRequiredMixin, generic.TemplateView):
         return render(request, "main/create-training.html", context=context)
 
 
-class PowerTrainingsListView(LoginRequiredMixin, generic.TemplateView):
+class PowerTrainingsListView(LoginRequiredMixin, generic.ListView):
     model = PowerTraining
     template_name = "main/power-trainings-list.html"
 
@@ -85,6 +85,18 @@ class ExerciseCreateView(LoginRequiredMixin, generic.CreateView):
     template_name = "main/exercise-form.html"
     form_class = ExerciseForm
     success_url = "/exercises/"
+
+    
+class PowerTrainingUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = PowerTraining
+    template_name = "main/update-power-training.html"
+    form_class = PowerTrainingForm
+    success_url = "/power-trainings/"
+
+    def get_context_data(self, **kwargs):
+        context = super(PowerTrainingUpdateView, self).get_context_data(**kwargs)
+        context["exercises"] = Exercise.objects.all()
+        return context
 
 
 def logout_view(request: HttpRequest) -> HttpResponse:

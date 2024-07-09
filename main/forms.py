@@ -10,7 +10,7 @@ class UserCreateForm(UserCreationForm):
         fields = UserCreationForm.Meta.fields
 
 
-class TrainingCreateForm(ModelForm):
+class PowerTrainingForm(ModelForm):
     class Meta:
         model = PowerTraining
         fields = ["start", "end", "description", "user"]

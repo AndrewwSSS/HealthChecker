@@ -47,6 +47,77 @@ function chane_password_form_handle(){
     })
 }
 
+function add_exercise_to_power_training() {
+    let select_item = document.getElementById("select_exercise")
+
+    let formData = {
+        training_id: $("#training_id").val(),
+        exercise_id: select_item.options[select_item.selectedIndex].value,
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "/api/add_power_training_exercise",
+        data: formData,
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        dataType: "json",
+    }).done(function (response) {
+        if (response.status === "success") {
+            console.log(response)
+            let card = document.getElementById("card_update_power_training")
+            let exercise_name = select_item.options[select_item.selectedIndex].name
+
+            let noExerciseMessage = document.getElementById("no-exercises-message")
+            if (noExerciseMessage) {
+                noExerciseMessage.remove()
+            }
+
+            let template = `<div><div class="card-title-container"><span>f{exercise_name}</span></div><ul class="list-group"></ul></div>`
+            card.append(template)
+
+            show_toast("Exercise added successfully", "success")
+        } else {
+            show_toast("Error to add new exercise", "error")
+        }
+    })
+}
+
+
+function add_approach_to_exercises() {
+    let select_item = document.getElementById("select_exercise")
+
+    let formData = {
+        training_id: $("#training_id").val(),
+        exercise_id: select_item.options[select_item.selectedIndex].value,
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "/api/add_power_training_exercise",
+        data: formData,
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        dataType: "json",
+    }).done(function (response) {
+        if (response.status === "success") {
+            let list_group = document.getElementById(select_item.options[select_item.selectedIndex].text + "_list")
+            if (list_group) {
+                let newElem = document.createElement("li");
+                newElem.classList.add("list-group-item")
+                list_group.appendChild(newElem)
+            }
+            show_toast("Exercise added successfully", "success")
+        } else {
+
+        }
+    })
+}
+
 
 function update_user_form_handle(){
     let formData = {
@@ -134,6 +205,11 @@ function show_toast(msg, type) {
         on('click', '.toggle-sidebar-btn', function(e) {
             select('body').classList.toggle('toggle-sidebar')
         })
+    }
+
+    let add_exercise_btn = select("#addExercise")
+    if (add_exercise_btn) {
+        on("click", "#addExercise", add_exercise_to_power_training)
     }
 
     let buttonsSendForm = select(".formSendButton", true)
