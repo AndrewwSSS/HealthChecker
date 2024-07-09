@@ -88,15 +88,19 @@ def add_power_exercise(request: HttpRequest) -> JsonResponse:
         return NOT_FOUND_RESPONSE
 
     try:
-        lst = list(PowerTrainingExercise.objects.all())
         PowerTrainingExercise.objects.get(power_training_id=training_id, exercise_id=exercise_id)
         return INVALID_DATA_RESPONSE
     except PowerTrainingExercise.DoesNotExist:
         pass
 
-    PowerTrainingExercise.objects.create(exercise=exercise,
+    power_training = PowerTrainingExercise.objects.create(exercise=exercise,
                                          power_training_id=training_id)
-    return SUCCESS_RESPONSE
+    return JsonResponse(
+        {
+            "status": "success",
+            "power_training_id": power_training.id,
+        }
+    )
 
 
 @login_required

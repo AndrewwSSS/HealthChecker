@@ -2,6 +2,51 @@ const SUCCESSES_ICON = '<i class="bi bi-check-circle-fill"></i>'
 const ERROR_ICON = '<i class="bi bi-x-circle-fill"></i>'
 const TOAST_SHOW_DURATION = 5000
 
+const select = (el, all = false) => {
+    el = el.trim()
+    if (all) {
+        return [...document.querySelectorAll(el)]
+    } else {
+        return document.querySelector(el)
+    }
+}
+
+/**
+ * Easy event listener function
+ */
+const on = (type, el, listener, all = false) => {
+    if (all) {
+        select(el, all).forEach(e => e.addEventListener(type, listener))
+    } else {
+        select(el, all).addEventListener(type, listener)
+    }
+}
+
+/**
+ * Easy on scroll event listener
+ */
+const onscroll = (el, listener) => {
+    el.addEventListener('scroll', listener)
+}
+
+
+function add_approach_form(event) {
+    let elem = event.target.parentElement.parentElement.parentElement;
+    let list_group = elem.querySelector(".list-group");
+
+    let li = document.createElement("li");
+    li.classList.add("list-group-item");
+    li.innerHTML = `<div class="d-flex">
+                      <div class="card-title-container gap-2 justify-content-between">
+                          <span>Weight</span>
+                          <input type="number" class="form-control" name="weight"/>
+                          <span>Repeats</span>
+                          <input type="number" class="form-control" name="repeats"/>
+                          <button class="btn btn-primary">Save</button>
+                      </div>
+                    </div>`
+    list_group.appendChild(li);
+}
 
 function getCookie(name) {
     let cookieValue = null;
@@ -48,6 +93,7 @@ function chane_password_form_handle(){
 }
 
 function delete_exercise(event) {
+    console.log("1")
     let elementToRemove = event.target.parentElement.parentElement.parentElement
     let formData = {
         exercise_id: elementToRemove.getAttribute("data-exercise-id"),
@@ -72,7 +118,6 @@ function delete_exercise(event) {
 
 }
 
-
 function add_exercise_to_power_training() {
     let select_item = document.getElementById("select_exercise")
 
@@ -92,15 +137,26 @@ function add_exercise_to_power_training() {
         dataType: "json",
     }).done(function (response) {
         let card = document.getElementById("card_update_power_training")
-        let exercise_name = select_item.options[select_item.selectedIndex].name
+        let exercise_name = select_item.options[select_item.selectedIndex].text
 
         let noExerciseMessage = document.getElementById("no-exercises-message")
         if (noExerciseMessage) {
             noExerciseMessage.remove()
         }
+
         let div = document.createElement("div")
-        div.innerHTML = `<div><div class="card-title-container"><span>f{exercise_name}</span></div><ul class="list-group" id="${exercise_name}_list"></ul></div>`
+        div.setAttribute("data-exercise-id", `${response["power_training_id"]}`)
+        div.innerHTML = (`<div class="card-title-container mb-3">
+                              <span>${exercise_name}</span>
+                              <div class="card-title-container gap-2">
+                                  <button class="btn btn-primary addApproach">Add approach</button>
+                                  <button class="btn btn-danger deleteExercise">Delete</button>
+                              </div>
+                          </div>
+                          <ul class="list-group"></ul>`)
         card.appendChild(div)
+        card.querySelector(".deleteExercise").addEventListener("click", delete_exercise);
+        card.querySelector(".addApproach").addEventListener("click", add_approach_form);
 
         show_toast("Exercise added successfully", "success")
     }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
@@ -188,39 +244,14 @@ function show_toast(msg, type) {
 
 (function() {
     "use strict";
-    /**
-     * Easy selector helper function
-     */
-    const select = (el, all = false) => {
-        el = el.trim()
-        if (all) {
-            return [...document.querySelectorAll(el)]
-        } else {
-            return document.querySelector(el)
-        }
-    }
-
-    /**
-     * Easy event listener function
-     */
-    const on = (type, el, listener, all = false) => {
-        if (all) {
-            select(el, all).forEach(e => e.addEventListener(type, listener))
-        } else {
-            select(el, all).addEventListener(type, listener)
-        }
-    }
-
-    /**
-     * Easy on scroll event listener
-     */
-    const onscroll = (el, listener) => {
-        el.addEventListener('scroll', listener)
-    }
 
     /**
      * Sidebar toggle
      */
+    if(select(".addApproach")) {
+        on("click", ".addApproach", add_approach_form)
+    }
+
     if (select('.toggle-sidebar-btn')) {
         on('click', '.toggle-sidebar-btn', function(e) {
             select('body').classList.toggle('toggle-sidebar')
