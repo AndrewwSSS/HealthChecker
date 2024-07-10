@@ -132,7 +132,7 @@
           </a>
         </li>
         <li>
-          <a href="{% url "main:power-trainings-list"%}">
+          <a href="{% url "main:cycling-training-list"%}">
             <i class="fa-solid fa-person-biking"></i>
             <span>
               Cycling trainings
@@ -166,14 +166,36 @@
       </ul>
     </li>
 
+
     <li class="nav-item">
-      <a class="nav-link collapsed" href="{% url "main:user-profile" %}">
+      <a class="nav-link collapsed" data-bs-target="#foodComponent" data-bs-toggle="collapse" href="#">
         <i class="fa-solid fa-burger"></i>
         <span>
           Food
         </span>
+        <i class="bi bi-chevron-down ms-auto"></i>
       </a>
+        <ul id="foodComponent" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li>
+          <a href="{% url "main:dish-list"%}">
+            <i class="fa-solid fa-bowl-food"></i>
+            <span>
+              Dishes
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="{% url "main:cycling-training-list"%}">
+            <i class="fa-solid fa-drumstick-bite"></i>
+            <span>
+              Meals
+            </span>
+          </a>
+        </li>
+      </ul>
     </li>
+
+
 
     <li class="nav-item">
       <a class="nav-link collapsed" href="{% url "main:exercises-list" %}">

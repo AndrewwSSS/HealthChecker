@@ -2,6 +2,8 @@ const SUCCESSES_ICON = '<i class="bi bi-check-circle-fill"></i>'
 const ERROR_ICON = '<i class="bi bi-x-circle-fill"></i>'
 const TOAST_SHOW_DURATION = 5000
 
+
+
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== "") {
@@ -45,7 +47,22 @@ const onscroll = (el, listener) => {
     el.addEventListener('scroll', listener)
 }
 
-
+function delete_training(type, id, success_callback, fail_callback) {
+    let formData = {
+        type: type,
+        training_id: id,
+    }
+    $.ajax({
+        type: "POST",
+        url: "/api/trainings/delete_training",
+        data: formData,
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        dataType: "json",
+    }).done(success_callback).fail(fail_callback)
+}
 function add_approach_form(event) {
     console.log("Add approach form")
     let elem = event.target.parentElement.parentElement.parentElement;
@@ -261,6 +278,34 @@ function show_toast(msg, type) {
     },TOAST_SHOW_DURATION);
 }
 
+function delete_cycling_training(event) {
+    let elem = event.target.parentElement.parentElement;
+    let id = elem.getAttribute("data-training-id");
+
+    delete_training("CY", id,
+function (data) {
+        elem.remove()
+        show_toast("Successfully deleted training", "success")
+    },
+    function (XMLHttpRequest, textStatus, errorThrown) {
+        show_toast(`${textStatus}. ${errorThrown}`, "error")
+    });
+}
+
+function delete_power_training(event) {
+    let elem = event.target.parentElement.parentElement;
+    let id = elem.getAttribute("data-training-id");
+
+    delete_training("PW", id,
+        function (data) {
+            elem.remove()
+            show_toast("Successfully deleted training", "success")
+        },
+        function (XMLHttpRequest, textStatus, errorThrown) {
+            show_toast(`${textStatus}. ${errorThrown}`, "error")
+        });
+}
+
 (function() {
     "use strict";
 
@@ -268,6 +313,8 @@ function show_toast(msg, type) {
     on("click", ".addApproach", add_approach_form, true)
     on("click", "#addExercise", add_exercise_to_power_training, true)
     on("click", ".deleteExercise", delete_exercise, true)
+    on("click", ".deleteCyclingTraining", delete_cycling_training, true)
+    on("click", ".deletePowerTraining", delete_power_training, true)
 
 
     if (select('.toggle-sidebar-btn')) {

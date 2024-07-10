@@ -40,7 +40,6 @@ class CyclingTraining(Training):
     average_speed = models.FloatField()
     distance = models.FloatField()
     climb = models.FloatField()
-    duration = models.TimeField()
 
 
 class SwimmingTraining(Training):
@@ -67,7 +66,6 @@ class FoodCategory(models.Model):
 
 class Dish(models.Model):
     name = models.CharField(max_length=255)
-    category = models.ForeignKey(FoodCategory, on_delete=models.CASCADE)
     calories = models.FloatField()
     protein = models.FloatField()
     carbohydrates = models.FloatField()
@@ -79,12 +77,12 @@ class Dish(models.Model):
 
 class DishCount(models.Model):
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
+    meal = models.ForeignKey("Meal", on_delete=models.CASCADE, related_name="dishes")
     weight = models.FloatField()
 
 
 class Meal(models.Model):
     date = models.DateField(auto_now_add=True)
-    dishes = models.ManyToManyField(Dish)
     user = models.ForeignKey("User", on_delete=models.CASCADE)
 
 

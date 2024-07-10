@@ -1268,3 +1268,11 @@ h6 {
   align-items: center;
   justify-content: space-between;
 }
+
+/*.trainingElement button {*/
+/*  display: none;*/
+/*}*/
+
+/*.trainingElement:hover button {*/
+/*  display: inline-block;*/
+/*}*/

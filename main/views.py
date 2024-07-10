@@ -3,11 +3,11 @@ from datetime import datetime
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import generic
 
-from main.forms import UserCreateForm, PowerTrainingForm, ExerciseForm
-from main.models import User, PowerTraining, Exercise
+from main.forms import UserCreateForm, PowerTrainingForm, ExerciseForm, CyclingTrainingForm, DishForm
+from main.models import User, PowerTraining, Exercise, CyclingTraining, Dish
 
 
 class HomePageView(LoginRequiredMixin, generic.TemplateView):
@@ -38,27 +38,11 @@ class CreateUserView(generic.CreateView):
     success_url = "/"
 
 
-class CreateTrainingView(LoginRequiredMixin, generic.TemplateView):
-    template_name = "main/create-training.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(CreateTrainingView, self).get_context_data(**kwargs)
-        context["default_start_date"] = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        return context
-
-    def get(self, request, *args, **kwargs):
-        return render(request, "main/create-training.html", context=self.get_context_data(**kwargs))
-
-    def post(self, request, *args, **kwargs):
-        form = PowerTrainingForm(request.POST)
-        context = self.get_context_data(**kwargs)
-        if form.is_valid():
-            form.save()
-            # TODO redirection to update view
-        else:
-            context["errors"] = form.errors
-            context = context + request.POST
-        return render(request, "main/create-training.html", context=context)
+class CreatePowerTrainingView(LoginRequiredMixin, generic.CreateView):
+    template_name = "main/create-power-training.html"
+    model = PowerTraining
+    form_class = PowerTrainingForm
+    success_url = "/power-trainings/"
 
 
 class PowerTrainingsListView(LoginRequiredMixin, generic.ListView):
@@ -95,13 +79,55 @@ class PowerTrainingUpdateView(LoginRequiredMixin, generic.UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(PowerTrainingUpdateView, self).get_context_data(**kwargs)
-        context["exercises"] = Exercise.objects.all()
         return context
+
+
+class CyclingTrainingListView(LoginRequiredMixin, generic.ListView):
+    model = CyclingTraining
+    template_name = "main/cycling-training-list.html"
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(CyclingTrainingListView, self).get_context_data(**kwargs)
+        return context
+
+
+class CreateCyclingTrainingView(LoginRequiredMixin, generic.CreateView):
+    model = CyclingTraining
+    form_class = CyclingTrainingForm
+    template_name = "main/create-cycling-training.html"
+    success_url = "/cycling-trainings/"
+
+
+class DishListView(LoginRequiredMixin, generic.ListView):
+    model = Dish
+    template_name = "main/dish-list.html"
+
+
+class CreateDishView(LoginRequiredMixin, generic.CreateView):
+    model = Dish
+    form_class = DishForm
+    template_name = "main/create-dish.html"
+    success_url = "/dishes/"
+
+
+class UpdateDishView(LoginRequiredMixin, generic.UpdateView):
+    model = Dish
+    form_class = DishForm
+    template_name = "main/update-dish.html"
+    success_url = "/dishes/"
+
+
+class UpdateCyclingTrainingView(LoginRequiredMixin, generic.UpdateView):
+    model = CyclingTraining
+    form = CyclingTrainingForm
+    template_name = "main/update-cycling-training.html"
 
 
 def logout_view(request: HttpRequest) -> HttpResponse:
     logout(request)
     return HttpResponseRedirect("/accounts/login")
+
+
 
 
 

@@ -5,7 +5,7 @@ from ajax.views import (change_password,
                         add_power_exercise,
                         delete_exercise,
                         delete_approach,
-                        add_approach)
+                        add_approach, delete_training)
 
 urlpatterns = [
     path("user_update", update_user, name="user_update"),
@@ -14,6 +14,7 @@ urlpatterns = [
     path("delete_exercise", delete_exercise, name="delete_exercise"),
     path("delete_approach", delete_approach, name="delete_approach"),
     path("add_approach", add_approach, name="add_approach"),
+    path("trainings/delete_training", delete_training, name="delete_training"),
 ]
 
 app_name = 'ajax'

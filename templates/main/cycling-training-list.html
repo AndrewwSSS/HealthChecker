@@ -7,23 +7,21 @@
           <div class="card-body">
             <div class="card-title-container">
               <h5 class="card-title">
-                Power trainings
+                Cycling trainings
               </h5>
               <div class="d-flex h-50">
-                <a class="btn btn-primary" href="{% url "main:create-power-training" %}">
+                <a class="btn btn-primary" href="{% url "main:create-cycling-training" %}">
                   Create training
                 </a>
               </div>
             </div>
-            {% for powerTraining in powertraining_list %}
-              <a href="{% url "main:update-power-training" powerTraining.id %}"
-                 data-training-id="{{ powerTraining.id }}"
-                 class="trainingElement">
+            {% for cyclingTraining in cyclingtraining_list%}
+              <a href="#" class="training-element" data-training-id="{{ cyclingTraining.id }}">
                 <div class="alert alert-primary fade show">
                     <span>
-                      {{ powerTraining.start }}
+                      {{ cyclingTraining.start }}
                     </span>
-                  <button class="btn btn-danger deletePowerTraining">Delete</button>
+                    <button class="btn btn-danger deleteCyclingTraining">Delete</button>
                 </div>
               </a>
             {% empty %}

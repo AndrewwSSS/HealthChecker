@@ -6,7 +6,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from ajax.forms import UserUpdateForm
 from main.models import (Exercise,
                          Approach,
-                         PowerTrainingExercise, Training)
+                         PowerTrainingExercise, Training, CyclingTraining, SwimmingTraining, Walk, Jogging)
 
 INVALID_METHOD_RESPONSE = JsonResponse(
     {
@@ -165,6 +165,36 @@ def delete_approach(request: HttpRequest) -> JsonResponse:
         return SUCCESS_RESPONSE
     except Approach.DoesNotExist:
         return NOT_FOUND_RESPONSE
+
+
+def delete_training(request: HttpRequest) -> JsonResponse:
+    if request.method != "POST":
+        return INVALID_METHOD_RESPONSE
+
+    training_type = request.POST.get("type", default=None)
+    training_id = request.POST.get("training_id", default=None)
+    if not training_type or not training_id:
+        return INVALID_DATA_RESPONSE
+
+    try:
+        if training_type == "PW":
+            training = PowerTrainingExercise.objects.get(pk=training_id)
+            training.delete()
+        elif training_type == "CY":
+            training = CyclingTraining.objects.get(pk=training_id)
+            training.delete()
+        elif training_type == "SW":
+            training = SwimmingTraining.objects.get(pk=training_id)
+            training.delete()
+        elif training_type == "WK":
+            training = Walk.objects.get(pk=training_id)
+            training.delete()
+        elif training_type == "JG":
+            training = Jogging.objects.get(pk=training_id)
+            training.delete()
+        return SUCCESS_RESPONSE
+    except Exception:
+        return INVALID_DATA_RESPONSE
 
 
 def change_power_training_exercise(request: HttpRequest) -> JsonResponse:

@@ -5,7 +5,7 @@
     <div class="col-xl-9">
       <div class="card">
         <div class="card-body pt-3">
-          <form action="" method="post" id="createTrainingForm">
+          <form action="" method="post">
             {% csrf_token %}
             <div class="row mb-3">
               <label for="inputStartDate" class="col-md-4 col-lg-3 col-form-label">
@@ -32,25 +32,15 @@
               >
             </div>
             <div class="row mb-3">
-              <label for="selectTrainingType" class="col-md-4 col-lg-3 col-form-label">
-                Select training type
-              </label>
-              <select class="form-select" id="selectTrainingType" name="trainingType">
-                <option value="PW" {% if trainingType == "PW" %} selected {% endif %}>Power</option>
-                <option value="CY" {% if trainingType == "CY" %} selected {% endif %}>Cycling</option>
-                <option value="SW" {% if trainingType == "SW" %} selected {% endif %}>Swimming</option>
-                <option value="WK" {% if trainingType == "WK" %} selected {% endif %}>Walk</option>
-                <option value="JG" {% if trainingType == "JG" %} selected {% endif %}>Jogging</option>
-              </select>
-            </div>
-            <div class="row mb-3">
               <label for="addDescription" class="col-md-4 col-lg-3 col-form-label">
                 Add description
               </label>
               <textarea class="form-control" id="addDescription" name="description">{% if description %}{{ description }}{% endif %}</textarea>
             </div>
+            {% block otherFields %}
+            {% endblock %}
             <div class="text-center">
-              <input type="submit" class="btn btn-primary formSendButton" value="Create">
+              <input type="submit" class="btn btn-primary" value="Create">
             </div>
             <input type="hidden" name="user" value="{{ user.id }}">
           </form>

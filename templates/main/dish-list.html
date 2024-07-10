@@ -7,28 +7,25 @@
           <div class="card-body">
             <div class="card-title-container">
               <h5 class="card-title">
-                Power trainings
+                Dishes
               </h5>
               <div class="d-flex h-50">
-                <a class="btn btn-primary" href="{% url "main:create-power-training" %}">
-                  Create training
+                <a class="btn btn-primary" href="{% url "main:create-dish" %}">
+                  Create dish
                 </a>
               </div>
             </div>
-            {% for powerTraining in powertraining_list %}
-              <a href="{% url "main:update-power-training" powerTraining.id %}"
-                 data-training-id="{{ powerTraining.id }}"
-                 class="trainingElement">
+            {% for dish in dish_list%}
+              <a href="{% url "main:update-dish" dish.id %}">
                 <div class="alert alert-primary fade show">
                     <span>
-                      {{ powerTraining.start }}
+                      {{ dish.name }}
                     </span>
-                  <button class="btn btn-danger deletePowerTraining">Delete</button>
                 </div>
               </a>
             {% empty %}
               <h6 class="card-title">
-                No power trainings yet
+                No dishes yet
               </h6>
             {% endfor %}
             {% include "includes/pagination.html" %}

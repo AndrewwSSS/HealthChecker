@@ -47,7 +47,9 @@
                   <div class="card-title-container gap-3">
                     <select class="form-select" id="select_exercise">
                       {% for exercise in exercises %}
-                        <option value="{{ exercise.id }}">{{ exercise.name }}</option>
+                        <option value="{{ exercise.id }}">{{ exercise.name }}</option>\
+                      {% empty %}
+                        <option value="-1">No exercises yet</option>
                       {% endfor %}
                     </select>
                     <button class="btn btn-primary" id="addExercise">
