@@ -15,10 +15,10 @@ class Training(models.Model):
 
     class Meta:
         abstract = True
-        constraints = [
-            CheckConstraint(check=Q(start__gt=models.F("end")),
-                            name="start_date_grater_than_end_date"),
-        ]
+        # constraints = [
+        #     CheckConstraint(check=Q(start__gt=models.F("end")),
+        #                     name="start_date_grater_than_end_date"),
+        # ]
 
 
 class Approach(models.Model):
