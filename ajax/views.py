@@ -9,9 +9,9 @@ from ajax.forms import UserUpdateForm
 from main.models import (Exercise,
                          Approach,
                          PowerTrainingExercise,
-                         CyclingTraining,
-                         SwimmingTraining,
-                         Walk,
+                         Cycling,
+                         Swimming,
+                         Walking,
                          Jogging,
                          PowerTraining)
 
@@ -146,11 +146,11 @@ class DeleteTrainingView(LoginRequiredMixin, View):
         if training_type == "PW":
             get_object_or_404(PowerTraining, pk=training_id).delete()
         elif training_type == "CY":
-            get_object_or_404(CyclingTraining, pk=training_id).delete()
+            get_object_or_404(Cycling, pk=training_id).delete()
         elif training_type == "SW":
-            get_object_or_404(SwimmingTraining, pk=training_id).delete()
+            get_object_or_404(Swimming, pk=training_id).delete()
         elif training_type == "WK":
-            get_object_or_404(Walk, pk=training_id).delete()
+            get_object_or_404(Walking, pk=training_id).delete()
         elif training_type == "JG":
             get_object_or_404(Jogging, pk=training_id).delete()
         return SUCCESS_RESPONSE

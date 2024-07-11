@@ -63,15 +63,15 @@ class DistanceAverageSpeedMixin(models.Model):
         abstract = True
 
 
-class CyclingTraining(Training, DistanceAverageSpeedMixin):
+class Cycling(Training, DistanceAverageSpeedMixin):
     climb = models.FloatField(validators=[MinValueValidator(0)])
 
 
-class SwimmingTraining(Training, DistanceAverageSpeedMixin):
+class Swimming(Training, DistanceAverageSpeedMixin):
     pass
 
 
-class Walk(Training, DistanceAverageSpeedMixin):
+class Walking(Training, DistanceAverageSpeedMixin):
     pass
 
 
