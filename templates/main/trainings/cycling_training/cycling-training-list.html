@@ -16,7 +16,9 @@
               </div>
             </div>
             {% for cyclingTraining in cyclingtraining_list%}
-              <a href="#" class="training-element" data-training-id="{{ cyclingTraining.id }}">
+              <a href="{% url "main:update-cycling-training" cyclingTraining.id %}"
+                 class="training-element"
+                 data-training-id="{{ cyclingTraining.id }}">
                 <div class="alert alert-primary fade show">
                     <span>
                       {{ cyclingTraining.start }}
