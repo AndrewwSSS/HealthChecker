@@ -31,10 +31,6 @@ class CyclingTrainingForm(ModelForm):
         model = CyclingTraining
         fields = "__all__"
 
-    def clean(self):
-        # To keep the main validation and error messages
-        super(CyclingTrainingForm, self).clean()
-
 
 class DishForm(ModelForm):
     class Meta:
