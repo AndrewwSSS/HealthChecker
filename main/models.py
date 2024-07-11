@@ -55,9 +55,12 @@ class PowerTraining(Training):
     pass
 
 
-class DistanceAverageSpeedMixin:
+class DistanceAverageSpeedMixin(models.Model):
     average_speed = models.FloatField(validators=[MinValueValidator(0)])
     distance = models.FloatField(validators=[MinValueValidator(0)])
+
+    class Meta:
+        abstract = True
 
 
 class CyclingTraining(Training, DistanceAverageSpeedMixin):
