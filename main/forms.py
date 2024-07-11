@@ -1,7 +1,11 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.forms import ModelForm
 
-from main.models import User, PowerTraining, Exercise, CyclingTraining, Dish
+from main.models import (User,
+                         PowerTraining,
+                         Exercise,
+                         CyclingTraining,
+                         Dish)
 
 
 class UserCreateForm(UserCreationForm):

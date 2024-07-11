@@ -12,7 +12,9 @@ from main.views import (HomePageView,
                         CyclingTrainingListView,
                         CreateCyclingTrainingView,
                         CreatePowerTrainingView,
-                        DishListView, CreateDishView, UpdateDishView)
+                        DishListView,
+                        CreateDishView,
+                        UpdateDishView)
 from django.contrib.auth.views import LoginView
 
 
