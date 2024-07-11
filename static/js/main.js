@@ -229,6 +229,8 @@ function chane_password_form_handle(){
             show_toast("Password change successfully", "success")
         }
 
+    }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
+        show_toast(`${textStatus}. ${errorThrown}`, "error")
     })
 }
 
@@ -262,15 +264,16 @@ function update_user_form_handle(){
 function show_toast(msg, type) {
     let toast = document.createElement('div')
     toast.classList.add("toastElement");
-    toast.innerHTML = SUCCESSES_ICON + msg
     let toastBox = document.getElementById("toastBox");
     toastBox.appendChild(toast);
 
     if(type === "success") {
         toast.classList.add("success");
+        toast.innerHTML = SUCCESSES_ICON + msg
     }
     else if (type === "error") {
         toast.classList.add("error");
+        toast.innerHTML = ERROR_ICON + msg
     }
 
     setTimeout(function () {
@@ -303,7 +306,8 @@ function delete_power_training(event) {
         },
         function (XMLHttpRequest, textStatus, errorThrown) {
             show_toast(`${textStatus}. ${errorThrown}`, "error")
-        });
+           }
+    );
 }
 
 (function() {
@@ -315,47 +319,25 @@ function delete_power_training(event) {
     on("click", ".deleteExercise", delete_exercise, true)
     on("click", ".deleteCyclingTraining", delete_cycling_training, true)
     on("click", ".deletePowerTraining", delete_power_training, true)
+    on("click", "#change-password-btn", chane_password_form_handle)
+    on("click", "#changeUserBtn", update_user_form_handle)
 
-
-    if (select('.toggle-sidebar-btn')) {
-        on('click', '.toggle-sidebar-btn', function(e) {
-            select('body').classList.toggle('toggle-sidebar')
-        })
-    }
-
-
-    let buttonsSendForm = select(".formSendButton", true)
-    buttonsSendForm.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.target.classList.add('disabled')
-            setTimeout(function () {
-                e.target.classList.remove('disabled')
-            }, TOAST_SHOW_DURATION)
-        })
+    on('click', '.toggle-sidebar-btn', function() {
+        select('body').classList.toggle('toggle-sidebar')
     })
-
-    let btn_change_password = document.getElementById("change-password-btn");
-    let btn_update_user = document.getElementById("changeUserBtn");
-    if(btn_change_password && btn_update_user){
-        btn_change_password.addEventListener("click", chane_password_form_handle);
-        btn_update_user.addEventListener("click", update_user_form_handle);
-    }
+    on('click', '.search-bar-toggle', function(e) {
+        select('.search-bar').classList.toggle('search-bar-show')
+    }, true)
 
 
+    on("click", ".formSendButton", function(e) {
+        e.target.classList.add('disabled')
+        setTimeout(function () {
+            e.target.classList.remove('disabled')
+        }, TOAST_SHOW_DURATION)
+    }, true)
 
 
-    /**
-     * Search bar toggle
-     */
-    if (select('.search-bar-toggle')) {
-        on('click', '.search-bar-toggle', function(e) {
-            select('.search-bar').classList.toggle('search-bar-show')
-        })
-    }
-
-    /**
-     * Navbar links active state on scroll
-     */
     let navbarlinks = select('#navbar .scrollto', true)
     const navbarlinksActive = () => {
         let position = window.scrollY + 200
@@ -413,68 +395,6 @@ function delete_power_training(event) {
         return new bootstrap.Tooltip(tooltipTriggerEl)
     })
 
-    /**
-     * Initiate quill editors
-     */
-    // if (select('.quill-editor-default')) {
-    //     new Quill('.quill-editor-default', {
-    //         theme: 'snow'
-    //     });
-    // }
-    //
-    // if (select('.quill-editor-bubble')) {
-    //     new Quill('.quill-editor-bubble', {
-    //         theme: 'bubble'
-    //     });
-    // }
-    //
-    // if (select('.quill-editor-full')) {
-    //     new Quill(".quill-editor-full", {
-    //         modules: {
-    //             toolbar: [
-    //                 [{
-    //                     font: []
-    //                 }, {
-    //                     size: []
-    //                 }],
-    //                 ["bold", "italic", "underline", "strike"],
-    //                 [{
-    //                     color: []
-    //                 },
-    //                     {
-    //                         background: []
-    //                     }
-    //                 ],
-    //                 [{
-    //                     script: "super"
-    //                 },
-    //                     {
-    //                         script: "sub"
-    //                     }
-    //                 ],
-    //                 [{
-    //                     list: "ordered"
-    //                 },
-    //                     {
-    //                         list: "bullet"
-    //                     },
-    //                     {
-    //                         indent: "-1"
-    //                     },
-    //                     {
-    //                         indent: "+1"
-    //                     }
-    //                 ],
-    //                 ["direction", {
-    //                     align: []
-    //                 }],
-    //                 ["link", "image", "video"],
-    //                 ["clean"]
-    //             ]
-    //         },
-    //         theme: "snow"
-    //     });
-    // }
 
     /**
      * Initiate TinyMCE Editor
@@ -569,7 +489,6 @@ function delete_power_training(event) {
                     event.preventDefault()
                     event.stopPropagation()
                 }
-
                 form.classList.add('was-validated')
             }, false)
         })
@@ -598,10 +517,6 @@ function delete_power_training(event) {
         });
     })
 
-
-    /**
-     * Autoresize echart charts
-     */
     const mainContainer = select('#main');
     if (mainContainer) {
         setTimeout(() => {
@@ -612,10 +527,6 @@ function delete_power_training(event) {
             }).observe(mainContainer);
         }, 100);
     }
-
-
-
-
 })();
 
 
