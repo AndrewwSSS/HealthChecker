@@ -15,7 +15,16 @@ from main.views import (HomePageView,
                         DishListView,
                         CreateDishView,
                         UpdateDishView,
-                        UpdateCyclingTrainingView)
+                        UpdateCyclingTrainingView,
+                        SwimmingTrainingListView,
+                        WalkingTrainingListView,
+                        JoggingTrainingListView,
+                        CreateSwimmingView,
+                        CreateWalkingView,
+                        CreateJoggingView,
+                        UpdateSwimmingView,
+                        UpdateJoggingView,
+                        UpdateWalkingView)
 from django.contrib.auth.views import LoginView
 
 
@@ -38,6 +47,15 @@ urlpatterns = [
     path("dishes/", DishListView.as_view(), name="dish-list"),
     path("dishes/create", CreateDishView.as_view(), name="create-dish"),
     path("dishes/update/<int:pk>", UpdateDishView.as_view(), name="update-dish"),
+    path("swimming-trainings/", SwimmingTrainingListView.as_view(), name="swimming-training-list"),
+    path("walking-trainings/", WalkingTrainingListView.as_view(), name="walking-training-list"),
+    path("jogging-trainings/", JoggingTrainingListView.as_view(), name="jogging-training-list"),
+    path("swimming-trainings/create", CreateSwimmingView.as_view(), name="create-swimming-training"),
+    path("walking-trainings/create", CreateWalkingView.as_view(), name="create-walking-training"),
+    path("jogging-traings/create", CreateJoggingView.as_view(), name="create-jogging-training"),
+    path("swimming-trainings/update/<int:pk>", UpdateSwimmingView.as_view(), name="update-swimming-training"),
+    path("jogging-traings/update/<int:pk>", UpdateJoggingView.as_view(), name="update-jogging-training"),
+    path("walking-trainings/update/<int:pk>", UpdateWalkingView.as_view(), name="update-walking-training"),
 ]
 
 app_name = "main"

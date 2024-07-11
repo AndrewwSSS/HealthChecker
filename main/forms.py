@@ -4,8 +4,11 @@ from django.forms import ModelForm
 from main.models import (User,
                          PowerTraining,
                          Exercise,
-                         CyclingTraining,
-                         Dish)
+                         Cycling,
+                         Dish,
+                         Jogging,
+                         Swimming,
+                         Walking)
 
 
 class UserCreateForm(UserCreationForm):
@@ -26,13 +29,31 @@ class ExerciseForm(ModelForm):
         fields = ["name", "description"]
 
 
-class CyclingTrainingForm(ModelForm):
+class CyclingForm(ModelForm):
     class Meta:
-        model = CyclingTraining
+        model = Cycling
         fields = "__all__"
 
 
 class DishForm(ModelForm):
     class Meta:
         model = Dish
+        fields = "__all__"
+
+
+class JoggingForm(ModelForm):
+    class Meta:
+        model = Jogging
+        fields = "__all__"
+
+
+class SwimmingForm(ModelForm):
+    class Meta:
+        model = Swimming
+        fields = "__all__"
+
+
+class WalkingForm(ModelForm):
+    class Meta:
+        model = Walking
         fields = "__all__"

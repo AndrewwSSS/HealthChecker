@@ -19,7 +19,7 @@
                      id="inputStartDate"
                      name="start"
                      class="form-control"
-                     value="{% if object %}{{ object.start }}{% else %}{{ default_start_date }}{% endif %}"
+                     value="{% if object %}{{ object.start.day }}/{{ object.start.month }}/{{ object.start.year }} {{ object.start.time.hour }}:{{ object.start.time.minute }}:{{ object.start.time.second }}{% else %}{{ default_start_date }}{% endif %}"
               >
             </div>
             <div class="row mb-3">
@@ -31,7 +31,7 @@
                      id="inputEndDate"
                      name="end"
                      class="form-control"
-                     value="{% if object %}{{ object.end }}{% endif %}"
+                     value="{% if object %}{{ object.end.day }}/{{ object.end.month }}/{{ object.end.year }} {{ object.end.time.hour }}:{{ object.end.time.minute }}:{{ object.end.time.second }}{% endif %}"
               >
             </div>
             <div class="row mb-3">

@@ -3,12 +3,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.views import generic
 
-from main.forms import UserCreateForm, PowerTrainingForm, ExerciseForm, CyclingTrainingForm, DishForm
-from main.models import User, PowerTraining, Exercise, CyclingTraining, Dish
+from main.forms import UserCreateForm, PowerTrainingForm, ExerciseForm, CyclingForm, DishForm, SwimmingForm, \
+    JoggingForm, WalkingForm
+from main.models import User, PowerTraining, Exercise, Cycling, Dish, Swimming, Jogging, Walking
 
 
 class HomePageView(LoginRequiredMixin, generic.TemplateView):
-    template_name = "main/index.html"
+    template_name = "base.html"
     login_url = "accounts/login"
 
     def get_context_data(self, **kwargs):
@@ -81,17 +82,13 @@ class PowerTrainingUpdateView(LoginRequiredMixin, generic.UpdateView):
 
 
 class CyclingTrainingListView(LoginRequiredMixin, generic.ListView):
-    model = CyclingTraining
+    model = Cycling
     template_name = "main/trainings/cycling_training/cycling-training-list.html"
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(CyclingTrainingListView, self).get_context_data(**kwargs)
-        return context
 
 
 class CreateCyclingTrainingView(LoginRequiredMixin, generic.CreateView):
-    model = CyclingTraining
-    form_class = CyclingTrainingForm
+    model = Cycling
+    form_class = CyclingForm
     template_name = "main/trainings/cycling_training/cycling-training-form.html"
     success_url = "/cycling-trainings/"
 
@@ -117,9 +114,10 @@ class UpdateDishView(LoginRequiredMixin, generic.UpdateView):
 
 class UpdateCyclingTrainingView(LoginRequiredMixin, generic.UpdateView):
     fields = "__all__"
-    model = CyclingTraining
-    class_form = CyclingTrainingForm
+    model = Cycling
+    class_form = CyclingForm
     template_name = "main/trainings/cycling_training/cycling-training-form.html"
+    success_url = "/cycling-trainings/"
 
 
 def logout_view(request: HttpRequest) -> HttpResponse:
@@ -127,4 +125,61 @@ def logout_view(request: HttpRequest) -> HttpResponse:
     return HttpResponseRedirect("/accounts/login")
 
 
+class SwimmingTrainingListView(LoginRequiredMixin, generic.ListView):
+    model = Swimming
+    template_name = "main/trainings/swimming_training/swimming-list.html"
 
+
+class JoggingTrainingListView(LoginRequiredMixin, generic.ListView):
+    model = Jogging
+    template_name = "main/trainings/jogging_trainings/jogging-list.html"
+
+
+class WalkingTrainingListView(LoginRequiredMixin, generic.ListView):
+    model = Walking
+    template_name = "main/trainings/walk/walking-list.html"
+
+
+class CreateSwimmingView(LoginRequiredMixin, generic.CreateView):
+    model = Swimming
+    form_class = SwimmingForm
+    template_name = "basic_distance_average_speed_form.html"
+    success_url = "/swimming-trainings/"
+
+
+class CreateJoggingView(LoginRequiredMixin, generic.CreateView):
+    model = Jogging
+    form_class = JoggingForm
+    template_name = "basic_distance_average_speed_form.html"
+    success_url = "/jogging-trainings/"
+
+
+class CreateWalkingView(LoginRequiredMixin, generic.CreateView):
+    model = Walking
+    form_class = WalkingForm
+    template_name = "basic_distance_average_speed_form.html"
+    success_url = "/walking-trainings/"
+
+
+class UpdateSwimmingView(LoginRequiredMixin, generic.UpdateView):
+    fields = "__all__"
+    model = Swimming
+    class_form = SwimmingForm
+    template_name = "basic_distance_average_speed_form.html"
+    success_url = "/swimming-trainings/"
+
+
+class UpdateJoggingView(LoginRequiredMixin, generic.UpdateView):
+    fields = "__all__"
+    model = Jogging
+    class_form = JoggingForm
+    template_name = "basic_distance_average_speed_form.html"
+    success_url = "/jogging-trainings/"
+
+
+class UpdateWalkingView(LoginRequiredMixin, generic.UpdateView):
+    fields = "__all__"
+    model = Walking
+    class_form = WalkingForm
+    template_name = "basic_distance_average_speed_form.html"
+    success_url = "/walking-trainings/"
