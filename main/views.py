@@ -1,9 +1,6 @@
-from datetime import datetime
-
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
-from django.shortcuts import render, redirect
 from django.views import generic
 
 from main.forms import UserCreateForm, PowerTrainingForm, ExerciseForm, CyclingTrainingForm, DishForm
@@ -79,6 +76,7 @@ class PowerTrainingUpdateView(LoginRequiredMixin, generic.UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(PowerTrainingUpdateView, self).get_context_data(**kwargs)
+        context["exercises"] = Exercise.objects.all()
         return context
 
 
