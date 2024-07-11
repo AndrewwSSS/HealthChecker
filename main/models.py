@@ -1,6 +1,10 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.db.models import ForeignKey
+from django.db.models import (ForeignKey,
+                              UniqueConstraint,
+                              CheckConstraint,
+                              Q)
 
 
 class Training(models.Model):
@@ -11,12 +15,19 @@ class Training(models.Model):
 
     class Meta:
         abstract = True
+        constraints = [
+            CheckConstraint(check=Q(start__gt=models.F("end")),
+                            name="start_date_grater_than_end_date"),
+        ]
 
 
 class Approach(models.Model):
-    weight = models.FloatField(default=0)
-    repeats = models.IntegerField()
-    training = models.ForeignKey("PowerTrainingExercise", on_delete=models.CASCADE, related_name="approaches")
+    weight = models.FloatField(default=0,
+                               validators=[MinValueValidator(0)])
+    repeats = models.IntegerField(validators=[MinValueValidator(0)])
+    training = models.ForeignKey("PowerTrainingExercise",
+                                 on_delete=models.CASCADE,
+                                 related_name="approaches")
 
 
 class Exercise(models.Model):
@@ -29,47 +40,48 @@ class Exercise(models.Model):
 
 class PowerTrainingExercise(models.Model):
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
-    power_training = models.ForeignKey("PowerTraining", related_name="exercises", on_delete=models.CASCADE, null=True)
+    power_training = models.ForeignKey("PowerTraining",
+                                       related_name="exercises",
+                                       on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=["exercise", "power_training"],
+                             name="unique_power_training_exercise"),
+        ]
 
 
 class PowerTraining(Training):
     pass
 
 
-class CyclingTraining(Training):
-    average_speed = models.FloatField()
-    distance = models.FloatField()
-    climb = models.FloatField()
+class DistanceAverageSpeedMixin:
+    average_speed = models.FloatField(validators=[MinValueValidator(0)])
+    distance = models.FloatField(validators=[MinValueValidator(0)])
 
 
-class SwimmingTraining(Training):
-    average_speed = models.FloatField()
-    distance = models.FloatField()
+class CyclingTraining(Training, DistanceAverageSpeedMixin):
+    climb = models.FloatField(validators=[MinValueValidator(0)])
 
 
-class Walk(Training):
-    average_speed = models.FloatField()
-    distance = models.FloatField()
+class SwimmingTraining(Training, DistanceAverageSpeedMixin):
+    pass
 
 
-class Jogging(Training):
-    average_speed = models.FloatField()
-    distance = models.FloatField()
+class Walk(Training, DistanceAverageSpeedMixin):
+    pass
 
 
-class FoodCategory(models.Model):
-    name = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.name
+class Jogging(Training, DistanceAverageSpeedMixin):
+    pass
 
 
 class Dish(models.Model):
-    name = models.CharField(max_length=255)
-    calories = models.FloatField()
-    protein = models.FloatField()
-    carbohydrates = models.FloatField()
-    fats = models.FloatField()
+    name = models.CharField(max_length=255, unique=True)
+    calories = models.FloatField(validators=[MinValueValidator(0.1)])
+    protein = models.FloatField(validators=[MinValueValidator(0.1)])
+    carbohydrates = models.FloatField(validators=[MinValueValidator(0.1)])
+    fats = models.FloatField(validators=[MinValueValidator(0.1)])
 
     def __str__(self):
         return self.name
@@ -78,11 +90,11 @@ class Dish(models.Model):
 class DishCount(models.Model):
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
     meal = models.ForeignKey("Meal", on_delete=models.CASCADE, related_name="dishes")
-    weight = models.FloatField()
+    weight = models.FloatField(validators=[MinValueValidator(1)])
 
 
 class Meal(models.Model):
-    date = models.DateField(auto_now_add=True)
+    date = models.DateTimeField()
     user = models.ForeignKey("User", on_delete=models.CASCADE)
 
 
@@ -98,8 +110,10 @@ class User(AbstractUser):
         null=True
     )
     birth_date = models.DateField(null=True)
-    weight = models.FloatField(null=True)
-    height = models.IntegerField(null=True)
+    weight = models.FloatField(null=True,
+                               validators=[MinValueValidator(20), MaxValueValidator(400)])
+    height = models.IntegerField(null=True,
+                                 validators=[MinValueValidator(140), MaxValueValidator(250)])
 
     @property
     def body_mass_index(self):
