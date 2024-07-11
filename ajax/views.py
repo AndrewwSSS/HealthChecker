@@ -13,9 +13,7 @@ from main.models import (Exercise,
                          SwimmingTraining,
                          Walk,
                          Jogging,
-                         PowerTraining,
-                         User)
-
+                         PowerTraining)
 
 SUCCESS_RESPONSE = JsonResponse({
     "status": "success",
