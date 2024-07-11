@@ -6,6 +6,9 @@
       <div class="card">
         <div class="card-body pt-3">
           <form action="" method="post">
+            {% if form.errors %}
+              {{ form.errors }}
+            {% endif %}
             {% csrf_token %}
             <div class="row mb-3">
               <label for="inputStartDate" class="col-md-4 col-lg-3 col-form-label">
@@ -16,7 +19,7 @@
                      id="inputStartDate"
                      name="start"
                      class="form-control"
-                     value="{{ default_start_date }}"
+                     value="{% if object %}{{ object.start }}{% else %}{{ default_start_date }}{% endif %}"
               >
             </div>
             <div class="row mb-3">
@@ -28,19 +31,21 @@
                      id="inputEndDate"
                      name="end"
                      class="form-control"
-                     value="{% if end %}{{ end }}{% endif %}"
+                     value="{% if object %}{{ object.end }}{% endif %}"
               >
             </div>
             <div class="row mb-3">
               <label for="addDescription" class="col-md-4 col-lg-3 col-form-label">
                 Add description
               </label>
-              <textarea class="form-control" id="addDescription" name="description">{% if description %}{{ description }}{% endif %}</textarea>
+              <textarea class="form-control"
+                        id="addDescription"
+                        name="description">{% if object %}{{ object.description }}{% endif %}</textarea>
             </div>
             {% block otherFields %}
             {% endblock %}
             <div class="text-center">
-              <input type="submit" class="btn btn-primary" value="Create">
+              <input type="submit" class="btn btn-primary" value="{% if object %}Update{% else %}Create{% endif %}">
             </div>
             <input type="hidden" name="user" value="{{ user.id }}">
           </form>
