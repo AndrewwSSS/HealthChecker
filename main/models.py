@@ -10,15 +10,15 @@ from django.db.models import (ForeignKey,
 class Training(models.Model):
     user = ForeignKey("User", on_delete=models.CASCADE)
     start = models.DateTimeField()
-    end = models.DateTimeField(null=True)
+    end = models.DateTimeField(null=True, blank=True)
     description = models.TextField(blank=True)
 
     class Meta:
         abstract = True
-        # constraints = [
-        #     CheckConstraint(check=Q(start__gt=models.F("end")),
-        #                     name="start_date_grater_than_end_date"),
-        # ]
+        constraints = [
+            CheckConstraint(check=Q(start__lt=models.F("end")),
+                            name="end_date_grater_than_start_date"),
+        ]
 
 
 class Approach(models.Model):
