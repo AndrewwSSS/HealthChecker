@@ -8,7 +8,8 @@ from main.models import (User,
                          Dish,
                          Jogging,
                          Swimming,
-                         Walking)
+                         Walking,
+                         Meal)
 
 
 class UserCreateForm(UserCreationForm):
@@ -56,4 +57,10 @@ class SwimmingForm(ModelForm):
 class WalkingForm(ModelForm):
     class Meta:
         model = Walking
+        fields = "__all__"
+
+
+class MealForm(ModelForm):
+    class Meta:
+        model = Meal
         fields = "__all__"
