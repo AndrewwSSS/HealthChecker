@@ -15,10 +15,10 @@ from main.models import (Exercise,
                          Jogging,
                          PowerTraining,
                          Dish,
-                         User)
+                         User, Meal, DishCount)
 
 SUCCESS_RESPONSE = JsonResponse({
-    "status": "success",
+    "status": "Success",
 }, status=200)
 
 NOT_FOUND_RESPONSE = JsonResponse({
@@ -164,12 +164,15 @@ class AddDishView(LoginRequiredMixin, View):
         meal_id = request.POST.get("meal_id", default=None)
         weight = request.POST.get("weight", default=None)
 
-        if not dish_id:
+        if not dish_id or not meal_id or not weight:
             return INVALID_DATA_RESPONSE
 
-        try:
-            dish = User.dishes.get(pk=dish_id)
-        except Dish.DoesNotExist:
-            return NOT_FOUND_RESPONSE
+        dish = get_object_or_404(Dish, pk=dish_id)
+        if dish not in request.user.dishes.all():
+            return INVALID_DATA_RESPONSE
 
+        meal = get_object_or_404(Meal, pk=meal_id)
 
+        DishCount.objects.create(dish=dish, meal=meal, weight=weight)
+
+        return SUCCESS_RESPONSE

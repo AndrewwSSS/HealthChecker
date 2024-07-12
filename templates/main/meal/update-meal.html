@@ -41,22 +41,27 @@
                   </div>
                 </div>
                 <ul class="list-group mb-3"  id="meal_list_group"  style="margin-left: 40px">
-                  {% for dish in meal.dishes.all %}
-                    <li class="list-group-item" data-dish-id="{{ dish.id }}">
-                      <div class="card-title-container">
-                        <div class="">
-                          <span>
-                            Dish: {{ dish.name }}
-                          </span>
-                          <span>
-                            Weight: {{ dish.weight }}
-                          </span>
+                  {% for dish_count in meal.dishes.all %}
+                    <li class="list-group-item" data-dish-id="{{ dish_count.id }}">
+                      <div class="d-flex">
+                        <div class="card-title-container gap-2 justify-content-between">
+                          <span>Dish</span>
+                          <input type="text"
+                                 class="form-control"
+                                 value="{{ dish_count.dish.name }}"
+                                 disabled>
+                          <span>Weight</span>
+                          <input type="number"
+                                 class="form-control weightInput"
+                                 name="weight"
+                                 value="{{ dish_count.weight }}"/>
+                          <button class="btn btn-primary saveMealDish">Save</button>
+                          <button class="btn btn-danger deleteDish">Delete</button>
                         </div>
-                        <button class="btn btn-danger deleteApproach">Delete</button>
                       </div>
                     </li>
                   {% empty %}
-                    <h6 class="card-title" id="no-exercises-message">
+                    <h6 class="card-title" id="no-dish-message">
                       No dishes yet
                     </h6>
                   {% endfor %}

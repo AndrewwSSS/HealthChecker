@@ -315,19 +315,51 @@ function add_dish_form(event) {
 
     let new_li_element = document.createElement("li");
 
+    let noDishMessage = document.getElementById("no-dish-message")
+    if (noDishMessage) {
+        noDishMessage.remove()
+    }
+
     new_li_element.setAttribute("data-dish-id", select_element.options[select_element.selectedIndex].value);
     new_li_element.classList.add("list-group-item");
     new_li_element.innerHTML = `<div class="d-flex">
                       <div class="card-title-container gap-2 justify-content-between">
                           <span>Dish</span>
-                          <input type="text" class="disabled" value="${select_element.options[select_element.selectedIndex].text}">
+                          <input type="text"
+                                 class="form-control"
+                                 value="${select_element.options[select_element.selectedIndex].text}" disabled>
                           <span>Weight</span>
-                          <input type="number" class="form-control" name="weight"/>
+                          <input type="number" class="form-control weightInput" name="weight"/>
                           <button class="btn btn-primary saveMealDish">Save</button>
                       </div>
                     </div>`
     list_group.appendChild(new_li_element);
-    // new_li_element.querySelector(".saveMealDish").addEventListener("click", add_approach);
+    new_li_element.querySelector(".saveMealDish").addEventListener("click", add_dish);
+}
+
+function add_dish(event) {
+    let li_element = event.target.parentElement.parentElement.parentElement;
+    let dish_id = li_element.getAttribute("data-dish-id");
+    let weight = this.parentElement.querySelector('input[name="weight"]').value;
+    let formData = {
+        dish_id: dish_id,
+        weight: weight,
+        meal_id: document.getElementById("meal_id").value,
+    }
+
+    $.ajax({  type: "POST",
+        url: "/api/add_dish_to_meal",
+        data: formData,
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        dataType: "json",
+    }).done(function (data) {
+        show_toast("Successfully updated dish", "success")
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        show_toast(`${textStatus}. ${errorThrown}`, "error")
+    })
 }
 
 (function() {
