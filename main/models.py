@@ -80,12 +80,17 @@ class Jogging(Training, DistanceAverageSpeedMixin):
 
 
 class Dish(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
     calories = models.FloatField(validators=[MinValueValidator(0.1)])
     protein = models.FloatField(validators=[MinValueValidator(0.1)])
     carbohydrates = models.FloatField(validators=[MinValueValidator(0.1)])
     fats = models.FloatField(validators=[MinValueValidator(0.1)])
     user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="dishes")
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=["user", "name"], name="unique_dish_name_for_user")
+        ]
 
     def __str__(self):
         return self.name
