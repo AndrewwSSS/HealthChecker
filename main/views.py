@@ -1,11 +1,26 @@
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
+from django.shortcuts import redirect
 from django.views import generic
 
-from main.forms import UserCreateForm, PowerTrainingForm, ExerciseForm, CyclingForm, DishForm, SwimmingForm, \
-    JoggingForm, WalkingForm
-from main.models import User, PowerTraining, Exercise, Cycling, Dish, Swimming, Jogging, Walking
+from main.forms import (UserCreateForm,
+                        PowerTrainingForm,
+                        ExerciseForm,
+                        CyclingForm,
+                        DishForm,
+                        SwimmingForm,
+                        JoggingForm,
+                        WalkingForm)
+from main.models import (User,
+                         PowerTraining,
+                         Exercise,
+                         Cycling,
+                         Dish,
+                         Swimming,
+                         Jogging,
+                         Walking,
+                         Meal)
 
 
 class HomePageView(LoginRequiredMixin, generic.TemplateView):
@@ -40,7 +55,10 @@ class CreatePowerTrainingView(LoginRequiredMixin, generic.CreateView):
     template_name = "main/trainings/power-training/create-power-training.html"
     model = PowerTraining
     form_class = PowerTrainingForm
-    success_url = "/power-trainings/"
+
+    def form_valid(self, form):
+        training = form.save()
+        return redirect("main:update-power-training", pk=training.pk)
 
 
 class PowerTrainingsListView(LoginRequiredMixin, generic.ListView):
@@ -68,7 +86,7 @@ class ExerciseCreateView(LoginRequiredMixin, generic.CreateView):
     form_class = ExerciseForm
     success_url = "/exercises/"
 
-    
+
 class PowerTrainingUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = PowerTraining
     template_name = "main/trainings/power-training/update-power-training.html"
@@ -183,3 +201,8 @@ class UpdateWalkingView(LoginRequiredMixin, generic.UpdateView):
     class_form = WalkingForm
     template_name = "basic_distance_average_speed_form.html"
     success_url = "/walking-trainings/"
+
+
+class MealListView(LoginRequiredMixin, generic.ListView):
+    model = Meal
+    template_name = "main/meal/meal-list.html"
