@@ -13,7 +13,9 @@ from main.models import (Exercise,
                          Swimming,
                          Walking,
                          Jogging,
-                         PowerTraining)
+                         PowerTraining,
+                         Dish,
+                         User)
 
 SUCCESS_RESPONSE = JsonResponse({
     "status": "success",
@@ -154,4 +156,20 @@ class DeleteTrainingView(LoginRequiredMixin, View):
         elif training_type == "JG":
             get_object_or_404(Jogging, pk=training_id).delete()
         return SUCCESS_RESPONSE
+
+
+class AddDishView(LoginRequiredMixin, View):
+    def post(self, request: HttpRequest) -> JsonResponse:
+        dish_id = request.POST.get("dish_id", default=None)
+        meal_id = request.POST.get("meal_id", default=None)
+        weight = request.POST.get("weight", default=None)
+
+        if not dish_id:
+            return INVALID_DATA_RESPONSE
+
+        try:
+            dish = User.dishes.get(pk=dish_id)
+        except Dish.DoesNotExist:
+            return NOT_FOUND_RESPONSE
+
 

@@ -64,7 +64,6 @@ function delete_training(type, id, success_callback, fail_callback) {
     }).done(success_callback).fail(fail_callback)
 }
 function add_approach_form(event) {
-    console.log("Add approach form")
     let elem = event.target.parentElement.parentElement.parentElement;
     let list_group = elem.querySelector(".list-group");
 
@@ -80,10 +79,10 @@ function add_approach_form(event) {
                       </div>
                     </div>`
     list_group.appendChild(li);
-    li.querySelector(".addApproach").addEventListener("click", add_approach_to_exercises);
+    li.querySelector(".addApproach").addEventListener("click", add_approach);
 }
 
-function add_approach_to_exercises(event) {
+function add_approach(event) {
     let li_item = event.target.parentElement.parentElement.parentElement
 
     let formData = {
@@ -108,7 +107,7 @@ function add_approach_to_exercises(event) {
     })
 }
 
-function add_exercise_to_power_training() {
+function add_exercise() {
     console.log("Add exercise")
     let select_item = document.getElementById("select_exercise")
 
@@ -204,7 +203,7 @@ function delete_approach(event) {
     })
 }
 
-function chane_password_form_handle(){
+function chane_password(){
     let formData = {
         old_password: $("#currentPassword").val(),
         new_password1: $("#newPassword").val(),
@@ -234,7 +233,7 @@ function chane_password_form_handle(){
     })
 }
 
-function update_user_form_handle(){
+function update_user(){
     let formData = {
         email: $("#Email").val(),
         username: $("#username").val(),
@@ -310,17 +309,39 @@ function delete_power_training(event) {
     );
 }
 
+function add_dish_form(event) {
+    let select_element = document.getElementById("select_dish");
+    let list_group = document.getElementById("meal_list_group");
+
+    let new_li_element = document.createElement("li");
+
+    new_li_element.setAttribute("data-dish-id", select_element.options[select_element.selectedIndex].value);
+    new_li_element.classList.add("list-group-item");
+    new_li_element.innerHTML = `<div class="d-flex">
+                      <div class="card-title-container gap-2 justify-content-between">
+                          <span>Dish</span>
+                          <input type="text" class="disabled" value="${select_element.options[select_element.selectedIndex].text}">
+                          <span>Weight</span>
+                          <input type="number" class="form-control" name="weight"/>
+                          <button class="btn btn-primary saveMealDish">Save</button>
+                      </div>
+                    </div>`
+    list_group.appendChild(new_li_element);
+    // new_li_element.querySelector(".saveMealDish").addEventListener("click", add_approach);
+}
+
 (function() {
     "use strict";
 
     on("click", ".deleteApproach", delete_approach, true);
     on("click", ".addApproach", add_approach_form, true)
-    on("click", "#addExercise", add_exercise_to_power_training, true)
+    on("click", "#addExercise", add_exercise, true)
     on("click", ".deleteExercise", delete_exercise, true)
     on("click", ".deleteCyclingTraining", delete_cycling_training, true)
     on("click", ".deletePowerTraining", delete_power_training, true)
-    on("click", "#change-password-btn", chane_password_form_handle)
-    on("click", "#changeUserBtn", update_user_form_handle)
+    on("click", "#change-password-btn", chane_password)
+    on("click", "#changeUserBtn", update_user)
+    on("click", "#addDish", add_dish_form)
 
     on('click', '.toggle-sidebar-btn', function() {
         select('body').classList.toggle('toggle-sidebar')

@@ -28,21 +28,21 @@
                     Dishes
                   </h5>
                   <div class="card-title-container gap-3">
-                    <select class="form-select" id="select_exercise">
+                    <select class="form-select" id="select_dish">
                       {% for dish in user.dishes.all %}
-                        <option value="{{ dish.id }}">{{ dish.name }}</option>\
+                        <option value="{{ dish.id }}">{{ dish.name }}</option>
                       {% empty %}
                         <option value="-1">No dishes yet</option>
                       {% endfor %}
                     </select>
-                    <button class="btn btn-primary" id="addExercise">
+                    <button class="btn btn-primary" id="addDish">
                       Add dish
                     </button>
                   </div>
                 </div>
-                <ul class="list-group mb-3" style="margin-left: 40px">
+                <ul class="list-group mb-3"  id="meal_list_group"  style="margin-left: 40px">
                   {% for dish in meal.dishes.all %}
-                    <li class="list-group-item" data-approach-id="{{ dish.id }}">
+                    <li class="list-group-item" data-dish-id="{{ dish.id }}">
                       <div class="card-title-container">
                         <div class="">
                           <span>
