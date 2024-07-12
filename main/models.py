@@ -85,6 +85,7 @@ class Dish(models.Model):
     protein = models.FloatField(validators=[MinValueValidator(0.1)])
     carbohydrates = models.FloatField(validators=[MinValueValidator(0.1)])
     fats = models.FloatField(validators=[MinValueValidator(0.1)])
+    user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="dishes")
 
     def __str__(self):
         return self.name
