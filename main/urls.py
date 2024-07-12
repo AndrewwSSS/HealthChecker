@@ -24,7 +24,7 @@ from main.views import (HomePageView,
                         CreateJoggingView,
                         UpdateSwimmingView,
                         UpdateJoggingView,
-                        UpdateWalkingView)
+                        UpdateWalkingView, MealListView, CreateMealView, UpdateMealView)
 from django.contrib.auth.views import LoginView
 
 
@@ -56,6 +56,9 @@ urlpatterns = [
     path("swimming-trainings/update/<int:pk>", UpdateSwimmingView.as_view(), name="update-swimming-training"),
     path("jogging-traings/update/<int:pk>", UpdateJoggingView.as_view(), name="update-jogging-training"),
     path("walking-trainings/update/<int:pk>", UpdateWalkingView.as_view(), name="update-walking-training"),
+    path("meals/", MealListView.as_view(), name="meal-list"),
+    path("meals/create", CreateMealView.as_view(), name="create-meal"),
+    path("meals/update/<int:pk>", UpdateMealView.as_view(), name="update-meal")
 ]
 
 app_name = "main"

@@ -11,7 +11,7 @@ from main.forms import (UserCreateForm,
                         DishForm,
                         SwimmingForm,
                         JoggingForm,
-                        WalkingForm)
+                        WalkingForm, MealForm)
 from main.models import (User,
                          PowerTraining,
                          Exercise,
@@ -206,3 +206,19 @@ class UpdateWalkingView(LoginRequiredMixin, generic.UpdateView):
 class MealListView(LoginRequiredMixin, generic.ListView):
     model = Meal
     template_name = "main/meal/meal-list.html"
+
+
+class CreateMealView(LoginRequiredMixin, generic.CreateView):
+    model = Meal
+    form_class = MealForm
+    template_name = "main/meal/create-meal.html"
+
+    def form_valid(self, form):
+        meal = form.save()
+        return redirect("main:update-meal", pk=meal.pk)
+
+
+class UpdateMealView(LoginRequiredMixin, generic.UpdateView):
+    model = Meal
+    form_class = MealForm
+    template_name = "main/meal/update-meal.html"

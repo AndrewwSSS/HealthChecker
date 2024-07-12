@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="section">
+    <div class="row justify-content-center">
+      <div class="col-xl-9">
+        <div class="card">
+          <div class="card-body pt3">
+            <h5 class="card-title">
+              Meal
+            </h5>
+            <div class="row mb-3">
+              <label for="inputStartDate" class="col-md-4 col-lg-3 col-form-label">
+                date
+              </label>
+              <input type="text"
+                     placeholder="dd/mm/yyyy H:M:S"
+                     id="inputStartDate"
+                     name="start"
+                     class="form-control"
+                     value="{{ meal.date }}"
+              >
+            </div>
+
+            <div class="card" style="border: #0d120a 2px solid">
+              <div class="card-body gap-3" id="card_update_power_training">
+                <div class="card-title-container mb-3">
+                  <h5 class="card-title">
+                    Dishes
+                  </h5>
+                  <div class="card-title-container gap-3">
+                    <select class="form-select" id="select_exercise">
+                      {% for dish in user.dishes.all %}
+                        <option value="{{ dish.id }}">{{ dish.name }}</option>\
+                      {% empty %}
+                        <option value="-1">No dishes yet</option>
+                      {% endfor %}
+                    </select>
+                    <button class="btn btn-primary" id="addExercise">
+                      Add dish
+                    </button>
+                  </div>
+                </div>
+                <ul class="list-group mb-3" style="margin-left: 40px">
+                  {% for dish in meal.dishes.all %}
+                    <li class="list-group-item" data-approach-id="{{ dish.id }}">
+                      <div class="card-title-container">
+                        <div class="">
+                          <span>
+                            Dish: {{ dish.name }}
+                          </span>
+                          <span>
+                            Weight: {{ dish.weight }}
+                          </span>
+                        </div>
+                        <button class="btn btn-danger deleteApproach">Delete</button>
+                      </div>
+                    </li>
+                  {% empty %}
+                    <h6 class="card-title" id="no-exercises-message">
+                      No dishes yet
+                    </h6>
+                  {% endfor %}
+                </ul>
+                <input type="hidden" value="{{ meal.id }}" id="meal_id">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
