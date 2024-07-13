@@ -101,6 +101,7 @@ function add_approach(event) {
         },
         dataType: "json",
     }).done(function (response) {
+        li_item.setAttribute("data-approach-id", response["approach_id"]);
         show_toast("Approach successfully added.", "success")
     }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
         show_toast(`${textStatus}. ${errorThrown}`, "error")
@@ -108,7 +109,6 @@ function add_approach(event) {
 }
 
 function add_exercise() {
-    console.log("Add exercise")
     let select_item = document.getElementById("select_exercise")
 
     let formData = {
@@ -323,43 +323,105 @@ function add_dish_form(event) {
     new_li_element.setAttribute("data-dish-id", select_element.options[select_element.selectedIndex].value);
     new_li_element.classList.add("list-group-item");
     new_li_element.innerHTML = `<div class="d-flex">
-                      <div class="card-title-container gap-2 justify-content-between">
-                          <span>Dish</span>
-                          <input type="text"
-                                 class="form-control"
-                                 value="${select_element.options[select_element.selectedIndex].text}" disabled>
-                          <span>Weight</span>
-                          <input type="number" class="form-control weightInput" name="weight"/>
-                          <button class="btn btn-primary saveMealDish">Save</button>
-                      </div>
-                    </div>`
+                                  <div class="card-title-container gap-2 justify-content-between">
+                                      <input type="text"
+                                             class="form-control"
+                                             value="${select_element.options[select_element.selectedIndex].text}" disabled>
+                                      <span>Weight</span>
+                                      <input type="number"
+                                             class="form-control weightInput"
+                                             name="weight"/>
+                                      <button class="btn btn-primary saveMealDish">Save</button>
+                                      <button class="btn btn-danger deleteDishCount">Delete</button>
+                                  </div>
+                                </div>`
     list_group.appendChild(new_li_element);
-    new_li_element.querySelector(".saveMealDish").addEventListener("click", add_dish);
+    new_li_element.querySelector(".saveMealDish").addEventListener("click", save_dish);
+    new_li_element.querySelector(".deleteDishCount").addEventListener("click", delete_dish);
+
 }
 
-function add_dish(event) {
+function save_dish(event) {
     let li_element = event.target.parentElement.parentElement.parentElement;
     let dish_id = li_element.getAttribute("data-dish-id");
     let weight = this.parentElement.querySelector('input[name="weight"]').value;
+
     let formData = {
         dish_id: dish_id,
         weight: weight,
         meal_id: document.getElementById("meal_id").value,
     }
 
-    $.ajax({  type: "POST",
-        url: "/api/add_dish_to_meal",
-        data: formData,
-        headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            "X-CSRFToken": getCookie("csrftoken")
-        },
-        dataType: "json",
-    }).done(function (data) {
-        show_toast("Successfully updated dish", "success")
-    }).fail(function (jqXHR, textStatus, errorThrown) {
-        show_toast(`${textStatus}. ${errorThrown}`, "error")
-    })
+    if (li_element.hasAttribute("data-dish-count-id")) {
+        formData.dish_count_id = li_element.getAttribute("data-dish-count-id");
+        $.ajax({  type: "POST",
+            url: "/api/update_dish_count",
+            data: formData,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            dataType: "json",
+        }).done(function (response) {
+            show_toast("Successfully updated dish", "success")
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            show_toast(`${textStatus}. ${errorThrown}`, "error")
+        })
+    } else {
+        $.ajax({
+            type: "POST",
+            url: "/api/add_dish_to_meal",
+            data: formData,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            dataType: "json",
+        }).done(function (response) {
+            li_element.removeAttribute("data-dish-id")
+            li_element.setAttribute("data-dish-count-id", response["dish_count_id"]);
+            event.target.textContent = "Update"
+            show_toast("Successfully added dish", "success")
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            show_toast(`${textStatus}. ${errorThrown}`, "error")
+        })
+    }
+}
+
+
+function delete_dish(event) {
+    let li_element = event.target.parentElement.parentElement.parentElement;
+    let ul_element = li_element.parentElement
+
+    if (li_element.hasAttribute("data-dish-count-id")) {
+        let formData = {
+            dish_count_id: li_element.getAttribute("data-dish-count-id"),
+            meal_id: document.getElementById("meal_id").value,
+        }
+        $.ajax({
+            type: "POST",
+            url: "/api/delete_dish_count",
+            data: formData,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            dataType: "json",
+        }).done(function (response) {
+            li_element.remove()
+            if (ul_element.querySelectorAll("li").length === 0) {
+                ul_element.innerHTML = "<h6 class='card-title' id='no-dish-message'>No dishes yet</h6>"
+            }
+            show_toast("Successfully deleted dish", "success")
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            show_toast(`${textStatus}. ${errorThrown}`, "error")
+        })
+    } else {
+        li_element.remove()
+    }
+    if (ul_element.querySelectorAll("li").length === 0) {
+        ul_element.innerHTML = "<h6 class='card-title' id='no-dish-message'>No dishes yet</h6>"
+    }
 }
 
 (function() {
@@ -374,6 +436,7 @@ function add_dish(event) {
     on("click", "#change-password-btn", chane_password)
     on("click", "#changeUserBtn", update_user)
     on("click", "#addDish", add_dish_form)
+    on("click", ".deleteDishCount", delete_dish, true)
 
     on('click', '.toggle-sidebar-btn', function() {
         select('body').classList.toggle('toggle-sidebar')

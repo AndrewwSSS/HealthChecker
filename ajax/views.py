@@ -114,7 +114,9 @@ class AddApproachView(LoginRequiredMixin, View):
 
         approach.save()
 
-        return SUCCESS_RESPONSE
+        return JsonResponse({
+            "approach_id": approach.id
+        }, status=200)
 
 
 class DeleteExerciseView(LoginRequiredMixin, View):
@@ -158,7 +160,7 @@ class DeleteTrainingView(LoginRequiredMixin, View):
         return SUCCESS_RESPONSE
 
 
-class AddDishView(LoginRequiredMixin, View):
+class AddDishCountView(LoginRequiredMixin, View):
     def post(self, request: HttpRequest) -> JsonResponse:
         dish_id = request.POST.get("dish_id", default=None)
         meal_id = request.POST.get("meal_id", default=None)
@@ -173,6 +175,49 @@ class AddDishView(LoginRequiredMixin, View):
 
         meal = get_object_or_404(Meal, pk=meal_id)
 
-        DishCount.objects.create(dish=dish, meal=meal, weight=weight)
+        dish_count = DishCount.objects.create(dish=dish,
+                                              meal=meal,
+                                              weight=weight)
 
+        return JsonResponse({
+            "dish_count_id": dish_count.id,
+        }, status=200)
+
+
+class UpdateDishCountView(LoginRequiredMixin, View):
+    def post(self, request: HttpRequest) -> JsonResponse:
+        dish_id = request.POST.get("dish_id", default=None)
+        dish_count_id = request.POST.get("dish_count_id", default=None)
+        meal_id = request.POST.get("meal_id", default=None)
+        weight = request.POST.get("weight", default=None)
+
+        if not dish_id or not meal_id or not weight or not dish_count_id:
+            return INVALID_DATA_RESPONSE
+
+        try:
+            meal = Meal.objects.get(pk=meal_id, user=request.user)
+            dish_count = meal.dishes.get(pk=dish_id)
+        except (Meal.DoesNotExist, DishCount.DoesNotExist):
+            return INVALID_DATA_RESPONSE
+
+        dish_count.weight = weight
+        dish_count.save()
+        return SUCCESS_RESPONSE
+
+
+class DeleteDishCountView(LoginRequiredMixin, View):
+    def post(self, request: HttpRequest) -> JsonResponse:
+        dish_count_id = request.POST.get("dish_count_id", default=None)
+        meal_id = request.POST.get("meal_id", default=None)
+
+        if not dish_count_id or not meal_id:
+            return INVALID_DATA_RESPONSE
+
+        try:
+            meal = Meal.objects.get(pk=meal_id, user=request.user)
+            dish_count = meal.dishes.get(pk=dish_count_id)
+        except (Meal.DoesNotExist, DishCount.DoesNotExist):
+            return INVALID_DATA_RESPONSE
+
+        dish_count.delete()
         return SUCCESS_RESPONSE

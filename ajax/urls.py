@@ -7,7 +7,8 @@ from ajax.views import (UpdatePasswordView,
                         DeleteTrainingView,
                         DeleteApproach,
                         DeleteExerciseView,
-                        AddDishView)
+                        AddDishCountView,
+                        DeleteDishCountView)
 
 urlpatterns = [
     path("user_update", UpdateUser.as_view(), name="user_update"),
@@ -17,7 +18,8 @@ urlpatterns = [
     path("delete_approach", DeleteApproach.as_view(), name="delete_approach"),
     path("add_approach", AddApproachView.as_view(), name="add_approach"),
     path("trainings/delete_training", DeleteTrainingView.as_view(), name="delete_training"),
-    path("add_dish_to_meal", AddDishView.as_view(), name="add_dish_to_meal")
+    path("add_dish_to_meal", AddDishCountView.as_view(), name="add_dish_to_meal"),
+    path("delete_dish_count", DeleteDishCountView.as_view(), name="delete_dish_count"),
 ]
 
 app_name = 'ajax'

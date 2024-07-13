@@ -42,10 +42,9 @@
                 </div>
                 <ul class="list-group mb-3"  id="meal_list_group"  style="margin-left: 40px">
                   {% for dish_count in meal.dishes.all %}
-                    <li class="list-group-item" data-dish-id="{{ dish_count.id }}">
+                    <li class="list-group-item" data-dish-count-id="{{ dish_count.id }}">
                       <div class="d-flex">
                         <div class="card-title-container gap-2 justify-content-between">
-                          <span>Dish</span>
                           <input type="text"
                                  class="form-control"
                                  value="{{ dish_count.dish.name }}"
@@ -55,8 +54,8 @@
                                  class="form-control weightInput"
                                  name="weight"
                                  value="{{ dish_count.weight }}"/>
-                          <button class="btn btn-primary saveMealDish">Save</button>
-                          <button class="btn btn-danger deleteDish">Delete</button>
+                          <button class="btn btn-primary saveMealDish">Update</button>
+                          <button class="btn btn-danger deleteDishCount">Delete</button>
                         </div>
                       </div>
                     </li>
