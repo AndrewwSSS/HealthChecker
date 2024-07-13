@@ -39,7 +39,8 @@ class Exercise(models.Model):
 
 
 class PowerTrainingExercise(models.Model):
-    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    exercise = models.ForeignKey(Exercise,
+                                 on_delete=models.CASCADE)
     power_training = models.ForeignKey("PowerTraining",
                                        related_name="exercises",
                                        on_delete=models.CASCADE)

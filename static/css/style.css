@@ -1274,5 +1274,11 @@ h6 {
 /*}*/
 
 /*.trainingElement:hover button {*/
-/*  display: inline-block;*/
+/*  display: inline-block;*e/
 /*}*/
+
+
+.deleteIcon {
+  color: red;
+  font-size: 25px;
+}

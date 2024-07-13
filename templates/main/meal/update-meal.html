@@ -2,7 +2,7 @@
 {% block content %}
   <section class="section">
     <div class="row justify-content-center">
-      <div class="col-xl-9">
+      <div class="col-lg-4">
         <div class="card">
           <div class="card-body pt3">
             <h5 class="card-title">
@@ -20,54 +20,55 @@
                      value="{{ meal.date }}"
               >
             </div>
-
-            <div class="card" style="border: #0d120a 2px solid">
-              <div class="card-body gap-3" id="card_update_power_training">
-                <div class="card-title-container mb-3">
-                  <h5 class="card-title">
-                    Dishes
-                  </h5>
-                  <div class="card-title-container gap-3">
-                    <select class="form-select" id="select_dish">
-                      {% for dish in user.dishes.all %}
-                        <option value="{{ dish.id }}">{{ dish.name }}</option>
-                      {% empty %}
-                        <option value="-1">No dishes yet</option>
-                      {% endfor %}
-                    </select>
-                    <button class="btn btn-primary" id="addDish">
-                      Add dish
-                    </button>
-                  </div>
-                </div>
-                <ul class="list-group mb-3"  id="meal_list_group"  style="margin-left: 40px">
-                  {% for dish_count in meal.dishes.all %}
-                    <li class="list-group-item" data-dish-count-id="{{ dish_count.id }}">
-                      <div class="d-flex">
-                        <div class="card-title-container gap-2 justify-content-between">
-                          <input type="text"
-                                 class="form-control"
-                                 value="{{ dish_count.dish.name }}"
-                                 disabled>
-                          <span>Weight</span>
-                          <input type="number"
-                                 class="form-control weightInput"
-                                 name="weight"
-                                 value="{{ dish_count.weight }}"/>
-                          <button class="btn btn-primary saveMealDish">Update</button>
-                          <button class="btn btn-danger deleteDishCount">Delete</button>
-                        </div>
-                      </div>
-                    </li>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-body gap-3" id="card_update_power_training">
+            <div class="card-title-container mb-3">
+              <h5 class="card-title">
+                Dishes
+              </h5>
+              <div class="card-title-container gap-3">
+                <select class="form-select" id="select_dish">
+                  {% for dish in user.dishes.all %}
+                    <option value="{{ dish.id }}">{{ dish.name }}</option>
                   {% empty %}
-                    <h6 class="card-title" id="no-dish-message">
-                      No dishes yet
-                    </h6>
+                    <option value="-1">No dishes yet</option>
                   {% endfor %}
-                </ul>
-                <input type="hidden" value="{{ meal.id }}" id="meal_id">
+                </select>
+                <button class="btn btn-primary" id="addDish">
+                  Add dish
+                </button>
               </div>
             </div>
+            <ul class="list-group mb-3"  id="meal_list_group">
+              {% for dish_count in meal.dishes.all %}
+                <li class="list-group-item" data-dish-count-id="{{ dish_count.id }}">
+                  <div class="d-flex">
+                    <div class="card-title-container gap-2 justify-content-between">
+                      <input type="text"
+                             class="form-control"
+                             value="{{ dish_count.dish.name }}"
+                             disabled>
+                      <span>Weight</span>
+                      <input type="number"
+                             class="form-control weightInput"
+                             name="weight"
+                             value="{{ dish_count.weight }}"/>
+                      <button class="btn btn-primary saveMealDish">Update</button>
+                      <i class="bi bi-x-circle-fill deleteDishCount deleteIcon"></i>
+                    </div>
+                  </div>
+                </li>
+              {% empty %}
+                <h6 class="card-title" id="no-dish-message">
+                  No dishes yet
+                </h6>
+              {% endfor %}
+            </ul>
+            <input type="hidden" value="{{ meal.id }}" id="meal_id">
           </div>
         </div>
       </div>

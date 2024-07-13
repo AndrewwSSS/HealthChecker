@@ -2,7 +2,7 @@
 {% block content %}
   <section class="section">
     <div class="row justify-content-center">
-      <div class="col-xl-9">
+      <div class="col-lg-4">
         <div class="card">
           <div class="card-body pt3">
             <h5 class="card-title">
@@ -37,70 +37,76 @@
               </label>
               <textarea class="form-control" id="addDescription" name="description">{{ powertraining.description }}</textarea>
             </div>
-
-            <div class="card" style="border: #0d120a 2px solid">
-              <div class="card-body gap-3" id="card_update_power_training">
-                <div class="card-title-container mb-3">
-                   <h5 class="card-title">
-                    Exercises
-                  </h5>
-                  <div class="card-title-container gap-3">
-                    <select class="form-select" id="select_exercise">
-                      {% for exercise in exercises %}
-                        <option value="{{ exercise.id }}">{{ exercise.name }}</option>\
-                      {% empty %}
-                        <option value="-1">No exercises yet</option>
-                      {% endfor %}
-                    </select>
-                    <button class="btn btn-primary" id="addExercise">
-                      Add exercise
-                    </button>
-                  </div>
-                </div>
-                {% for exercise in powertraining.exercises.all %}
-                  <div data-exercise-id="{{ exercise.id }}">
-                    <div class="card-title-container mb-3">
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-body gap-3" id="card_update_power_training">
+            <div class="card-title-container mb-3">
+              <h5 class="card-title">
+                Exercises
+              </h5>
+              <div class="card-title-container gap-3">
+                <select class="form-select" id="select_exercise">
+                  {% for exercise in exercises %}
+                    <option value="{{ exercise.id }}">{{ exercise.name }}</option>\
+                  {% empty %}
+                    <option value="-1">No exercises yet</option>
+                  {% endfor %}
+                </select>
+                <button class="btn btn-primary" id="addExercise">
+                  Add exercise
+                </button>
+              </div>
+            </div>
+            <div id="exercise-container">
+              {% for exercise in powertraining.exercises.all %}
+                <div data-exercise-id="{{ exercise.id }}">
+                  <div class="card-title-container mb-3">
                       <span>
                         {{ exercise.exercise.name }}
                       </span>
-                      <div class="card-title-container gap-2">
-                        <button class="btn btn-primary addApproach">
-                          Add approach
-                        </button>
-                        <button class="btn btn-danger deleteExercise">
-                          Delete
-                        </button>
-                     </div>
+                    <div class="card-title-container gap-2">
+                      <button class="btn btn-primary addApproach">
+                        Add approach
+                      </button>
+                      <button class="btn btn-danger deleteExercise">
+                        Delete
+                      </button>
                     </div>
-                     <ul class="list-group mb-3" style="margin-left: 40px">
-                     {% for approach in exercise.approaches.all %}
-                      <li class="list-group-item" data-approach-id="{{ approach.id }}">
-                        <div class="card-title-container">
-                          <div class="">
-                              <span>
-                              {% if approach.weight != 0 %}
-                                Weight: {{ approach.weight }}
-                              {% endif %}
-                              </span>
-                              <span>
-                                Repeats: {{ approach.repeats }}
-                              </span>
-                          </div>
-                          <button class="btn btn-danger deleteApproach">Delete</button>
-                        </div>
-                        
-                      </li>
-                     {% endfor %}
-                     </ul>
                   </div>
-                {% empty %}
-                  <h6 class="card-title" id="no-exercises-message">
-                    No exercises yet
-                  </h6>
-                {% endfor %}
-                <input type="hidden" value="{{ powertraining.id }}" id="training_id">
-              </div>
+                  <ul class="list-group mb-3" style="margin-left: 40px">
+                    {% for approach in exercise.approaches.all %}
+                      <li class="list-group-item" data-approach-id="{{ approach.id }}">
+                        <div class="d-flex">
+                          <div class="card-title-container gap-2 justify-content-between">
+                            <span>Weight</span>
+                            <input type="number"
+                                   class="form-control"
+                                   name="weight"
+                                   value="{{ approach.weight }}"/>
+                            <span>Repeats</span>
+                            <input type="number"
+                                   class="form-control"
+                                   name="repeats"
+                                   value="{{ approach.repeats }}"/>
+                            <button class="btn btn-primary saveApproach">Update</button>
+                            <i class="bi bi-x-circle-fill deleteApproach deleteIcon"></i>
+                          </div>
+                        </div>
+
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% empty %}
+                <h6 class="card-title" id="no-exercises-message">
+                  No exercises yet
+                </h6>
+              {% endfor %}
             </div>
+            <input type="hidden" value="{{ powertraining.id }}" id="training_id">
           </div>
         </div>
       </div>

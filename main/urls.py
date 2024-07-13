@@ -24,7 +24,10 @@ from main.views import (HomePageView,
                         CreateJoggingView,
                         UpdateSwimmingView,
                         UpdateJoggingView,
-                        UpdateWalkingView, MealListView, CreateMealView, UpdateMealView)
+                        UpdateWalkingView,
+                        MealListView,
+                        CreateMealView,
+                        UpdateMealView)
 from django.contrib.auth.views import LoginView
 
 

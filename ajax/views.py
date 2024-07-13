@@ -15,7 +15,7 @@ from main.models import (Exercise,
                          Jogging,
                          PowerTraining,
                          Dish,
-                         User, Meal, DishCount)
+                         User, Meal, DishCount, Training)
 
 SUCCESS_RESPONSE = JsonResponse({
     "status": "Success",
@@ -121,12 +121,21 @@ class AddApproachView(LoginRequiredMixin, View):
 
 class DeleteExerciseView(LoginRequiredMixin, View):
     def post(self, request: HttpRequest) -> JsonResponse:
-        exercise_id = request.POST.get("exercise_id", default=None)
+        exercise_id = request.POST.get("exercise_id",
+                                       default=None)
+        training_id = request.POST.get("training_id",
+                                       default=None)
 
-        if not exercise_id:
+        if not exercise_id or not training_id:
             return INVALID_DATA_RESPONSE
 
-        get_object_or_404(PowerTrainingExercise, pk=exercise_id).delete()
+        try:
+            training = PowerTraining.objects.get(pk=training_id,
+                                                 user=request.user)
+            exercise = training.exercises.get(pk=exercise_id)
+            exercise.delete()
+        except (PowerTraining.DoesNotExist, PowerTraining.DoesNotExist):
+            return NOT_FOUND_RESPONSE
         return SUCCESS_RESPONSE
 
 
@@ -142,8 +151,10 @@ class DeleteApproach(LoginRequiredMixin, View):
 
 class DeleteTrainingView(LoginRequiredMixin, View):
     def post(self, request) -> JsonResponse:
-        training_type = request.POST.get("type", default=None)
-        training_id = request.POST.get("training_id", default=None)
+        training_type = request.POST.get("type",
+                                         default=None)
+        training_id = request.POST.get("training_id",
+                                       default=None)
         if not training_type or not training_id:
             return INVALID_DATA_RESPONSE
 
@@ -162,18 +173,21 @@ class DeleteTrainingView(LoginRequiredMixin, View):
 
 class AddDishCountView(LoginRequiredMixin, View):
     def post(self, request: HttpRequest) -> JsonResponse:
-        dish_id = request.POST.get("dish_id", default=None)
-        meal_id = request.POST.get("meal_id", default=None)
-        weight = request.POST.get("weight", default=None)
+        dish_id = request.POST.get("dish_id",
+                                   default=None)
+        meal_id = request.POST.get("meal_id",
+                                   default=None)
+        weight = request.POST.get("weight",
+                                  default=None)
 
         if not dish_id or not meal_id or not weight:
             return INVALID_DATA_RESPONSE
 
-        dish = get_object_or_404(Dish, pk=dish_id)
-        if dish not in request.user.dishes.all():
+        try:
+            dish = request.user.dishes.get(pk=dish_id)
+            meal = Meal.objects.get(pk=meal_id, user=request.user)
+        except (Dish.DoesNotExist, Meal.DoesNotExist):
             return INVALID_DATA_RESPONSE
-
-        meal = get_object_or_404(Meal, pk=meal_id)
 
         dish_count = DishCount.objects.create(dish=dish,
                                               meal=meal,
@@ -220,4 +234,30 @@ class DeleteDishCountView(LoginRequiredMixin, View):
             return INVALID_DATA_RESPONSE
 
         dish_count.delete()
+        return SUCCESS_RESPONSE
+
+
+class UpdateApproachView(LoginRequiredMixin, View):
+    def post(self, request: HttpRequest) -> JsonResponse:
+        approach_id = request.POST.get("approach_id", default=None)
+        repeats = request.POST.get("repeats", default=None)
+        weight = request.POST.get("weight", default=None)
+        exercise_id = request.POST.get("power_training_exercise_id", default=None)
+
+        if not approach_id or not exercise_id or (not repeats and not weight):
+            return INVALID_DATA_RESPONSE
+
+        try:
+            exercise = PowerTrainingExercise.objects.get(pk=exercise_id, power_training__user=request.user)
+            approach = exercise.approaches.get(pk=approach_id)
+        except (PowerTrainingExercise.DoesNotExist, Approach.DoesNotExist):
+            return INVALID_DATA_RESPONSE
+
+        if weight:
+            approach.weight = weight
+
+        if repeats:
+            approach.repeats = repeats
+
+        approach.save()
         return SUCCESS_RESPONSE
