@@ -3,7 +3,6 @@ const ERROR_ICON = '<i class="bi bi-x-circle-fill"></i>'
 const TOAST_SHOW_DURATION = 5000
 
 
-
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== "") {
@@ -18,6 +17,19 @@ function getCookie(name) {
         }
     }
     return cookieValue;
+}
+
+function ajax_post(url, data, done_callback, fail_callback, dataType = "json") {
+    $.ajax({
+        type: 'POST',
+        url: url,
+        data: data,
+        dataType: dataType,
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+    }).done(done_callback).fail(fail_callback);
 }
 
 const select = (el, all = false) => {
@@ -52,17 +64,10 @@ function delete_training(type, id, success_callback, fail_callback) {
         type: type,
         training_id: id,
     }
-    $.ajax({
-        type: "POST",
-        url: "/api/trainings/delete_training",
-        data: formData,
-        headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            "X-CSRFToken": getCookie("csrftoken")
-        },
-        dataType: "json",
-    }).done(success_callback).fail(fail_callback)
+
+    ajax_post("/api/trainings/delete_training", formData, success_callback, fail_callback)
 }
+
 function add_approach_form(event) {
     let elem = event.target.parentElement.parentElement.parentElement;
     let list_group = elem.querySelector(".list-group");
@@ -94,61 +99,33 @@ function create_or_update_approach(event) {
     }
     if (li_item.hasAttribute("data-approach-id")) {
         formData.approach_id =li_item.getAttribute("data-approach-id")
-        $.ajax({
-            type: "POST",
-            url: "/api/update_approach",
-            data: formData,
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": getCookie("csrftoken")
-            },
-            dataType: "json",
-        }).done(function (response) {
-            show_toast("Approach successfully added.", "success")
-        }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
-            show_toast(`${textStatus}. ${errorThrown}`, "error")
-        })
+
+        let done_callback = response => show_toast("Approach successfully added.", "success")
+        let fail_callback = (XMLHttpRequest, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
+
+        ajax_post("/api/update_approach", formData, done_callback, fail_callback)
     } else {
-        $.ajax({
-            type: "POST",
-            url: "/api/add_approach",
-            data: formData,
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": getCookie("csrftoken")
-            },
-            dataType: "json",
-        }).done(function (response) {
+        let done_callback = response => {
             event.target.textContent = "Update"
             li_item.setAttribute("data-approach-id", response["approach_id"]);
             show_toast("Approach successfully added.", "success")
-        }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
-            show_toast(`${textStatus}. ${errorThrown}`, "error")
-        })
+        }
+        let fail_callback = (XMLHttpRequest, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
+        ajax_post("/api/add_approach", formData, done_callback, fail_callback)
     }
 
 
 }
 
-
 function add_exercise() {
     let select_item = document.getElementById("select_exercise")
 
     let formData = {
-        training_id: $("#training_id").val(),
+        training_id: document.getElementById("training_id").getAttribute("value"),
         exercise_id: select_item.options[select_item.selectedIndex].value,
     }
 
-    $.ajax({
-        type: "POST",
-        url: "/api/add_power_training_exercise",
-        data: formData,
-        headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            "X-CSRFToken": getCookie("csrftoken")
-        },
-        dataType: "json",
-    }).done(function (response) {
+    let done_callback = response => {
         let exercise_container = document.getElementById("exercise-container")
         let exercise_name = select_item.options[select_item.selectedIndex].text
 
@@ -173,9 +150,10 @@ function add_exercise() {
         // card.querySelector(".addApproach").addEventListener('click', add_approach_form);
 
         show_toast("Exercise added successfully", "success")
-    }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
-        show_toast(`${textStatus}. ${errorThrown}`, "error")
-    })
+    }
+    let fail_callback = (XMLHttpRequest, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
+
+    ajax_post("/api/add_power_training_exercise", formData, done_callback, fail_callback)
 }
 
 function delete_exercise(event) {
@@ -186,24 +164,17 @@ function delete_exercise(event) {
         exercise_id: exercise.getAttribute("data-exercise-id"),
         training_id: document.getElementById("training_id").value,
     }
-    $.ajax({
-        type: "POST",
-        url: "/api/delete_exercise",
-        data: formData,
-        headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            "X-CSRFToken": getCookie("csrftoken")
-        },
-        dataType: "json",
-    }).done(function (data) {
-        if (exercise_container.querySelectorAll("div").length === 0) {
-            exercise_container.innerHTML = "<h6 class='card-title' id='no-exercises-message'>No exercises yet</h6>"
-        }
+
+    let done_callback = response => {
         exercise.remove();
+        if (exercise_container.querySelectorAll("div").length === 0)
+            exercise_container.innerHTML = "<h6 class='card-title' id='no-exercises-message'>No exercises yet</h6>"
         show_toast("Exercise successfully deleted", "success")
-    }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
-        show_toast(`${textStatus}. ${errorThrown}`, "error")
-    })
+    }
+    let fail_callback =
+        (jqXHR, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
+
+    ajax_post("/api/delete_exercise", formData, done_callback, fail_callback)
 }
 
 function delete_approach(event) {
@@ -215,88 +186,50 @@ function delete_approach(event) {
             approach_id: li_item.getAttribute("data-approach-id"),
             exercise_id: ul_item.parentElement.getAttribute("data-exercise-id"),
         }
-        $.ajax({
-            type: "POST",
-            url: "/api/delete_approach",
-            data: formData,
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": getCookie("csrftoken")
-            },
-            dataType: "json",
-        }).done(function (response) {
+        let done_callback = response => {
             li_item.remove();
-            // if (ul_item.querySelectorAll("li").length === 0) {
-            //     ul_item.innerHTML = "<h6 class='card-title' id='no-exercises-message'>No exercises yet</h6>"
-            // }
             show_toast("Approach successfully added.", "success")
-        }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
-            show_toast(`${textStatus}. ${errorThrown}`, "error")
-        })
-    } else {
+        }
+        let fail_callback = (XMLHttpRequest, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
+        ajax_post("/api/delete_approach", formData, done_callback, fail_callback)
+    } else
         li_item.remove()
-    }
-
-    // if (ul_item.querySelectorAll("li").length === 0) {
-    //     ul_item.innerHTML = "<h6 class='card-title' id='no-exercises-message'>No exercises yet</h6>"
-    // }
 }
 
-function chane_password(){
+function chane_password() {
     let formData = {
-        old_password: $("#currentPassword").val(),
-        new_password1: $("#newPassword").val(),
-        new_password2: $("#renewPassword").val(),
+        old_password: document.getElementById("currentPassword").value,
+        new_password1: document.getElementById("newPassword").value,
+        new_password2: document.getElementById("renewPassword").value,
     };
+    let done_callback = response => show_toast("Password change successfully", "success")
 
-    $.ajax({
-        type: "POST",
-        url: "/api/change_password",
-        data: formData,
-        headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            "X-CSRFToken": getCookie("csrftoken")
-        },
-        dataType: "json",
-    }).done(function (data) {
-        console.log(data);
-        if (data.status === "error") {
-            show_toast("Error. Invalid input", "error")
-        }
-        else if (data.status === "success") {
-            show_toast("Password change successfully", "success")
-        }
-
-    }).fail(function (XMLHttpRequest, textStatus, errorThrown) {
-        show_toast(`${textStatus}. ${errorThrown}`, "error")
-    })
+    let fail_callback = (XMLHttpRequest, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
+    ajax_post("/api/change_password", formData, done_callback, fail_callback)
 }
 
 function update_user(){
+    let sex_select = document.getElementById("sex")
     let formData = {
-        email: $("#Email").val(),
-        username: $("#username").val(),
-        first_name: $("#first_name").val(),
-        last_name: $("#last_name").val(),
-
+        email: document.getElementById("Email").value,
+        username: document.getElementById("username").value,
+        first_name: document.getElementById("first_name").value,
+        last_name: document.getElementById("last_name").value,
+        sex: sex_select.options[sex_select.selectedIndex].value,
+        birth_date: document.getElementById("birth_date").value,
+        weight: document.getElementById("weight").value,
+        height: document.getElementById("height").value,
     };
 
-    $.ajax({
-        type: "POST",
-        url: "/api/user_update",
-        data: formData,
-        headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            "X-CSRFToken": getCookie("csrftoken")
-        },
-        dataType: "json",
-    }).done(function (data) {
-        if(data.status === "success"){
-            show_toast("User updated successfully.", "success");
-        } else if(data.status === "error") {
-            show_toast("User update error. Invalid input", "error");
+    let done_callback =
+            response => show_toast("User updated successfully.", "success");
+    let fail_callback =
+        (XMLHttpRequest, textStatus, errorThrown) => {
+            console.log(errorThrown)
+            show_toast(`${textStatus}. ${errorThrown}`, "error")
         }
-    })
+
+    ajax_post("/api/user_update", formData, done_callback, fail_callback)
 }
 
 function show_toast(msg, type) {
@@ -393,40 +326,23 @@ function save_dish(event) {
 
     if (li_element.hasAttribute("data-dish-count-id")) {
         formData.dish_count_id = li_element.getAttribute("data-dish-count-id");
-        $.ajax({  type: "POST",
-            url: "/api/update_dish_count",
-            data: formData,
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": getCookie("csrftoken")
-            },
-            dataType: "json",
-        }).done(function (response) {
-            show_toast("Successfully updated dish", "success")
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            show_toast(`${textStatus}. ${errorThrown}`, "error")
-        })
+        let done_callback = response => show_toast("Successfully updated dish", "success")
+        let fail_callback = (jqXHR, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
+
+        ajax_post("/api/update_dish_count", formData, done_callback, fail_callback)
     } else {
-        $.ajax({
-            type: "POST",
-            url: "/api/add_dish_to_meal",
-            data: formData,
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": getCookie("csrftoken")
-            },
-            dataType: "json",
-        }).done(function (response) {
+        let done_callback = response => {
             li_element.removeAttribute("data-dish-id")
             li_element.setAttribute("data-dish-count-id", response["dish_count_id"]);
             event.target.textContent = "Update"
             show_toast("Successfully added dish", "success")
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            show_toast(`${textStatus}. ${errorThrown}`, "error")
-        })
+        }
+        let fail_callback =
+            (jqXHR, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
+
+        ajax_post("/api/add_dish_to_meal", formData, done_callback, fail_callback)
     }
 }
-
 
 function delete_dish(event) {
     let li_element = event.target.parentElement.parentElement.parentElement;
@@ -437,30 +353,24 @@ function delete_dish(event) {
             dish_count_id: li_element.getAttribute("data-dish-count-id"),
             meal_id: document.getElementById("meal_id").value,
         }
-        $.ajax({
-            type: "POST",
-            url: "/api/delete_dish_count",
-            data: formData,
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": getCookie("csrftoken")
-            },
-            dataType: "json",
-        }).done(function (response) {
+
+        let done_callback = response => {
             li_element.remove()
             if (ul_element.querySelectorAll("li").length === 0) {
                 ul_element.innerHTML = "<h6 class='card-title' id='no-dish-message'>No dishes yet</h6>"
             }
             show_toast("Successfully deleted dish", "success")
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            show_toast(`${textStatus}. ${errorThrown}`, "error")
-        })
-    } else {
+        }
+        let fail_callback =
+            (jqXHR, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
+
+        ajax_post("/api/delete_dish_count", formData, done_callback, fail_callback)
+
+    } else
         li_element.remove()
-    }
-    if (ul_element.querySelectorAll("li").length === 0) {
+
+    if (ul_element.querySelectorAll("li").length === 0)
         ul_element.innerHTML = "<h6 class='card-title' id='no-dish-message'>No dishes yet</h6>"
-    }
 }
 
 (function() {

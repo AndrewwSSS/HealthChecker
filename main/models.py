@@ -119,7 +119,7 @@ class User(AbstractUser):
         choices=SEX_CHOICES,
         null=True
     )
-    birth_date = models.DateField(null=True)
+    birth_date = models.DateField(null=True,)
     weight = models.FloatField(null=True,
                                validators=[MinValueValidator(20), MaxValueValidator(400)])
     height = models.IntegerField(null=True,
