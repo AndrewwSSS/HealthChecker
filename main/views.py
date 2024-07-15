@@ -1,6 +1,10 @@
+from datetime import datetime
+from typing import Any
+
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
+from django.db.models import QuerySet, Q
+from django.http import HttpResponse, HttpRequest, HttpResponseRedirect, Http404
 from django.shortcuts import redirect
 from django.views import generic
 
@@ -11,7 +15,7 @@ from main.forms import (UserCreateForm,
                         DishForm,
                         SwimmingForm,
                         JoggingForm,
-                        WalkingForm, MealForm)
+                        WalkingForm, MealForm, DateSearchForm)
 from main.models import (User,
                          PowerTraining,
                          Exercise,
@@ -65,6 +69,14 @@ class PowerTrainingsListView(LoginRequiredMixin, generic.ListView):
     model = PowerTraining
     template_name = "main/trainings/power-training/power-trainings-list.html"
 
+    def get_queryset(self):
+        queryset = PowerTraining.objects.filter(user=self.request.user)
+        return get_queryset_for_date_search_form(queryset, self.request)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(PowerTrainingsListView, self).get_context_data(**kwargs)
+        return update_context_for_date_search_form(context, self.request)
+
 
 class ExercisesListView(LoginRequiredMixin, generic.ListView):
     model = Exercise
@@ -102,6 +114,14 @@ class PowerTrainingUpdateView(LoginRequiredMixin, generic.UpdateView):
 class CyclingTrainingListView(LoginRequiredMixin, generic.ListView):
     model = Cycling
     template_name = "main/trainings/cycling_training/cycling-training-list.html"
+
+    def get_queryset(self):
+        queryset = Cycling.objects.filter(user=self.request.user)
+        return get_queryset_for_date_search_form(queryset, self.request)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(CyclingTrainingListView, self).get_context_data(**kwargs)
+        return update_context_for_date_search_form(context, self.request)
 
 
 class CreateCyclingTrainingView(LoginRequiredMixin, generic.CreateView):
@@ -147,15 +167,39 @@ class SwimmingTrainingListView(LoginRequiredMixin, generic.ListView):
     model = Swimming
     template_name = "main/trainings/swimming_training/swimming-list.html"
 
+    def get_queryset(self):
+        queryset = Swimming.objects.filter(user=self.request.user)
+        return get_queryset_for_date_search_form(queryset, self.request)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(SwimmingTrainingListView, self).get_context_data(**kwargs)
+        return update_context_for_date_search_form(context, self.request)
+
 
 class JoggingTrainingListView(LoginRequiredMixin, generic.ListView):
     model = Jogging
     template_name = "main/trainings/jogging_trainings/jogging-list.html"
 
+    def get_queryset(self):
+        queryset = Jogging.objects.filter(user=self.request.user)
+        return get_queryset_for_date_search_form(queryset, self.request)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(JoggingTrainingListView, self).get_context_data(**kwargs)
+        return update_context_for_date_search_form(context, self.request)
+
 
 class WalkingTrainingListView(LoginRequiredMixin, generic.ListView):
     model = Walking
     template_name = "main/trainings/walk/walking-list.html"
+
+    def get_queryset(self):
+        queryset = Walking.objects.filter(user=self.request.user)
+        return get_queryset_for_date_search_form(queryset, self.request)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(WalkingTrainingListView, self).get_context_data(**kwargs)
+        return update_context_for_date_search_form(context, self.request)
 
 
 class CreateSwimmingView(LoginRequiredMixin, generic.CreateView):
@@ -207,6 +251,36 @@ class MealListView(LoginRequiredMixin, generic.ListView):
     model = Meal
     template_name = "main/meal/meal-list.html"
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(MealListView, self).get_context_data(**kwargs)
+        return update_context_for_date_search_form(context, self.request)
+
+    def get_queryset(self):
+        queryset = Meal.objects.filter(user=self.request.user)
+        date = self.request.GET.get("date", "")
+        if date:
+            try:
+                date = datetime.strptime(date, "%Y-%m-%d")
+            except ValueError as e:
+                raise Http404("Invalid date")
+
+        sort = self.request.GET.get("sort")
+
+        form = DateSearchForm(self.request.GET)
+        if not form.is_valid() or not queryset.count():
+            return queryset
+
+        if date:
+            base_queryset = queryset.filter(date__day=date.day,
+                                            date__month=date.month,
+                                            date__year=date.year)
+        if sort == "DESC":
+            base_queryset = queryset.order_by("-date")
+        else:
+            base_queryset = queryset.order_by("date")
+
+        return base_queryset
+
 
 class CreateMealView(LoginRequiredMixin, generic.CreateView):
     model = Meal
@@ -222,3 +296,45 @@ class UpdateMealView(LoginRequiredMixin, generic.UpdateView):
     model = Meal
     form_class = MealForm
     template_name = "main/meal/update-meal.html"
+
+
+def update_context_for_date_search_form(base_context: dict[str, Any],
+                                        request: HttpRequest) -> dict[str, Any]:
+    date = request.GET.get("date")
+    sort = request.GET.get("sort")
+
+    base_context["search_form"] = DateSearchForm(
+        initial={
+            "date": date,
+            "sort": sort
+        }
+    )
+    return base_context
+
+
+def get_queryset_for_date_search_form(base_queryset: QuerySet,
+                                      request: HttpRequest) -> QuerySet:
+
+    date = request.GET.get("date", "")
+    if date:
+        try:
+            date = datetime.strptime(date, "%Y-%m-%d")
+        except ValueError as e:
+            raise Http404("Invalid date")
+
+    sort = request.GET.get("sort")
+
+    form = DateSearchForm(request.GET)
+    if not form.is_valid() or not base_queryset.count():
+        return base_queryset
+
+    if date:
+        base_queryset = base_queryset.filter(start__day=date.day,
+                                             start__month=date.month,
+                                             start__year=date.year)
+    if sort == "DESC":
+        base_queryset = base_queryset.order_by("-start")
+    else:
+        base_queryset = base_queryset.order_by("start")
+
+    return base_queryset

@@ -2,6 +2,9 @@
 {% block content %}
   <section class="section">
     <div class="row justify-content-center">
+      <div class="col-lg-4">
+        {% include 'includes/date_search_form.html' %}
+      </div>
       <div class="col-lg-8">
         <div class="card">
           <div class="card-body">
@@ -15,7 +18,7 @@
                 </a>
               </div>
             </div>
-            {% for cyclingTraining in cyclingtraining_list%}
+            {% for cyclingTraining in cycling_list%}
               <a href="{% url "main:update-cycling-training" cyclingTraining.id %}"
                  class="training-element"
                  data-training-id="{{ cyclingTraining.id }}">
@@ -28,7 +31,7 @@
               </a>
             {% empty %}
               <h6 class="card-title">
-                No power trainings yet
+                No trainings yet
               </h6>
             {% endfor %}
             {% include "includes/pagination.html" %}

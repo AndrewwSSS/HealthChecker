@@ -1,5 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.forms import ModelForm
+from django import forms
 
 from main.models import (User,
                          PowerTraining,
@@ -64,3 +65,15 @@ class MealForm(ModelForm):
     class Meta:
         model = Meal
         fields = "__all__"
+
+
+class DateSearchForm(forms.Form):
+    choices = (
+        ("DESC", "descending"),
+        ("ASC", "ascending"),
+    )
+    date = forms.DateField(
+        required=False,
+        label="",
+    )
+    sort = forms.ChoiceField(choices=choices, required=True)
