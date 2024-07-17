@@ -1,43 +1,25 @@
-{% extends "base.html" %}
-{% block content %}
-  <section class="section">
-    <div class="row justify-content-center">
-      <div class="col-lg-4">
-        {% include 'includes/date_search_form.html' %}
-      </div>
-      <div class="col-lg-8">
-        <div class="card">
-          <div class="card-body">
-            <div class="card-title-container">
-              <h5 class="card-title">
-                Swimming trainings
-              </h5>
-              <div class="d-flex h-50">
-                <a class="btn btn-primary" href="{% url "main:create-swimming-training" %}">
-                  Create training
-                </a>
-              </div>
-            </div>
-            {% for swimming in swimming_list %}
-              <a href="{% url "main:update-swimming-training" swimming.id %}"
-                 data-training-id="{{ swimming.id }}"
-                 class="trainingElement">
-                <div class="alert alert-primary fade show">
-                    <span>
-                      {{ swimming.start }}
-                    </span>
-                  <button class="btn btn-danger deleteSwimmingTraining">Delete</button>
-                </div>
-              </a>
-            {% empty %}
-              <h6 class="card-title">
-                No swimming trainings yet
-              </h6>
-            {% endfor %}
-            {% include "includes/pagination.html" %}
-          </div>
+{% extends "base_training_list.html" %}
+{% block title %}Swimming trainings{% endblock %}
+{% block create_url %}{% url "main:create-swimming-training" %}{% endblock %}
+{% block trainings %}
+  {% for swimming in swimming_list %}
+    <a href="{% url "main:update-swimming-training" swimming.id %}"
+       data-training-id="{{ swimming.id }}"
+       data-training-type="SW"
+       class="training-element">
+
+      <div class="alert alert-primary fade show">
+        <div class="d-flex justify-content-between">
+            <span>
+              {{ swimming.start }}
+            </span>
+          <i class="fa-solid fa-xmark delete-element-icon delete-training-icon"></i>
         </div>
       </div>
-    </div>
-  </section>
+    </a>
+  {% empty %}
+    <h6 class="card-title">
+      No trainings yet
+    </h6>
+  {% endfor %}
 {% endblock %}

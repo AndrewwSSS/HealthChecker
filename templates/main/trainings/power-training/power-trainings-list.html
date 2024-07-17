@@ -1,43 +1,24 @@
-{% extends "base.html" %}
-{% block content %}
-  <section class="section">
-    <div class="row justify-content-center">
-      <div class="col-lg-4">
-        {% include "includes/date_search_form.html" %}
-      </div>
-      <div class="col-lg-8">
-        <div class="card">
-          <div class="card-body">
-            <div class="card-title-container">
-              <h5 class="card-title">
-                Power trainings
-              </h5>
-              <div class="d-flex h-50">
-                <a class="btn btn-primary" href="{% url "main:create-power-training" %}">
-                  Create training
-                </a>
-              </div>
-            </div>
-            {% for powerTraining in powertraining_list %}
-              <a href="{% url "main:update-power-training" powerTraining.id %}"
-                 data-training-id="{{ powerTraining.id }}"
-                 class="trainingElement">
-                <div class="alert alert-primary fade show">
-                    <span>
-                      {{ powerTraining.start }}
-                    </span>
-                  <button class="btn btn-danger deletePowerTraining">Delete</button>
-                </div>
-              </a>
-            {% empty %}
-              <h6 class="card-title">
-                No power trainings yet
-              </h6>
-            {% endfor %}
-            {% include "includes/pagination.html" %}
-          </div>
+{% extends "base_training_list.html" %}
+{% block title %}Power trainings{% endblock %}
+{% block create_url %}{% url "main:create-power-training" %}{% endblock %}
+{% block trainings %}
+  {% for powerTraining in powertraining_list %}
+    <a href="{% url "main:update-power-training" powerTraining.id %}"
+       data-training-id="{{ powerTraining.id }}"
+       data-training-type="PW"
+       class="training-element">
+      <div class="alert alert-primary fade show ">
+        <div class="d-flex justify-content-between">
+            <span>
+              {{ powerTraining.end|date:"d/m/Y" }} {{ powerTraining.end|time:"G:i" }}
+           </span>
+          <i class="fa-solid fa-xmark delete-element-icon delete-training-icon"></i>
         </div>
       </div>
-    </div>
-  </section>
+    </a>
+  {% empty %}
+    <h6 class="card-title">
+      No trainings yet
+    </h6>
+  {% endfor %}
 {% endblock %}
