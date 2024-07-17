@@ -2,6 +2,9 @@
 {% block content %}
   <section class="section">
     <div class="row justify-content-center">
+      <div class="col-lg-4">
+        {% include 'includes/search_by_name_form.html' %}
+      </div>
       <div class="col-lg-8">
         <div class="card">
           <div class="card-body">
@@ -9,24 +12,30 @@
               <h5 class="card-title">
                 Exercises
               </h5>
-              <a class="btn btn-primary" href="{% url "main:create-exercise" %}">
-                Add exercise
+              <a href="{% url "main:create-exercise" %}">
+                <i class="fa-solid fa-plus create-training-icon"></i>
               </a>
             </div>
-            {% for exercise in exercise_list %}
-              <a href="{% url "main:exercise-update" exercise.id %}">
-              <div class="alert alert-primary fade show">
-                <span>
-                  {{ exercise.name }}
-                </span>
-              </div>
-              </a>
-            {% empty %}
-              <h6 class="card-title">
-                No exercises yet
-              </h6>
-            {% endfor %}
-          {% include "includes/pagination.html" %}
+            <div class="exercises-container">
+              {% for exercise in exercise_list %}
+                <a href="{% url "main:exercise-update" exercise.id %}"
+                   data-id="{{ exercise.id }}">
+                  <div class="alert alert-primary fade show">
+                    <div class="d-flex justify-content-between">
+                      <span>
+                        {{ exercise.name }}
+                      </span>
+                      <i class="fa-solid fa-xmark delete-element-icon delete-exercise-icon"></i>
+                    </div>
+                  </div>
+                </a>
+              {% empty %}
+                <h6 class="card-title">
+                  No exercises yet
+                </h6>
+              {% endfor %}
+              {% include "includes/pagination.html" %}
+            </div>
           </div>
         </div>
       </div>
