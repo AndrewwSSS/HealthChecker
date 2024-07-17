@@ -59,16 +59,28 @@ const onscroll = (el, listener) => {
     el.addEventListener('scroll', listener)
 }
 
-function delete_training(type, id, success_callback, fail_callback) {
-    let formData = {
-        type: type,
-        training_id: id,
+function delete_training(event) {
+    event.preventDefault();
+    let training_element = event.target.parentElement.parentElement.parentElement
+    let trainings_container = training_element.parentElement
+    let formData = get_training_information(training_element)
+
+    let success_callback = response => {
+        training_element.remove()
+        if (trainings_container.querySelectorAll("div").length === 0) {
+            trainings_container.innerHTML = "<h6 class='card-title'>No trainings yet</h6>"
+        }
+        show_toast("Successfully deleted training", "success")
+    }
+
+    let fail_callback = (XMLHttpRequest, textStatus, errorThrown) =>   {
+        show_toast(`${errorThrown}`, "error")
     }
 
     ajax_post("/api/trainings/delete_training", formData, success_callback, fail_callback)
 }
 
-function add_approach_form(event) {
+function create_approach_form(event) {
     let elem = event.target.parentElement.parentElement.parentElement;
     let list_group = elem.querySelector(".list-group");
 
@@ -95,7 +107,7 @@ function create_or_update_approach(event) {
     let formData = {
         weight: li_item.querySelector("input[name='weight']").value,
         repeats: li_item.querySelector("input[name='repeats']").value,
-        power_training_exercise_id: li_item.parentElement.parentElement.getAttribute("data-exercise-id"),
+        training: li_item.parentElement.parentElement.getAttribute("data-exercise-id"),
     }
     if (li_item.hasAttribute("data-approach-id")) {
         formData.approach_id =li_item.getAttribute("data-approach-id")
@@ -117,7 +129,7 @@ function create_or_update_approach(event) {
 
 }
 
-function add_exercise() {
+function create_power_exercise() {
     let select_item = document.getElementById("select_exercise")
 
     let formData = {
@@ -144,8 +156,8 @@ function add_exercise() {
                           </div>
                           <ul class="list-group mb-3"></ul>`)
         exercise_container.appendChild(div)
-        on("click", ".addApproach", add_approach_form, true)
-        on("click", ".deleteExercise", delete_exercise, true)
+        on("click", ".addApproach", create_approach_form, true)
+        on("click", ".deleteExercise", delete_power_exercise, true)
         // card.querySelector(".deleteExercise").addEventListener('click', delete_exercise);
         // card.querySelector(".addApproach").addEventListener('click', add_approach_form);
 
@@ -156,7 +168,8 @@ function add_exercise() {
     ajax_post("/api/add_power_training_exercise", formData, done_callback, fail_callback)
 }
 
-function delete_exercise(event) {
+function delete_power_exercise(event) {
+    event.preventDefault()
     let exercise = event.target.parentElement.parentElement.parentElement
     let exercise_container = exercise.parentElement
 
@@ -167,14 +180,15 @@ function delete_exercise(event) {
 
     let done_callback = response => {
         exercise.remove();
-        if (exercise_container.querySelectorAll("div").length === 0)
+        if (exercise_container.querySelectorAll("div").length === 0) {
             exercise_container.innerHTML = "<h6 class='card-title' id='no-exercises-message'>No exercises yet</h6>"
+        }
         show_toast("Exercise successfully deleted", "success")
     }
     let fail_callback =
-        (jqXHR, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
+        (jqXHR, textStatus, errorThrown) => show_toast(`${errorThrown}`, "error")
 
-    ajax_post("/api/delete_exercise", formData, done_callback, fail_callback)
+    ajax_post("/api/delete_power_exercise", formData, done_callback, fail_callback)
 }
 
 function delete_approach(event) {
@@ -232,7 +246,7 @@ function update_user(){
     ajax_post("/api/user_update", formData, done_callback, fail_callback)
 }
 
-function show_toast(msg, type) {
+function show_toast(msg, type = "success") {
     let toast = document.createElement('div')
     toast.classList.add("toastElement");
     let toastBox = document.getElementById("toastBox");
@@ -245,43 +259,21 @@ function show_toast(msg, type) {
     else if (type === "error") {
         toast.classList.add("error");
         toast.innerHTML = ERROR_ICON + msg
-    }
+}
 
     setTimeout(function () {
         toast.remove();
     },TOAST_SHOW_DURATION);
 }
 
-function delete_cycling_training(event) {
-    let elem = event.target.parentElement.parentElement;
-    let id = elem.getAttribute("data-training-id");
-
-    delete_training("CY", id,
-function (data) {
-        elem.remove()
-        show_toast("Successfully deleted training", "success")
-    },
-    function (XMLHttpRequest, textStatus, errorThrown) {
-        show_toast(`${textStatus}. ${errorThrown}`, "error")
-    });
+function get_training_information(element) {
+    let result = {}
+    result.id =  element.getAttribute("data-training-id");
+    result.type = element.getAttribute("data-training-type");
+    return result
 }
 
-function delete_power_training(event) {
-    let elem = event.target.parentElement.parentElement;
-    let id = elem.getAttribute("data-training-id");
-
-    delete_training("PW", id,
-        function (data) {
-            elem.remove()
-            show_toast("Successfully deleted training", "success")
-        },
-        function (XMLHttpRequest, textStatus, errorThrown) {
-            show_toast(`${textStatus}. ${errorThrown}`, "error")
-           }
-    );
-}
-
-function add_dish_form(event) {
+function create_dish_count_form(event) {
     let select_element = document.getElementById("select_dish");
     let list_group = document.getElementById("meal_list_group");
 
@@ -303,31 +295,30 @@ function add_dish_form(event) {
                                       <input type="number"
                                              class="form-control weightInput"
                                              name="weight"/>
-                                      <button class="btn btn-primary saveMealDish">Save</button>
+                                      <button class="btn btn-primary create-or-update-dish-count">Save</button>
                                       <button class="btn btn-danger deleteDishCount">Delete</button>
                                   </div>
                                 </div>`
     list_group.appendChild(new_li_element);
-    new_li_element.querySelector(".saveMealDish").addEventListener("click", save_dish);
-    new_li_element.querySelector(".deleteDishCount").addEventListener("click", delete_dish);
+    new_li_element.querySelector(".create-or-update-dish-count").addEventListener("click", create_or_update_dish);
+    new_li_element.querySelector(".deleteDishCount").addEventListener("click", delete_dish_count);
 
 }
 
-function save_dish(event) {
+function create_or_update_dish(event) {
     let li_element = event.target.parentElement.parentElement.parentElement;
-    let dish_id = li_element.getAttribute("data-dish-id");
     let weight = this.parentElement.querySelector('input[name="weight"]').value;
 
     let formData = {
-        dish_id: dish_id,
+        dish: li_element.getAttribute("data-dish-id"),
         weight: weight,
-        meal_id: document.getElementById("meal_id").value,
+        meal: document.getElementById("meal_id").getAttribute("value"),
     }
 
     if (li_element.hasAttribute("data-dish-count-id")) {
-        formData.dish_count_id = li_element.getAttribute("data-dish-count-id");
-        let done_callback = response => show_toast("Successfully updated dish", "success")
-        let fail_callback = (jqXHR, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
+        formData.dish_count = li_element.getAttribute("data-dish-count-id");
+        let done_callback = response => show_toast("Successfully updated dish", "success");
+        let fail_callback = (jqXHR, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error");
 
         ajax_post("/api/update_dish_count", formData, done_callback, fail_callback)
     } else {
@@ -344,14 +335,13 @@ function save_dish(event) {
     }
 }
 
-function delete_dish(event) {
+function delete_dish_count(event) {
     let li_element = event.target.parentElement.parentElement.parentElement;
     let ul_element = li_element.parentElement
 
     if (li_element.hasAttribute("data-dish-count-id")) {
         let formData = {
-            dish_count_id: li_element.getAttribute("data-dish-count-id"),
-            meal_id: document.getElementById("meal_id").value,
+            dish_count: li_element.getAttribute("data-dish-count-id"),
         }
 
         let done_callback = response => {
@@ -373,34 +363,100 @@ function delete_dish(event) {
         ul_element.innerHTML = "<h6 class='card-title' id='no-dish-message'>No dishes yet</h6>"
 }
 
+function on_check_sort(event) {
+    if (event.target.checked) {
+        document.getElementById("date-search-form").submit()
+    }
+}
+
+function delete_exercise(event) {
+    event.preventDefault();
+    let element = event.target.parentElement.parentElement.parentElement
+    let container = element.parentElement
+
+    let formData = {
+        exercise_id: element.dataset.id,
+    }
+
+    let success_callback = response => {
+        element.remove()
+        if (container.querySelectorAll("div").length === 0) {
+            container.innerHTML = "<h6 class='card-title'>No exercises yet</h6>"
+        }
+        show_toast("Successfully deleted exercise", "success")
+    }
+
+    let fail_callback = (XMLHttpRequest, textStatus, errorThrown) => {
+        show_toast(`${errorThrown}`, "error")
+    }
+
+    ajax_post("/api/delete_exercise", formData, success_callback, fail_callback)
+
+}
+
+function delete_dish(event) {
+    event.preventDefault()
+    let dish_element = event.target.parentElement.parentElement.parentElement
+    let container = dish_element.parentElement
+
+    let formData = {
+        dish_id: dish_element.dataset.id,
+    }
+
+    let success_callback = response => {
+        dish_element.remove()
+        if (container.querySelectorAll("div").length === 0) {
+            container.innerHTML = "<h6 class='card-title'>No dishes yet</h6>"
+        }
+        show_toast("Successfully deleted dish", "success")
+    }
+
+    let fail_callback = (XMLHttpRequest, textStatus, errorThrown) => {
+        show_toast(`${errorThrown}`, "error")
+    }
+
+    ajax_post("/api/delete_dish", formData, success_callback, fail_callback)
+}
+
 (function() {
     "use strict";
 
     on("click", ".deleteApproach", delete_approach, true);
-    on("click", ".addApproach", add_approach_form, true)
-    on("click", "#addExercise", add_exercise, true)
-    on("click", ".deleteExercise", delete_exercise, true)
-    on("click", ".deleteCyclingTraining", delete_cycling_training, true)
-    on("click", ".deletePowerTraining", delete_power_training, true)
+    on("click", ".addApproach", create_approach_form, true)
+    on("click", "#addExercise", create_power_exercise, true)
+    on("click", ".deleteExercise", delete_power_exercise, true)
     on("click", "#change-password-btn", chane_password)
     on("click", "#changeUserBtn", update_user)
-    on("click", "#addDish", add_dish_form)
-    on("click", ".deleteDishCount", delete_dish, true)
+    on("click", "#addDish", create_dish_count_form)
+    on("click", ".deleteDishCount", delete_dish_count, true)
     on("click", ".saveApproach", create_or_update_approach, true)
+    on("click", ".create-or-update-dish-count", create_or_update_dish, true)
     on('click', '.toggle-sidebar-btn', function() {
         select('body').classList.toggle('toggle-sidebar')
     })
+    on('click', '.form-check', on_check_sort, true)
     on('click', '.search-bar-toggle', function(e) {
         select('.search-bar').classList.toggle('search-bar-show')
     }, true)
-
-
     on("click", ".formSendButton", function(e) {
         e.target.classList.add('disabled')
         setTimeout(function () {
             e.target.classList.remove('disabled')
         }, TOAST_SHOW_DURATION)
     }, true)
+
+    select(".delete-training-icon", true).forEach(element => {
+        element.addEventListener('click', delete_training, false)
+    })
+
+    select(".delete-exercise-icon", true).forEach(element => {
+        element.addEventListener('click', delete_exercise, false)
+    })
+
+    select(".delete-dish-icon", true).forEach(element => {
+        element.addEventListener('click', delete_dish, false)
+    })
+
 
 
     let navbarlinks = select('#navbar .scrollto', true)
