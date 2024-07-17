@@ -250,3 +250,15 @@ class DeleteDishView(LoginRequiredMixin, View):
                           id=dish_id,
                           user=request.user).delete()
         return SUCCESS_RESPONSE
+
+
+class DeleteMealView(LoginRequiredMixin, View):
+    @staticmethod
+    def post(request: HttpRequest) -> JsonResponse:
+        meal_id = request.POST.get("meal_id", default=None)
+        if not meal_id:
+            return INVALID_DATA_RESPONSE
+        get_object_or_404(Meal,
+                          id=meal_id,
+                          user=request.user).delete()
+        return SUCCESS_RESPONSE

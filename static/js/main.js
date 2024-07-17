@@ -418,6 +418,33 @@ function delete_dish(event) {
     ajax_post("/api/delete_dish", formData, success_callback, fail_callback)
 }
 
+
+function delete_meal(event) {
+    event.preventDefault()
+    let meal_element = event.target.parentElement.parentElement.parentElement
+    let container = meal_element.parentElement
+
+    let formData = {
+        meal_id: meal_element.dataset.id
+    }
+
+    let success_callback = response => {
+        meal_element.remove()
+        if (container.querySelectorAll("div").length === 0) {
+            container.innerHTML = "<h6 class='card-title'>No meals yet</h6>"
+        }
+        show_toast("Successfully deleted meal")
+    }
+
+    let fail_callback = (XMLHttpRequest, textStatus, errorThrown) => {
+        show_toast(`${errorThrown}`, "error")
+    }
+
+    ajax_post("/api/delete_meal", formData, success_callback, fail_callback)
+
+}
+
+
 (function() {
     "use strict";
 
@@ -457,6 +484,9 @@ function delete_dish(event) {
         element.addEventListener('click', delete_dish, false)
     })
 
+    select(".delete-meal-icon", true).forEach(element => {
+        element.addEventListener('click', delete_meal, false)
+    })
 
 
     let navbarlinks = select('#navbar .scrollto', true)
