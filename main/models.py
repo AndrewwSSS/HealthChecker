@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
@@ -18,20 +20,22 @@ class Training(models.Model):
         constraints = [
             CheckConstraint(check=Q(start__lt=models.F("end")),
                             name="end_date_grater_than_start_date"),
+            CheckConstraint(check=Q(start__lt=datetime.now()),
+                            name="start_less_than_now")
         ]
 
 
 class Approach(models.Model):
     weight = models.FloatField(default=0,
                                validators=[MinValueValidator(0)])
-    repeats = models.IntegerField(validators=[MinValueValidator(0)])
+    repeats = models.IntegerField(validators=[MinValueValidator(1)])
     training = models.ForeignKey("PowerTrainingExercise",
                                  on_delete=models.CASCADE,
                                  related_name="approaches")
 
 
 class Exercise(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True)
     
     def __str__(self):
@@ -57,15 +61,15 @@ class PowerTraining(Training):
 
 
 class DistanceAverageSpeedMixin(models.Model):
-    average_speed = models.FloatField(validators=[MinValueValidator(0)])
-    distance = models.FloatField(validators=[MinValueValidator(0)])
+    average_speed = models.FloatField(validators=[MinValueValidator(1)])
+    distance = models.FloatField(validators=[MinValueValidator(1)])
 
     class Meta:
         abstract = True
 
 
 class Cycling(Training, DistanceAverageSpeedMixin):
-    climb = models.FloatField(validators=[MinValueValidator(0)])
+    climb = models.FloatField(validators=[MinValueValidator(1)])
 
 
 class Swimming(Training, DistanceAverageSpeedMixin):
@@ -102,6 +106,11 @@ class DishCount(models.Model):
     meal = models.ForeignKey("Meal", on_delete=models.CASCADE, related_name="dishes")
     weight = models.FloatField(validators=[MinValueValidator(1)])
 
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=["dish", "meal"], name="unique_dish_for_meal"),
+        ]
+
 
 class Meal(models.Model):
     date = models.DateTimeField()
@@ -126,5 +135,5 @@ class User(AbstractUser):
                                  validators=[MinValueValidator(140), MaxValueValidator(250)])
 
     @property
-    def body_mass_index(self):
+    def body_mass_index(self) -> float | None:
         return
