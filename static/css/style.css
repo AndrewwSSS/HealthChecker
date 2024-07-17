@@ -1269,14 +1269,14 @@ h6 {
   justify-content: space-between;
 }
 
-/*.trainingElement button {*/
-/*  display: none;*/
-/*}*/
 
-/*.trainingElement:hover button {*/
-/*  display: inline-block;*e/
-/*}*/
+.alert i {
+  display: none;
+}
 
+.alert:hover i {
+  display: block;
+}
 
 .deleteIcon {
   color: red;
@@ -1284,5 +1284,15 @@ h6 {
 }
 
 .profileIcon {
+  font-size: 22px;
+}
+
+.delete-element-icon {
+  color: red;
+  font-size: 22px;
+  align-self: center;
+}
+
+.create-training-icon {
   font-size: 22px;
 }

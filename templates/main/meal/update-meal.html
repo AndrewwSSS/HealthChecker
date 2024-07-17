@@ -8,21 +8,30 @@
             <h5 class="card-title">
               Meal
             </h5>
-            <div class="row mb-3">
-              <label for="inputStartDate" class="col-md-4 col-lg-3 col-form-label">
-                date
-              </label>
-              <input type="text"
-                     placeholder="dd/mm/yyyy H:M:S"
-                     id="inputStartDate"
-                     name="start"
-                     class="form-control"
-                     value="{{ meal.date }}"
-              >
-            </div>
-            <div class="text-center">
-              <button class="btn btn-success">Update</button>
-            </div>
+            <form action="" method="post">
+              {% if form.errors %}
+                {{ form.errors }}
+              {% endif %}
+              {% csrf_token %}
+              <div class="row mb-3">
+                <label for="inputStartDate" class="col-md-3 col-lg-3 col-form-label text-center">
+                  date
+                </label>
+                <div class="col-md-9 col-lg-9">
+                  <input type="text"
+                         placeholder="mm/dd/yyyy H:M:S"
+                         id="inputStartDate"
+                         name="date"
+                         class="form-control"
+                         value="{{ meal.date|date:"m/d/Y" }} {{ meal.date|time:"H:i" }}">
+                </div>
+                <input type="hidden" value="{{ user.id }}" name="user">
+              </div>
+              <div class="text-center">
+                <input class="btn btn-success" type="submit" value="update"/>
+              </div>
+            </form>
+
           </div>
         </div>
       </div>
@@ -42,14 +51,12 @@
                     <option value="-1">No dishes yet</option>
                   {% endfor %}
                 </select>
-                <button class="btn btn-primary" id="addDish">
-                  Add dish
-                </button>
+                <i id="addDish" class="fa-solid fa-plus create-training-icon"></i>
               </div>
             </div>
             <ul class="list-group mb-3"  id="meal_list_group">
               {% for dish_count in meal.dishes.all %}
-                <li class="list-group-item" data-dish-count-id="{{ dish_count.id }}">
+                <li class="list-group-item" data-dish-count-id="{{ dish_count.id }}" data-dish-id="{{ dish_count.dish.id }}">
                   <div class="d-flex">
                     <div class="card-title-container gap-2 justify-content-between">
                       <input type="text"
@@ -61,7 +68,7 @@
                              class="form-control weightInput"
                              name="weight"
                              value="{{ dish_count.weight }}"/>
-                      <button class="btn btn-primary saveMealDish">Update</button>
+                      <button class="btn btn-primary create-or-update-dish-count">Update</button>
                       <i class="bi bi-x-circle-fill deleteDishCount deleteIcon"></i>
                     </div>
                   </div>

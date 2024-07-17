@@ -1,66 +1,91 @@
 {% extends "base.html" %}
 {% block content %}
   <div class="row justify-content-center">
-    <div class="col-xl-9">
+    <div class="col-lg-8">
       <div class="card">
         <div class="card-body pt-3">
-          <form action="" method="post">
-            {% csrf_token %}
-            <div class="row mb-3">
-              <label for="inputName" class="col-md-4 col-lg-3 col-form-label">
-                Name
-              </label>
-              <input type="text"
-                     id="inputName"
-                     name="name"
-                     class="form-control"
-              >
+          <div class="row justify-content-center">
+            <div class="col-lg-8">
+              <form action="" method="post">
+                {% csrf_token %}
+                <div class="row mb-3">
+                  <label for="inputName" class="col-md-3 col-lg-3 col-form-label text-center">
+                    Name
+                  </label>
+                  <div class="col-md-9 col-lg-9">
+                    <input type="text"
+                           id="inputName"
+                           name="name"
+                           class="form-control"
+                           value="{% if object %}{{ object.name }}{% endif %}">
+                  </div>
+
+                </div>
+                <div class="row mb-3">
+                  <label for="inputCalories" class="col-md-3 col-lg-3 col-form-label text-center">
+                    Calories
+                  </label>
+                  <div class="col-md-9 col-lg-9">
+                    <input type="number"
+                           id="inputCalories"
+                           name="calories"
+                           class="form-control"
+                           value="{% if form.instance.calories %}{{ form.instance.calories }}{% endif %}"/>
+                  </div>
+
+                </div>
+                <div class="row mb-3">
+                  <label for="inputProtein" class="col-md-3 col-lg-3 col-form-label text-center">
+                    Protein
+                  </label>
+                  <div class="col-md-9 col-lg-9">
+                    <input type="number"
+                           id="inputProtein"
+                           name="protein"
+                           placeholder="per 100 gram"
+                           class="form-control"
+                           value="{% if object %}{{ object.protein }}{% endif %}">
+                  </div>
+
+
+                </div>
+                <div class="row mb-3">
+                  <label for="inputCarbohydrates" class="col-md-3 col-lg-3 col-form-label text-center">
+                    carbohydrates
+                  </label>
+                  <div class="col-md-9 col-lg-9">
+                    <input type="number"
+                           id="inputCarbohydrates"
+                           name="carbohydrates"
+                           placeholder="per 100 gram"
+                           class="form-control"
+                           value="{% if object %}{{ object.carbohydrates }}{% endif %}">
+                  </div>
+
+
+                </div>
+                <div class="row mb-3">
+                  <label for="inputFats" class="col-md-3 col-lg-3 col-form-label text-center">
+                    fats
+                  </label>
+                  <div class="col-md-9 col-lg-9">
+                    <input type="number"
+                           id="inputFats"
+                           name="fats"
+                           placeholder="per 100 gram"
+                           class="form-control"
+                           value="{% if object %}{{ object.fats }}{% endif %}">
+                  </div>
+
+
+                </div>
+                <div class="text-center">
+                  <input type="submit" class="btn btn-primary" value="Create">
+                </div>
+                <input type="hidden" name="user" value="{{ user.id }}">
+              </form>
             </div>
-            <div class="row mb-3">
-              <label for="inputCalories" class="col-md-4 col-lg-3 col-form-label">
-                Calories (per 100g)
-              </label>
-              <input type="number"
-                     id="inputCalories"
-                     name="calories"
-                     class="form-control"
-              >
-            </div>
-            <div class="row mb-3">
-              <label for="inputProtein" class="col-md-4 col-lg-3 col-form-label">
-                Protein (per 100g)
-              </label>
-              <input type="number"
-                     id="inputProtein"
-                     name="protein"
-                     class="form-control"
-              >
-            </div>
-            <div class="row mb-3">
-              <label for="inputCarbohydrates" class="col-md-4 col-lg-3 col-form-label">
-                carbohydrates (per 100g)
-              </label>
-              <input type="number"
-                     id="inputCarbohydrates"
-                     name="carbohydrates"
-                     class="form-control"
-              >
-            </div>
-            <div class="row mb-3">
-              <label for="inputFats" class="col-md-4 col-lg-3 col-form-label">
-                fats (per 100g)
-              </label>
-              <input type="number"
-                     id="inputFats"
-                     name="fats"
-                     class="form-control"
-              >
-            </div>
-            <div class="text-center">
-              <input type="submit" class="btn btn-primary" value="Create">
-            </div>
-            <input type="hidden" name="user" value="{{ user.id }}">
-          </form>
+          </div>
         </div>
       </div>
     </div>

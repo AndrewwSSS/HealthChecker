@@ -1,0 +1,19 @@
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">
+      Search
+    </h5>
+    <form method="get" id="date-search-form">
+      <input class="form-control mb-3"
+             type="text"
+             name="name"
+             placeholder="Enter name"
+             value="{% if search_form.initial.name %}{{ search_form.initial.name }}{% endif %}" />
+      <div class="text-center">
+        <input class="btn btn-success text-center"
+               type="submit"
+               value="Search"/>
+      </div>
+    </form>
+  </div>
+</div>

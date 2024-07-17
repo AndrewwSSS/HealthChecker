@@ -5,38 +5,55 @@
       <div class="col-lg-4">
         <div class="card">
           <div class="card-body pt3">
-            <h5 class="card-title">
-              Update training
-            </h5>
-            <div class="row mb-3">
-              <label for="inputStartDate" class="col-md-4 col-lg-3 col-form-label">
-                Start date
-              </label>
-              <input type="text"
-                     placeholder="dd/mm/yyyy H:M:S"
-                     id="inputStartDate"
-                     name="start"
-                     class="form-control"
-                     value="{{ powertraining.start }}"
-              >
+            <div class="row">
+              <form method="post">
+                {% csrf_token %}
+                <h5 class="card-title">
+                  Update training
+                </h5>
+                <div class="row mb-3">
+                  <label for="inputStartDate" class="col-md-4 col-lg-4 col-form-label text-center">
+                    Start date
+                  </label>
+                  <div class="col-md-8 col-lg-8">
+                    <input type="text"
+                           placeholder="dd/mm/yyyy H:M:S"
+                           id="inputStartDate"
+                           name="start"
+                           class="form-control"
+                           value="{{ object.start|date:"d/m/Y" }} {{ object.start|time:"G:i" }}">
+                  </div>
+
+                </div>
+                <div class="row mb-3">
+                  <label for="inputEndDate" class="col-md-4 col-lg-4 col-form-label text-center">
+                    End date
+                  </label>
+                  <div class="col-md-8 col-lg-8">
+                    <input type="text"
+                           placeholder="dd/mm/yyyy H:M:S"
+                           id="inputEndDate"
+                           name="end"
+                           class="form-control"
+                           value="{{ object.end|date:"d/m/Y" }} {{ object.end|time:"G:i" }}">
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="addDescription" class="col-md-4 col-lg-4 col-form-label text-center">
+                    Description
+                  </label>
+                  <div class="col-md-11 col-lg-11 justify-content-center">
+                    <textarea class="form-control" id="addDescription" name="description">{{ powertraining.description }}</textarea>
+                  </div>
+
+                </div>
+                <div class="text-center">
+                  <input type="submit" class="btn btn-success">
+                </div>
+                <input type="hidden" value="{{ user.id }}" name="user">
+              </form>
             </div>
-            <div class="row mb-3">
-              <label for="inputEndDate" class="col-md-4 col-lg-3 col-form-label">
-                End date
-              </label>
-              <input type="text"
-                     placeholder="dd/mm/yyyy H:M:S"
-                     id="inputEndDate"
-                     name="end"
-                     class="form-control"
-                     value="{{ powertraining.end }}">
-            </div>
-            <div class="row mb-3">
-              <label for="addDescription" class="col-md-4 col-lg-3 col-form-label">
-                Description
-              </label>
-              <textarea class="form-control" id="addDescription" name="description">{{ powertraining.description }}</textarea>
-            </div>
+
           </div>
         </div>
       </div>

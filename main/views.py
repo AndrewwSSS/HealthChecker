@@ -15,7 +15,10 @@ from main.forms import (UserCreateForm,
                         DishForm,
                         SwimmingForm,
                         JoggingForm,
-                        WalkingForm, MealForm, DateSearchForm)
+                        WalkingForm,
+                        MealForm,
+                        DateSearchForm,
+                        NameSearchForm)
 from main.models import (User,
                          PowerTraining,
                          Exercise,
@@ -81,8 +84,15 @@ class PowerTrainingsListView(LoginRequiredMixin, generic.ListView):
 class ExercisesListView(LoginRequiredMixin, generic.ListView):
     model = Exercise
     template_name = "main/exercise/exercises-list.html"
-
     paginate_by = 30
+
+    def get_queryset(self):
+        queryset = Exercise.objects.all()
+        return get_queryset_for_name_search_form(queryset, self.request)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(ExercisesListView, self).get_context_data(**kwargs)
+        return update_context_for_name_search_form(context, self.request)
 
 
 class ExerciseUpdateView(LoginRequiredMixin, generic.UpdateView):
@@ -134,6 +144,15 @@ class CreateCyclingTrainingView(LoginRequiredMixin, generic.CreateView):
 class DishListView(LoginRequiredMixin, generic.ListView):
     model = Dish
     template_name = "main/dish/dish-list.html"
+    paginate_by = 30
+
+    def get_queryset(self):
+        queryset = Dish.objects.filter(user=self.request.user)
+        return get_queryset_for_name_search_form(queryset, self.request)
+
+    def get_context_data(self, **kwargs):
+        context = super(DishListView, self).get_context_data(**kwargs)
+        return update_context_for_name_search_form(context, self.request)
 
 
 class CreateDishView(LoginRequiredMixin, generic.CreateView):
@@ -205,21 +224,21 @@ class WalkingTrainingListView(LoginRequiredMixin, generic.ListView):
 class CreateSwimmingView(LoginRequiredMixin, generic.CreateView):
     model = Swimming
     form_class = SwimmingForm
-    template_name = "basic_distance_average_speed_form.html"
+    template_name = "base_distance_average_speed_form.html"
     success_url = "/swimming-trainings/"
 
 
 class CreateJoggingView(LoginRequiredMixin, generic.CreateView):
     model = Jogging
     form_class = JoggingForm
-    template_name = "basic_distance_average_speed_form.html"
+    template_name = "base_distance_average_speed_form.html"
     success_url = "/jogging-trainings/"
 
 
 class CreateWalkingView(LoginRequiredMixin, generic.CreateView):
     model = Walking
     form_class = WalkingForm
-    template_name = "basic_distance_average_speed_form.html"
+    template_name = "base_distance_average_speed_form.html"
     success_url = "/walking-trainings/"
 
 
@@ -227,7 +246,7 @@ class UpdateSwimmingView(LoginRequiredMixin, generic.UpdateView):
     fields = "__all__"
     model = Swimming
     class_form = SwimmingForm
-    template_name = "basic_distance_average_speed_form.html"
+    template_name = "base_distance_average_speed_form.html"
     success_url = "/swimming-trainings/"
 
 
@@ -235,7 +254,7 @@ class UpdateJoggingView(LoginRequiredMixin, generic.UpdateView):
     fields = "__all__"
     model = Jogging
     class_form = JoggingForm
-    template_name = "basic_distance_average_speed_form.html"
+    template_name = "base_distance_average_speed_form.html"
     success_url = "/jogging-trainings/"
 
 
@@ -243,7 +262,7 @@ class UpdateWalkingView(LoginRequiredMixin, generic.UpdateView):
     fields = "__all__"
     model = Walking
     class_form = WalkingForm
-    template_name = "basic_distance_average_speed_form.html"
+    template_name = "base_distance_average_speed_form.html"
     success_url = "/walking-trainings/"
 
 
@@ -287,6 +306,11 @@ class CreateMealView(LoginRequiredMixin, generic.CreateView):
     form_class = MealForm
     template_name = "main/meal/create-meal.html"
 
+    def get_context_data(self, **kwargs):
+        context = super(CreateMealView, self).get_context_data(**kwargs)
+        context["default_date"] = datetime.now()
+        return context
+
     def form_valid(self, form):
         meal = form.save()
         return redirect("main:update-meal", pk=meal.pk)
@@ -296,6 +320,32 @@ class UpdateMealView(LoginRequiredMixin, generic.UpdateView):
     model = Meal
     form_class = MealForm
     template_name = "main/meal/update-meal.html"
+    success_url = "/meals/"
+
+
+def update_context_for_name_search_form(base_context: dict[str, Any],
+                                        request: HttpRequest) -> dict[str, Any]:
+    name = request.GET.get("name", "")
+    base_context["search_form"] = NameSearchForm(
+        initial={
+            "name": name
+        }
+    )
+    return base_context
+
+
+def get_queryset_for_name_search_form(base_queryset: QuerySet,
+                                      request: HttpRequest) -> QuerySet:
+
+    name = request.GET.get("name", "")
+
+    form = NameSearchForm(request.GET)
+    if not form.is_valid() or not base_queryset.count():
+        return base_queryset
+    if name:
+        base_queryset = base_queryset.filter(name__icontains=name)
+
+    return base_queryset
 
 
 def update_context_for_date_search_form(base_context: dict[str, Any],
@@ -314,25 +364,15 @@ def update_context_for_date_search_form(base_context: dict[str, Any],
 
 def get_queryset_for_date_search_form(base_queryset: QuerySet,
                                       request: HttpRequest) -> QuerySet:
-
-    date = request.GET.get("date", "")
-    if date:
-        try:
-            date = datetime.strptime(date, "%Y-%m-%d")
-        except ValueError as e:
-            raise Http404("Invalid date")
-
-    sort = request.GET.get("sort")
-
     form = DateSearchForm(request.GET)
     if not form.is_valid() or not base_queryset.count():
         return base_queryset
 
-    if date:
+    if date := form.cleaned_data["date"]:
         base_queryset = base_queryset.filter(start__day=date.day,
                                              start__month=date.month,
                                              start__year=date.year)
-    if sort == "DESC":
+    if form.cleaned_data["sort"] == "DESC":
         base_queryset = base_queryset.order_by("-start")
     else:
         base_queryset = base_queryset.order_by("start")
