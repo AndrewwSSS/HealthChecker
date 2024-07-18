@@ -6,7 +6,9 @@ from django.db import models
 from django.db.models import (ForeignKey,
                               UniqueConstraint,
                               CheckConstraint,
-                              Q)
+                              Q,
+                              Sum)
+from django.db.models.functions import Now
 
 
 class Training(models.Model):
@@ -17,11 +19,12 @@ class Training(models.Model):
 
     class Meta:
         abstract = True
+        ordering = ['start']
         constraints = [
             CheckConstraint(check=Q(start__lt=models.F("end")),
                             name="end_date_grater_than_start_date"),
-            CheckConstraint(check=Q(start__lt=datetime.now()),
-                            name="start_less_than_now")
+            CheckConstraint(check=Q(start__lte=Now()),
+                            name="start_less_than_or_equal_now")
         ]
 
 
@@ -111,10 +114,40 @@ class DishCount(models.Model):
             UniqueConstraint(fields=["dish", "meal"], name="unique_dish_for_meal"),
         ]
 
+    @property
+    def calories(self) -> float:
+        return self.dish.calories * (self.weight / 100)
+
+    @property
+    def fats(self) -> float:
+        return self.dish.fats * (self.weight / 100)
+
+    @property
+    def carbohydrates(self) -> float:
+        return self.dish.carbohydrates * (self.weight / 100)
+
+    @property
+    def protein(self) -> float:
+        return self.dish.protein * (self.weight / 100)
+
 
 class Meal(models.Model):
     date = models.DateTimeField()
-    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    user = models.ForeignKey("User",
+                             on_delete=models.CASCADE,
+                             related_name="meals")
+
+    def get_total_calories(self):
+        return sum(dish.calories for dish in self.dishes.all())
+
+    def get_total_fats(self):
+        return sum(dish.fats for dish in self.dishes.all())
+
+    def get_total_protein(self):
+        return sum(dish.protein for dish in self.dishes.all())
+
+    def get_total_carbohydrates(self):
+        return sum(dish.carbohydrates for dish in self.dishes.all())
 
 
 class User(AbstractUser):
@@ -136,4 +169,6 @@ class User(AbstractUser):
 
     @property
     def body_mass_index(self) -> float | None:
-        return
+        if not self.weight or not self.height:
+            return None
+        return self.weight / (self.height**2)
