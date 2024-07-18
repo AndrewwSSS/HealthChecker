@@ -2,36 +2,42 @@
 {% block content %}
   <section class="section profile">
     <div class="row justify-content-center">
-      <div class="col-xl-9">
+      <div class="col-xl-8">
         <div class="card ">
           <div class="card-body pt-3" >
-            <form action="" method="post">
-              {% csrf_token %}
+            <div class="row justify-content-center">
+              <div class="col-lg-8">
+                <form action="" method="post">
+                  {% csrf_token %}
+                  <div class="row mb-3">
+                    <label class="col-md-3 col-lg-3 col-form-label text-center">Name</label>
+                    <div class="col-md-9 col-lg-9 ">
+                      <input type="text"
+                             name="name"
+                             class="form-control"
+                             placeholder="enter dish name"
+                             value="{{ exercise.name }}" required>
+                    </div>
+                  </div>
+  
                 <div class="row mb-3">
-                  <label class="col-md-3 col-lg-2 col-form-label">Name</label>
-                  <div class="col-md-9 col-lg-10 text-center">
-                    <input type="text"
-                           name="name"
-                           class="form-control"
-                           value="{{ exercise.name }}" required>
+                  <label class="col-md-3 col-lg-3 col-form-label text-center" >Description</label>
+                  <div class="col-md-9 col-lg-9" >
+                    <textarea class="form-control"
+                              name="description"
+                              placeholder="Enter description">{{ exercise.description }}</textarea>
                   </div>
                 </div>
-
-              <div class="row mb-3">
-                <label class="col-md-3 col-lg-2 col-form-label">Description</label>
-                <div class="col-md-9 col-lg-10 text-center" >
-                  <textarea class="form-control"
-                          name="description">{{ exercise.description }}</textarea>
+                <div class="text-center mt-3">
+                  {% if object %}
+                    <button type="submit" class="btn btn-success">Update</button>
+                  {% else %}
+                    <button type="submit" class="btn btn-success">Create</button>
+                  {% endif %}
                 </div>
+               </form>
               </div>
-              <div class="text-center mt-3">
-                {% if object %}
-                  <button type="submit" class="btn btn-success">Update</button>
-                {% else %}
-                  <button type="submit" class="btn btn-success">Create</button>
-                {% endif %}
-              </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>
