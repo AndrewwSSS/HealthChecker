@@ -16,8 +16,7 @@
                     Start date
                   </label>
                   <div class="col-md-8 col-lg-8">
-                    <input type="text"
-                           placeholder="dd/mm/yyyy H:M:S"
+                    <input type="datetime-local"
                            id="inputStartDate"
                            name="start"
                            class="form-control"
@@ -30,8 +29,7 @@
                     End date
                   </label>
                   <div class="col-md-8 col-lg-8">
-                    <input type="text"
-                           placeholder="dd/mm/yyyy H:M:S"
+                    <input type="datetime-local"
                            id="inputEndDate"
                            name="end"
                            class="form-control"
@@ -53,7 +51,6 @@
                 <input type="hidden" value="{{ user.id }}" name="user">
               </form>
             </div>
-
           </div>
         </div>
       </div>
@@ -67,7 +64,7 @@
               <div class="card-title-container gap-3">
                 <select class="form-select" id="select_exercise">
                   {% for exercise in exercises %}
-                    <option value="{{ exercise.id }}">{{ exercise.name }}</option>\
+                    <option value="{{ exercise.id }}">{{ exercise.name }}</option>
                   {% empty %}
                     <option value="-1">No exercises yet</option>
                   {% endfor %}
