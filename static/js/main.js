@@ -587,6 +587,7 @@ function change_avg_fats_filter(event) {
     let success_callback = response => {
         document.getElementById("fats-container").textContent = response['data']
         document.getElementById("avg-fats-filter-name").textContent = ` | ${period}`
+
     }
 
     let fail_callback = response => {
