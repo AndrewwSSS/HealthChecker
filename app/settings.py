@@ -23,8 +23,6 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-SILENCED_SYSTEM_CHECKS = ["models.E032"]
-
 # Application definition
 
 INSTALLED_APPS = [

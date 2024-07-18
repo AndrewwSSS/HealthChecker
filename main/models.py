@@ -22,9 +22,7 @@ class Training(models.Model):
         ordering = ['start']
         constraints = [
             CheckConstraint(check=Q(start__lt=models.F("end")),
-                            name="end_date_grater_than_start_date"),
-            CheckConstraint(check=Q(start__lte=Now()),
-                            name="start_less_than_or_equal_now")
+                            name="%(app_label)s_%(class)s_end_date_grater_than_start_date"),
         ]
 
 
