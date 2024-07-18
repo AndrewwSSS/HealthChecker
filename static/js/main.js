@@ -2,6 +2,38 @@ const SUCCESSES_ICON = '<i class="bi bi-check-circle-fill"></i>'
 const ERROR_ICON = '<i class="bi bi-x-circle-fill"></i>'
 const TOAST_SHOW_DURATION = 5000
 
+function init_trainings_type_ratio_echart_callback(response) {
+    echarts.init(document.querySelector("#trafficChart")).setOption({
+        tooltip: {
+            trigger: 'item'
+        },
+        legend: {
+            top: '5%',
+            left: 'center'
+        },
+        series: [{
+            name: 'Access From',
+            type: 'pie',
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: false,
+            label: {
+                show: false,
+                position: 'center'
+            },
+            emphasis: {
+                label: {
+                    show: true,
+                    fontSize: '18',
+                    fontWeight: 'bold'
+                }
+            },
+            labelLine: {
+                show: false
+            },
+            data: response['data']
+        }]
+    })
+}
 
 function getCookie(name) {
     let cookieValue = null;
@@ -427,7 +459,6 @@ function delete_dish(event) {
     ajax_post("/api/delete_dish", formData, success_callback, fail_callback)
 }
 
-
 function delete_meal(event) {
     event.preventDefault()
     let meal_element = event.target.parentElement.parentElement.parentElement
@@ -452,7 +483,6 @@ function delete_meal(event) {
     ajax_post("/api/delete_meal", formData, success_callback, fail_callback)
 
 }
-
 
 function change_filter_training_ratio(event) {
     let period = event.target.textContent
@@ -617,42 +647,11 @@ function change_avg_fats_filter(event) {
         element.addEventListener('click', delete_meal, false)
     })
 
-    ajax_get("/api/get_training_type_ratio", "period=today", function (response) {
-        echarts.init(document.querySelector("#trafficChart")).setOption({
-            tooltip: {
-                trigger: 'item'
-            },
-            legend: {
-                top: '5%',
-                left: 'center'
-            },
-            series: [{
-                name: 'Access From',
-                type: 'pie',
-                radius: ['40%', '70%'],
-                avoidLabelOverlap: false,
-                label: {
-                    show: false,
-                    position: 'center'
-                },
-                emphasis: {
-                    label: {
-                        show: true,
-                        fontSize: '18',
-                        fontWeight: 'bold'
-                    }
-                },
-                labelLine: {
-                    show: false
-                },
-                data: response['data']
-            }]
-        }, () => { show_toast("Error load training types ratio", 'error')});
-    })
+    ajax_get("/api/get_training_type_ratio",
+        "period=today",
+                 init_trainings_type_ratio_echart_callback,
+                () => { show_toast("Error load training types ratio", 'error')});
 
-    document.addEventListener("DOMContentLoaded", () => {
-
-    });
 
     let navbarlinks = select('#navbar .scrollto', true)
     const navbarlinksActive = () => {
