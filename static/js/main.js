@@ -2,6 +2,8 @@ const SUCCESSES_ICON = '<i class="bi bi-check-circle-fill"></i>'
 const ERROR_ICON = '<i class="bi bi-x-circle-fill"></i>'
 const TOAST_SHOW_DURATION = 5000
 
+
+
 function init_trainings_type_ratio_echart_callback(response) {
     echarts.init(document.querySelector("#trafficChart")).setOption({
         tooltip: {
@@ -484,12 +486,16 @@ function delete_meal(event) {
 
 }
 
+function update_statistic_card(container_id, filter_name_id, new_period, new_data) {
+    document.getElementById(container_id).innerHTML = new_data
+    document.getElementById(filter_name_id).innerHTML = `| ${new_period}`
+}
+
 function change_filter_training_ratio(event) {
     let period = event.target.textContent
     let data_string = `period=${period}`
 
     let success_callback = response => {
-        console.log(response['data'])
         let chart_dom = document.querySelector("#trafficChart")
         let chart = echarts.getInstanceByDom(chart_dom)
         chart.setOption({
@@ -538,11 +544,10 @@ function change_avg_calories_filter(event) {
     let data_string = `period=${period}`
 
     let success_callback = response => {
-        document.getElementById("calories-container").textContent = response['data']
-        document.getElementById("avg-calories-filter-name").textContent = ` | ${period}`
+        update_statistic_card("calories-container", "avg-calories-filter-name", period, response["data"])
     }
 
-    let fail_callback = response => {
+    let fail_callback = () => {
         show_toast(`Error to load`, "error")
     }
     ajax_get("/api/get_avg_calories_info", data_string, success_callback, fail_callback)
@@ -553,8 +558,7 @@ function change_avg_protein_filter(event) {
     let data_string = `period=${period}`
 
     let success_callback = response => {
-        document.getElementById("protein-container").textContent = response['data']
-        document.getElementById("avg-protein-filter-name").textContent = ` | ${period}`
+        update_statistic_card("protein-container", "avg-protein-filter-name", period, response["data"])
     }
 
     let fail_callback = response => {
@@ -569,8 +573,7 @@ function change_avg_carbohydrates_filter(event) {
     let data_string = `period=${period}`
 
     let success_callback = response => {
-        document.getElementById("carbohydrates-container").textContent = response['data']
-        document.getElementById("avg-carbohydrates-filter-name").textContent = ` | ${period}`
+        update_statistic_card("carbohydrates-container", "avg-carbohydrates-filter-name", period, response["data"])
     }
 
     let fail_callback = response => {
@@ -585,9 +588,7 @@ function change_avg_fats_filter(event) {
     let data_string = `period=${period}`
 
     let success_callback = response => {
-        document.getElementById("fats-container").textContent = response['data']
-        document.getElementById("avg-fats-filter-name").textContent = ` | ${period}`
-
+        update_statistic_card("fats-container", "avg-fats-filter-name", period, response["data"])
     }
 
     let fail_callback = response => {
@@ -595,6 +596,34 @@ function change_avg_fats_filter(event) {
     }
 
     ajax_get("/api/get_avg_fats_info", data_string, success_callback, fail_callback)
+}
+
+
+function load_all_statistics_of_main_page() {
+    // Init and load trainings ratio chart
+    ajax_get("/api/get_training_type_ratio",
+    "period=today",
+             init_trainings_type_ratio_echart_callback,
+            () => { show_toast("Error load training types ratio", 'error')});
+
+    let error_callback = response => { show_toast(`Error to load`, "error") }
+    let LOAD_PERIOD = "Today"
+
+    ajax_get("/api/get_avg_fats_info", `period=${LOAD_PERIOD}`, (response) => {
+        update_statistic_card("fats-container", "avg-fats-filter-name", LOAD_PERIOD, response["data"])
+    }, error_callback)
+
+    ajax_get("/api/get_avg_protein_info", `period=${LOAD_PERIOD}`, (response) => {
+        update_statistic_card("protein-container", "avg-protein-filter-name", LOAD_PERIOD, response["data"])
+    }, error_callback)
+
+    ajax_get("/api/get_avg_carbohydrates_info", `period=${LOAD_PERIOD}`, (response) => {
+        update_statistic_card("carbohydrates-container", "avg-carbohydrates-filter-name", LOAD_PERIOD, response["data"])
+    }, error_callback)
+
+    ajax_get("/api/get_avg_calories_info", `period=${LOAD_PERIOD}`, (response) => {
+        update_statistic_card("calories-container", "avg-calories-filter-name", LOAD_PERIOD, response["data"])
+    }, error_callback)
 }
 
 
@@ -648,11 +677,7 @@ function change_avg_fats_filter(event) {
         element.addEventListener('click', delete_meal, false)
     })
 
-    ajax_get("/api/get_training_type_ratio",
-        "period=today",
-                 init_trainings_type_ratio_echart_callback,
-                () => { show_toast("Error load training types ratio", 'error')});
-
+    load_all_statistics_of_main_page()
 
     let navbarlinks = select('#navbar .scrollto', true)
     const navbarlinksActive = () => {
