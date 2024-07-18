@@ -18,10 +18,11 @@
                 </a>
               </div>
             </div>
-            <div class="dishes-container">
+            <div class="dishes-container row">
               {% for dish in dish_list%}
                 <a href="{% url "main:update-dish" dish.id %}"
-                   data-id="{{ dish.id }}">
+                   data-id="{{ dish.id }}"
+                   class="col-lg-4">
                   <div class="alert alert-primary fade show">
                     <div class="d-flex justify-content-between">
                     <span>
