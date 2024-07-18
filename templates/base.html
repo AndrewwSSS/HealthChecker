@@ -24,7 +24,6 @@
 <header id="header" class="header fixed-top d-flex align-items-center">
   <div class="d-flex align-items-center justify-content-between">
     <a href="/home" class="logo d-flex align-items-center">
-      {#        <img src="img/logo.png" alt="">#}
       <span class="d-none d-lg-block">
         HealthChecker
       </span>
@@ -43,7 +42,6 @@
 
   <nav class="header-nav ms-auto">
     <ul class="d-flex align-items-center">
-
       <li class="nav-item d-block d-lg-none">
         <a class="nav-link nav-icon search-bar-toggle " href="#">
           <i class="bi bi-search"></i>
@@ -93,13 +91,11 @@
               <span>Sign Out</span>
             </a>
           </li>
-
-        </ul><!-- End Profile Dropdown Items -->
+        </ul>
       </li>
     </ul>
   </nav>
 </header>
-
 
 <!-- ======= Sidebar ======= -->
 <aside id="sidebar" class="sidebar">
@@ -208,6 +204,7 @@
 
 </aside>
 
+<!-- ====== Main content ======= -->
 <main id="main" class="main">
 {% block content %}
     <section class="section dashboard">
@@ -240,7 +237,6 @@
                     </div>
                     <div class="ps-3 align-center">
                       <h6 id="calories-container">-</h6>
-{#                      <span class="text-success small pt-1 fw-bold">12%</span>#}
                       <span class="text-muted small pt-2 ps-1">per day</span>
                     </div>
                   </div>
@@ -276,8 +272,6 @@
                     <div class="ps-3">
                       <h6 id="protein-container">-</h6>
                       <span class="text-muted small pt-2 ps-1">per day</span>
-{#                      <h6>$3,264</h6>#}
-{#                      <span class="text-success small pt-1 fw-bold">8%</span> <span class="text-muted small pt-2 ps-1">increase</span>#}
                     </div>
                   </div>
                 </div>
@@ -312,8 +306,6 @@
                     </div>
                     <div class="ps-3">
                       <h6 id="carbohydrates-container">-</h6>
-{#                      <h6>1244</h6>#}
-{#                      <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">decrease</span>#}
                       <span class="text-muted small pt-2 ps-1">per day</span>
                     </div>
                   </div>
@@ -348,8 +340,6 @@
                     </div>
                     <div class="ps-3">
                       <h6 id="fats-container">-</h6>
-                      {#                      <h6>1244</h6>#}
-                      {#                      <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">decrease</span>#}
                       <span class="text-muted small pt-2 ps-1">per day</span>
                     </div>
                   </div>
@@ -359,19 +349,18 @@
 
             </div>
           </div>
-        </div><!-- End Left side columns -->
+        </div>
 
         <!-- Right side columns -->
         <div class="col-lg-4">
           <!-- Trainings types ratio  -->
-          <div class="card" id="traffic_card">
+          <div class="card">
             <div class="filter">
               <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
               <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                 <li class="dropdown-header text-start">
                   <h6>Filter</h6>
                 </li>
-
                 <li>
                   <span class="dropdown-item training-ratio-filter" >Today</span>
                 </li>
@@ -391,9 +380,8 @@
               </h5>
 
               <div id="trafficChart" style="min-height: 400px;" class="echart"></div>
-              <script src="{% static "js/diagrams.js" %}"></script>
             </div>
-          </div><!-- End Website Traffic -->
+          </div>
         </div>
       </div>
     </section>
