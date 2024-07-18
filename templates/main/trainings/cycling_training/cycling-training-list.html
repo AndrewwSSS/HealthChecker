@@ -4,7 +4,7 @@
 {% block trainings %}
   {% for cyclingTraining in cycling_list%}
     <a href="{% url "main:update-cycling-training" cyclingTraining.id %}"
-       class="training-element"
+       class="training-element col-lg-4"
        data-training-id="{{ cyclingTraining.id }}"
        data-training-type="CY">
       <div class="alert alert-primary fade show">
