@@ -97,8 +97,8 @@ class DishForm(ModelForm):
         carbohydrates = cleaned_data.get("carbohydrates", 0)
         fats = cleaned_data.get("fats", 0)
 
-        if sum([protein, carbohydrates, fats]) != 100:
-            raise forms.ValidationError("Sum of protein, carbohydrates and fats must be 100")
+        if sum([protein, carbohydrates, fats]) < 100:
+            raise forms.ValidationError("Sum of protein, carbohydrates and fats must be less than 100")
         return cleaned_data
 
 
