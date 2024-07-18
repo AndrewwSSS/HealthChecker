@@ -18,14 +18,19 @@
                 </a>
               </div>
             </div>
-            <div class="meal-container">
+            <div class="meal-container row">
               {% for meal in meal_list%}
                 <a href="{% url "main:update-meal" meal.id %}"
-                   data-id="{{ meal.id }}">
+                   data-id="{{ meal.id }}"
+                   class="col-lg-4">
                   <div class="alert alert-primary fade show">
                     <div class="d-flex justify-content-between">
                       <span>
-                        {{ meal.date }}
+                        {% if meal.date.year == today.year and meal.date.month == today.month and meal.date.day == today.date.day %}
+                          Today, {{ meal.date|time:"G:i" }}
+                        {% else %}
+                          {{ meal.date }}
+                        {% endif %}
                       </span>
                       <i class="fa-solid fa-xmark delete-element-icon delete-meal-icon"></i>
                     </div>

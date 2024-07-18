@@ -272,6 +272,7 @@ class MealListView(LoginRequiredMixin, generic.ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(MealListView, self).get_context_data(**kwargs)
+        context["today"] = datetime.today()
         return update_context_for_date_search_form(context, self.request)
 
     def get_queryset(self):
