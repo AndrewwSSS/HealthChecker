@@ -18,7 +18,7 @@
                     Start date
                   </label>
                   <div class="col-md-9 col-lg-9">
-                    <input type="text"
+                    <input type="datetime-local"
                            placeholder="mm/dd/yyyy H:M"
                            id="inputStartDate"
                            name="start"
@@ -32,13 +32,12 @@
                     End date
                   </label>
                   <div class="col-md-9 col-lg-9">
-                    <input type="text"
+                    <input type="datetime-local"
                            placeholder="mm/dd/yyyy H:M"
                            id="inputEndDate"
                            name="end"
                            class="form-control"
-                           value="{% if object %}{{ object.end|date:"d/m/Y" }} {{ object.end|time:"G:i" }}{% endif %}"
-                    >
+                           value="{% if object %}{{ object.end|date:"d/m/Y" }} {{ object.end|time:"G:i" }}{% endif %}">
                   </div>
 
                 </div>
