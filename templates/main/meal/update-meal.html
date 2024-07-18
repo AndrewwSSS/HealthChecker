@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load tz %}
 {% block content %}
   <section class="section">
     <div class="row justify-content-center">
@@ -18,12 +19,12 @@
                   date
                 </label>
                 <div class="col-md-9 col-lg-9">
-                  <input type="text"
+                  <input type="datetime-local"
                          placeholder="mm/dd/yyyy H:M:S"
                          id="inputStartDate"
                          name="date"
                          class="form-control"
-                         value="{{ meal.date|date:"m/d/Y" }} {{ meal.date|time:"H:i" }}">
+                         value="{{ meal.date|date:"Y-m-d" }}T{{ meal.date|time:"G:i" }}">
                 </div>
                 <input type="hidden" value="{{ user.id }}" name="user">
               </div>

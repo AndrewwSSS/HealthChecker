@@ -16,12 +16,12 @@
                     Date
                   </label>
                   <div class="col-md-9 col-lg-9">
-                    <input type="text"
+                    <input type="datetime-local"
                            placeholder="dd/mm/yyyy H:M"
                            id="inputStartDate"
                            name="date"
                            class="form-control"
-                           value="{% if default_date %}{{ default_date|date:"m/d/Y" }} {{ default_date|time:"G:i" }}{% endif %}">
+                           value="{% if default_date %}{{ default_date|date:"Y-m-d" }}T{{ default_date|time:"G:i" }}{% endif %}">
                   </div>
                 </div>
                 <div class="text-center">

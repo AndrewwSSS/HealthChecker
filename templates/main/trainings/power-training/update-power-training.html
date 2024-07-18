@@ -20,7 +20,7 @@
                            id="inputStartDate"
                            name="start"
                            class="form-control"
-                           value="{{ object.start|date:"d/m/Y" }} {{ object.start|time:"G:i" }}">
+                           value="{{ object.start|date:"Y-m-d" }}T{{ object.start|time:"G:i" }}">
                   </div>
 
                 </div>
@@ -33,7 +33,7 @@
                            id="inputEndDate"
                            name="end"
                            class="form-control"
-                           value="{{ object.end|date:"d/m/Y" }} {{ object.end|time:"G:i" }}">
+                           value="{{ object.end|date:"Y-m-d" }}T{{ object.end|time:"G:i" }}">
                   </div>
                 </div>
                 <div class="row mb-3">
