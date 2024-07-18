@@ -1,4 +1,8 @@
+from datetime import date
+
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q, Avg, QuerySet
+from django.db.models.functions import TruncDate
 from django.http import HttpRequest, JsonResponse
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -262,3 +266,165 @@ class DeleteMealView(LoginRequiredMixin, View):
                           id=meal_id,
                           user=request.user).delete()
         return SUCCESS_RESPONSE
+
+
+class GetTrainingsTypeRatio(LoginRequiredMixin, View):
+    @staticmethod
+    def get(request: HttpRequest) -> JsonResponse:
+        period = request.GET.get("period", default=None)
+        if not period:
+            return INVALID_DATA_RESPONSE
+        period = period.lower()
+        today = date.today()
+        if period == "today":
+            q_obj = Q(user=request.user, start__date=today)
+        elif period == "this month":
+            q_obj = Q(user=request.user,
+                      start__month=today.month,
+                      start__year=today.year)
+        elif period == "this year":
+            q_obj = Q(user=request.user,
+                      start__year=today.year)
+        else:
+            return INVALID_DATA_RESPONSE
+
+        power_trainings = PowerTraining.objects.filter(q_obj).count()
+        cycling = Cycling.objects.filter(q_obj).count()
+        jogging = Jogging.objects.filter(q_obj).count()
+        walking = Walking.objects.filter(q_obj).count()
+        swimming = Swimming.objects.filter(q_obj).count()
+
+        response = JsonResponse(
+            {
+                "data": [
+                    {
+                        "name": "Power trainings",
+                        "value": power_trainings,
+                    },
+                    {
+                        "name": "Cycling",
+                        "value": cycling,
+                    },
+                    {
+                        "name": "Jogging",
+                        "value": jogging,
+                    },
+                    {
+                        "name": "Walking",
+                        "value": walking,
+                    },
+                    {
+                        "name": "Swimming",
+                        "value": swimming,
+                    },
+                ]
+            }, status=200)
+        return response
+
+
+def get_and_validate_period(request: HttpRequest) -> str | None:
+    period = request.GET.get("period", default=None)
+    period = period.lower()
+    return period
+
+
+def get_meals_by_period(period: str, user: User) -> QuerySet[Meal] | None:
+    today = date.today()
+
+    if period == "today":
+        q_obj = Q(date__date=today)
+    elif period == "this month":
+        q_obj = Q(date__month=today.month,
+                  date__year=today.year)
+    elif period == "this year":
+        q_obj = Q(date__year=today.year)
+    else:
+        return None
+    return user.meals.filter(q_obj)
+
+
+def get_unique_meal_dates_count(query_set: QuerySet[Meal]) -> int:
+    return query_set.annotate(unique_date=TruncDate('date')).values('unique_date').distinct().count()
+
+
+class GetAvgCaloriesPerDayInfo(LoginRequiredMixin, View):
+    @staticmethod
+    def get(request: HttpRequest) -> JsonResponse:
+        if (not (period := get_and_validate_period(request)) or
+                (user_meals := get_meals_by_period(period, request.user)) is None):
+            return INVALID_DATA_RESPONSE
+
+        total_calories = sum(meal.get_total_calories() for meal in user_meals)
+        unique_dates_count = get_unique_meal_dates_count(user_meals)
+
+        avg_calories_per_day = 0
+        if unique_dates_count:
+            avg_calories_per_day = total_calories / unique_dates_count
+
+        response = JsonResponse({
+            "data": avg_calories_per_day,
+        }, status=200)
+        return response
+
+
+class GetAvgProteinPerDayView(LoginRequiredMixin, View):
+    @staticmethod
+    def get(request: HttpRequest) -> JsonResponse:
+        if (not (period := get_and_validate_period(request)) or
+                (user_meals := get_meals_by_period(period, request.user)) is None):
+            return INVALID_DATA_RESPONSE
+
+        total_protein = sum(meal.get_total_protein() for meal in user_meals)
+        unique_dates_count = get_unique_meal_dates_count(user_meals)
+
+        avg_protein_per_day = 0
+        if unique_dates_count:
+            avg_protein_per_day = total_protein / unique_dates_count
+
+        response = JsonResponse({
+            "data": avg_protein_per_day,
+        }, status=200)
+        return response
+
+
+class GetAvgCarbohydratesPerDayView(LoginRequiredMixin, View):
+    @staticmethod
+    def get(request: HttpRequest) -> JsonResponse:
+        if (not (period := get_and_validate_period(request)) or
+                (user_meals := get_meals_by_period(period, request.user)) is None):
+            return INVALID_DATA_RESPONSE
+
+        total_protein = sum(meal.get_total_carbohydrates() for meal in user_meals)
+        unique_dates_count = get_unique_meal_dates_count(user_meals)
+
+        avg_carbohydrates_per_day = 0
+        if unique_dates_count:
+            avg_carbohydrates_per_day = total_protein / unique_dates_count
+
+        response = JsonResponse({
+            "data": avg_carbohydrates_per_day,
+        }, status=200)
+
+        return response
+
+
+class GetAvgFatsPerDayView(LoginRequiredMixin, View):
+    @staticmethod
+    def get(request: HttpRequest) -> JsonResponse:
+        if (not (period := get_and_validate_period(request)) or
+                (user_meals := get_meals_by_period(period, request.user)) is None):
+            return INVALID_DATA_RESPONSE
+
+        total_fats = sum(meal.get_total_fats() for meal in user_meals)
+        unique_dates_count = get_unique_meal_dates_count(user_meals)
+
+        avg_fats_per_day = 0
+        if unique_dates_count:
+            avg_fats_per_day = total_fats / unique_dates_count
+
+        response = JsonResponse({
+            "data": avg_fats_per_day,
+        }, status=200)
+
+        return response
+

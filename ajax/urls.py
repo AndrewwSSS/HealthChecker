@@ -13,7 +13,12 @@ from ajax.views import (UpdatePasswordView,
                         UpdateDishCountView,
                         DeleteExerciseView,
                         DeleteDishView,
-                        DeleteMealView)
+                        DeleteMealView,
+                        GetTrainingsTypeRatio,
+                        GetAvgCaloriesPerDayInfo,
+                        GetAvgProteinPerDayView,
+                        GetAvgCarbohydratesPerDayView,
+                        GetAvgFatsPerDayView)
 
 urlpatterns = [
     path("user_update", UpdateUser.as_view(), name="user-update"),
@@ -30,6 +35,11 @@ urlpatterns = [
     path("delete_exercise", DeleteExerciseView.as_view(), name="delete-exercise"),
     path("delete_dish", DeleteDishView.as_view(), name="delete-dish"),
     path("delete_meal", DeleteMealView.as_view(), name="delete-meal"),
+    path("get_training_type_ratio", GetTrainingsTypeRatio.as_view(), name="get-training-type-ratio"),
+    path("get_avg_calories_info", GetAvgCaloriesPerDayInfo.as_view(), name="get-calories-info"),
+    path("get_avg_protein_info", GetAvgProteinPerDayView.as_view(), name="get-avg-protein-info"),
+    path("get_avg_carbohydrates_info", GetAvgCarbohydratesPerDayView.as_view(), name="get-avg-carbohydrates-info"),
+    path("get_avg_fats_info", GetAvgFatsPerDayView.as_view(), name="get-avg-fats-info")
 ]
 
 app_name = 'ajax'

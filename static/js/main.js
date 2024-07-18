@@ -32,6 +32,15 @@ function ajax_post(url, data, done_callback, fail_callback, dataType = "json") {
     }).done(done_callback).fail(fail_callback);
 }
 
+function ajax_get(url, data_string, done_callback, fail_callback, dataType = "json") {
+    $.ajax({
+        type: 'GET',
+        url: url,
+        data: data_string,
+        dataType: dataType,
+    }).done(done_callback).fail(fail_callback);
+}
+
 const select = (el, all = false) => {
     el = el.trim()
     if (all) {
@@ -445,6 +454,119 @@ function delete_meal(event) {
 }
 
 
+function change_filter_training_ratio(event) {
+    let period = event.target.textContent
+    let data_string = `period=${period}`
+
+    let success_callback = response => {
+        console.log(response['data'])
+        let chart_dom = document.querySelector("#trafficChart")
+        let chart = echarts.getInstanceByDom(chart_dom)
+        chart.setOption({
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: {
+                top: '5%',
+                left: 'center'
+            },
+            series: [{
+                name: 'Access From',
+                type: 'pie',
+                radius: ['40%', '70%'],
+                avoidLabelOverlap: false,
+                label: {
+                    show: false,
+                    position: 'center'
+                },
+                emphasis: {
+                    label: {
+                        show: true,
+                        fontSize: '18',
+                        fontWeight: 'bold'
+                    }
+                },
+                labelLine: {
+                    show: false
+                },
+                data: response['data']
+            }]
+        })
+        chart.resize()
+        document.getElementById("training-ratio-span").textContent = `| ${period}`
+    }
+
+    let fail_callback = response => {
+        show_toast(`Error to load`, "error")
+    }
+
+    ajax_get("/api/get_training_type_ratio", data_string, success_callback, fail_callback)
+}
+
+function change_avg_calories_filter(event) {
+    let period = event.target.textContent
+    let data_string = `period=${period}`
+
+    let success_callback = response => {
+        document.getElementById("calories-container").textContent = response['data']
+        document.getElementById("avg-calories-filter-name").textContent = ` | ${period}`
+    }
+
+    let fail_callback = response => {
+        show_toast(`Error to load`, "error")
+    }
+    ajax_get("/api/get_avg_calories_info", data_string, success_callback, fail_callback)
+}
+
+function change_avg_protein_filter(event) {
+    let period = event.target.textContent
+    let data_string = `period=${period}`
+
+    let success_callback = response => {
+        document.getElementById("protein-container").textContent = response['data']
+        document.getElementById("avg-protein-filter-name").textContent = ` | ${period}`
+    }
+
+    let fail_callback = response => {
+        show_toast(`Error to load`, "error")
+    }
+
+    ajax_get("/api/get_avg_protein_info", data_string, success_callback, fail_callback)
+}
+
+function change_avg_carbohydrates_filter(event) {
+    let period = event.target.textContent
+    let data_string = `period=${period}`
+
+    let success_callback = response => {
+        document.getElementById("carbohydrates-container").textContent = response['data']
+        document.getElementById("avg-carbohydrates-filter-name").textContent = ` | ${period}`
+    }
+
+    let fail_callback = response => {
+        show_toast(`Error to load`, "error")
+    }
+
+    ajax_get("/api/get_avg_carbohydrates_info", data_string, success_callback, fail_callback)
+}
+
+function change_avg_fats_filter(event) {
+    let period = event.target.textContent
+    let data_string = `period=${period}`
+
+    let success_callback = response => {
+        document.getElementById("fats-container").textContent = response['data']
+        document.getElementById("avg-fats-filter-name").textContent = ` | ${period}`
+    }
+
+    let fail_callback = response => {
+        show_toast(`Error to load`, "error")
+    }
+
+    ajax_get("/api/get_avg_fats_info", data_string, success_callback, fail_callback)
+}
+
+
 (function() {
     "use strict";
 
@@ -458,6 +580,13 @@ function delete_meal(event) {
     on("click", ".deleteDishCount", delete_dish_count, true)
     on("click", ".saveApproach", create_or_update_approach, true)
     on("click", ".create-or-update-dish-count", create_or_update_dish, true)
+    on("click", ".training-ratio-filter", change_filter_training_ratio, true)
+    on("click", ".avg-calories-filter", change_avg_calories_filter, true)
+    on("click", ".avg-protein-filter", change_avg_protein_filter, true)
+    on("click", ".avg-carbohydrates-filter", change_avg_carbohydrates_filter, true)
+    on("click", ".avg-fats-filter", change_avg_fats_filter, true)
+
+
     on('click', '.toggle-sidebar-btn', function() {
         select('body').classList.toggle('toggle-sidebar')
     })
@@ -488,6 +617,42 @@ function delete_meal(event) {
         element.addEventListener('click', delete_meal, false)
     })
 
+    ajax_get("/api/get_training_type_ratio", "period=today", function (response) {
+        echarts.init(document.querySelector("#trafficChart")).setOption({
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: {
+                top: '5%',
+                left: 'center'
+            },
+            series: [{
+                name: 'Access From',
+                type: 'pie',
+                radius: ['40%', '70%'],
+                avoidLabelOverlap: false,
+                label: {
+                    show: false,
+                    position: 'center'
+                },
+                emphasis: {
+                    label: {
+                        show: true,
+                        fontSize: '18',
+                        fontWeight: 'bold'
+                    }
+                },
+                labelLine: {
+                    show: false
+                },
+                data: response['data']
+            }]
+        }, () => { show_toast("Error load training types ratio", 'error')});
+    })
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+    });
 
     let navbarlinks = select('#navbar .scrollto', true)
     const navbarlinksActive = () => {
