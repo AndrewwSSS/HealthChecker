@@ -240,7 +240,9 @@ class DeleteExerciseView(LoginRequiredMixin, View):
         if not exercise_id:
             return INVALID_DATA_RESPONSE
 
-        get_object_or_404(Exercise, id=exercise_id).delete()
+        get_object_or_404(Exercise,
+                          id=exercise_id,
+                          owner=request.user).delete()
         return SUCCESS_RESPONSE
 
 

@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
@@ -8,11 +9,34 @@ from django.db.models import (ForeignKey,
                               CheckConstraint,
                               Q,
                               Sum)
-from django.db.models.functions import Now
+
+
+class User(AbstractUser):
+    SEX_CHOICES = (
+        ('F', 'Female',),
+        ('M', 'Male',),
+        ('U', 'Unsure',),
+    )
+    sex = models.CharField(
+        max_length=1,
+        choices=SEX_CHOICES,
+        null=True
+    )
+    birth_date = models.DateField(null=True,)
+    weight = models.FloatField(null=True,
+                               validators=[MinValueValidator(20), MaxValueValidator(400)])
+    height = models.IntegerField(null=True,
+                                 validators=[MinValueValidator(140), MaxValueValidator(250)])
+
+    @property
+    def body_mass_index(self) -> float | None:
+        if not self.weight or not self.height:
+            return None
+        return self.weight / (self.height**2)
 
 
 class Training(models.Model):
-    user = ForeignKey("User", on_delete=models.CASCADE)
+    user = ForeignKey(get_user_model(), on_delete=models.CASCADE)
     start = models.DateTimeField()
     end = models.DateTimeField(null=True, blank=True)
     description = models.TextField(blank=True)
@@ -36,6 +60,9 @@ class Approach(models.Model):
 
 
 class Exercise(models.Model):
+    owner = models.ForeignKey(get_user_model(),
+                              on_delete=models.CASCADE,
+                              related_name="exercises")
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True)
     
@@ -91,7 +118,9 @@ class Dish(models.Model):
     protein = models.FloatField(validators=[MinValueValidator(0.1)])
     carbohydrates = models.FloatField(validators=[MinValueValidator(0.1)])
     fats = models.FloatField(validators=[MinValueValidator(0.1)])
-    user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="dishes")
+    user = models.ForeignKey(get_user_model(),
+                             on_delete=models.CASCADE,
+                             related_name="dishes")
 
     class Meta:
         constraints = [
@@ -104,7 +133,9 @@ class Dish(models.Model):
 
 class DishCount(models.Model):
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
-    meal = models.ForeignKey("Meal", on_delete=models.CASCADE, related_name="dishes")
+    meal = models.ForeignKey("Meal",
+                             on_delete=models.CASCADE,
+                             related_name="dishes")
     weight = models.FloatField(validators=[MinValueValidator(1)])
 
     class Meta:
@@ -131,7 +162,7 @@ class DishCount(models.Model):
 
 class Meal(models.Model):
     date = models.DateTimeField()
-    user = models.ForeignKey("User",
+    user = models.ForeignKey(get_user_model(),
                              on_delete=models.CASCADE,
                              related_name="meals")
 
@@ -148,25 +179,3 @@ class Meal(models.Model):
         return sum(dish.carbohydrates for dish in self.dishes.all())
 
 
-class User(AbstractUser):
-    SEX_CHOICES = (
-        ('F', 'Female',),
-        ('M', 'Male',),
-        ('U', 'Unsure',),
-    )
-    sex = models.CharField(
-        max_length=1,
-        choices=SEX_CHOICES,
-        null=True
-    )
-    birth_date = models.DateField(null=True,)
-    weight = models.FloatField(null=True,
-                               validators=[MinValueValidator(20), MaxValueValidator(400)])
-    height = models.IntegerField(null=True,
-                                 validators=[MinValueValidator(140), MaxValueValidator(250)])
-
-    @property
-    def body_mass_index(self) -> float | None:
-        if not self.weight or not self.height:
-            return None
-        return self.weight / (self.height**2)
