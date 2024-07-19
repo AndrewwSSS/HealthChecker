@@ -67,9 +67,16 @@ class ExerciseForm(ModelForm):
 
 
 class CyclingForm(ModelForm):
+    description = forms.CharField(required=False)
+
     class Meta:
         model = Cycling
-        fields = "__all__"
+        fields = ["start",
+                  "end",
+                  "description",
+                  "average_speed",
+                  "climb",
+                  "distance"]
 
     def clean(self):
         cleaned_data = clean_distance_average_speed_trainings(self.cleaned_data)
@@ -82,7 +89,13 @@ class CyclingForm(ModelForm):
 class DishForm(ModelForm):
     class Meta:
         model = Dish
-        fields = ["name", "carbohydrates", "fats", "protein", "calories"]
+        fields = [
+            "name",
+            "carbohydrates",
+            "fats",
+            "protein",
+            "calories"
+        ]
 
     def clean(self):
         cleaned_data = super(DishForm, self).clean()
@@ -98,7 +111,13 @@ class DishForm(ModelForm):
 class JoggingForm(ModelForm):
     class Meta:
         model = Jogging
-        fields = "__all__"
+        fields = [
+            "start",
+            "end",
+            "description",
+            "average_speed",
+            "distance"
+        ]
 
     def clean(self):
         cleaned_data = clean_distance_average_speed_trainings(self.cleaned_data)
@@ -108,7 +127,13 @@ class JoggingForm(ModelForm):
 class SwimmingForm(ModelForm):
     class Meta:
         model = Swimming
-        fields = "__all__"
+        fields = [
+            "start",
+            "end",
+            "description",
+            "average_speed",
+            "distance"
+        ]
 
     def clean(self):
         cleaned_data = clean_distance_average_speed_trainings(self.cleaned_data)
@@ -118,7 +143,13 @@ class SwimmingForm(ModelForm):
 class WalkingForm(ModelForm):
     class Meta:
         model = Walking
-        fields = "__all__"
+        fields = [
+            "start",
+            "end",
+            "description",
+            "average_speed",
+            "distance"
+        ]
 
     def clean(self):
         cleaned_data = clean_distance_average_speed_trainings(self.cleaned_data)

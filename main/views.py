@@ -250,12 +250,24 @@ class CreateSwimmingView(LoginRequiredMixin, generic.CreateView):
     template_name = "base_distance_average_speed_form.html"
     success_url = "/swimming-trainings/"
 
+    def form_valid(self, form):
+        swimming = form.save(commit=False)
+        swimming.user = self.request.user
+        swimming.save()
+        return redirect("main:swimming-training-list")
+
 
 class CreateJoggingView(LoginRequiredMixin, generic.CreateView):
     model = Jogging
     form_class = JoggingForm
     template_name = "base_distance_average_speed_form.html"
     success_url = "/jogging-trainings/"
+
+    def form_valid(self, form):
+        jogging = form.save(commit=False)
+        jogging.user = self.request.user
+        jogging.save()
+        return redirect("main:jogging-training-list")
 
 
 class CreateWalkingView(LoginRequiredMixin, generic.CreateView):
@@ -264,12 +276,24 @@ class CreateWalkingView(LoginRequiredMixin, generic.CreateView):
     template_name = "base_distance_average_speed_form.html"
     success_url = "/walking-trainings/"
 
+    def form_valid(self, form):
+        walking = form.save(commit=False)
+        walking.user = self.request.user
+        walking.save()
+        return redirect("main:walking-training-list")
+
 
 class CreateCyclingTrainingView(LoginRequiredMixin, generic.CreateView):
     model = Cycling
     form_class = CyclingForm
     template_name = "main/trainings/cycling_training/cycling-training-form.html"
     success_url = "/cycling-trainings/"
+
+    def form_valid(self, form):
+        cycling = form.save(commit=False)
+        cycling.user = self.request.user
+        cycling.save()
+        return redirect("main:cycling-training-list")
 
 
 # update training views
@@ -293,35 +317,88 @@ class UpdatePowerTrainingView(LoginRequiredMixin, generic.UpdateView):
 
 
 class UpdateSwimmingView(LoginRequiredMixin, generic.UpdateView):
-    fields = "__all__"
+    fields = [
+        "start",
+        "end",
+        "description",
+        "average_speed",
+        "distance"
+    ]
     model = Swimming
     class_form = SwimmingForm
     template_name = "base_distance_average_speed_form.html"
     success_url = "/swimming-trainings/"
 
+    def form_valid(self, form):
+        swimming = form.save(commit=False)
+        if swimming.user != self.request.user:
+            return HttpResponseNotFound("Access Denied")
+        swimming.save()
+        return redirect("main:swimming-training-list")
+
 
 class UpdateJoggingView(LoginRequiredMixin, generic.UpdateView):
-    fields = "__all__"
+    fields = [
+        "start",
+        "end",
+        "description",
+        "average_speed",
+        "distance"
+    ]
     model = Jogging
     class_form = JoggingForm
     template_name = "base_distance_average_speed_form.html"
     success_url = "/jogging-trainings/"
 
+    def form_valid(self, form):
+        jogging = form.save(commit=False)
+        if jogging.user != self.request.user:
+            return HttpResponseNotFound("Access Denied")
+        jogging.save()
+        return redirect("main:swimming-training-list")
+
 
 class UpdateWalkingView(LoginRequiredMixin, generic.UpdateView):
-    fields = "__all__"
+    fields = [
+        "start",
+        "end",
+        "description",
+        "average_speed",
+        "distance"
+    ]
     model = Walking
     class_form = WalkingForm
     template_name = "base_distance_average_speed_form.html"
     success_url = "/walking-trainings/"
 
+    def form_valid(self, form):
+        walking = form.save(commit=False)
+        if walking.user != self.request.user:
+            return HttpResponseNotFound("Access Denied")
+        walking.save()
+        return redirect("main:swimming-training-list")
+
 
 class UpdateCyclingTrainingView(LoginRequiredMixin, generic.UpdateView):
-    fields = "__all__"
+    fields = [
+        "start",
+        "end",
+        "description",
+        "average_speed",
+        "climb",
+        "distance"
+    ]
     model = Cycling
     class_form = CyclingForm
     template_name = "main/trainings/cycling_training/cycling-training-form.html"
     success_url = "/cycling-trainings/"
+
+    def form_valid(self, form):
+        training = form.save(commit=False)
+        if training.user != self.request.user:
+            return HttpResponseNotFound("Access Denied")
+        training.save()
+        return redirect("main:cycling-training-list")
 # ------
 
 
