@@ -16,11 +16,14 @@ from main.models import (User,
 
 
 def clean_base_training(cleaned_data) -> dict:
-    start = cleaned_data.get('start', "")
-    end = cleaned_data.get('end', "")
+    start = cleaned_data.get('start', None)
+    end = cleaned_data.get('end', None)
 
     if not start or not end:
         return cleaned_data
+
+    if start > datetime.now():
+        raise forms.ValidationError('Start date must be less than now')
 
     if start > end:
         raise forms.ValidationError('Start must be less than end date')
