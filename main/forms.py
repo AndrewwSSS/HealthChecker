@@ -22,7 +22,7 @@ def clean_base_training(cleaned_data) -> dict:
     if not start or not end:
         return cleaned_data
 
-    if start > datetime.now():
+    if start < datetime.now():
         raise forms.ValidationError('Start date must be less than now')
 
     if start > end:
