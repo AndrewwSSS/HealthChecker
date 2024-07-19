@@ -1,5 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
+  <div class="pagetitle">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="{% url "main:meal-list" %}">Power trainings list</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="#">Update</a>
+        </li>
+      </ol>
+    </nav>
+  </div>
   <section class="section">
     <div class="row justify-content-center">
       <div class="col-lg-4">
