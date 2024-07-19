@@ -476,3 +476,34 @@ class GetTotalKMbyWalking(GetTotalKmTraining):
 class GetTotalKMbySwimming(GetTotalKmTraining):
     training_type = Swimming
 
+
+class GetPFCratio(LoginRequiredMixin, View):
+    @staticmethod
+    def get(request: HttpRequest) -> JsonResponse:
+        if (not (period := get_and_validate_period(request)) or
+                (meals := get_meals_by_period(period, request.user) is None)):
+            return INVALID_DATA_RESPONSE
+
+        meals = get_meals_by_period(period, request.user)
+
+        protein_weight = sum(meal.get_total_protein() for meal in meals)
+        carbohydrates_weight = sum(meal.get_total_carbohydrates() for meal in meals)
+        fats_weight = sum(meal.get_total_fats() for meal in meals)
+
+        response = JsonResponse({
+            "data": [
+                {
+                    "name": "protein",
+                    "value": int(protein_weight),
+                },
+                {
+                    "name": "carbohydrates",
+                    "value": int(carbohydrates_weight)
+                },
+                {
+                    "name": "fats",
+                    "value": int(fats_weight)
+                },
+            ]
+        }, status=200)
+        return response

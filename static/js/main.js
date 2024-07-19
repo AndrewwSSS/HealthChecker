@@ -6,8 +6,19 @@ const FAIL_CALLBACK = () => {
 }
 
 
+function set_echart_data(id, data) {
+    let chart_dom = document.getElementById(id)
+    let chart = echarts.getInstanceByDom(chart_dom)
+    chart.setOption({
+        series: [{
+            data: data
+        }]
+    })
+    chart.resize()
+}
+
 function init_trainings_type_ratio_echart_callback(response) {
-    echarts.init(document.querySelector("#trafficChart")).setOption({
+    echarts.init(document.querySelector("#training-types-ratio")).setOption({
         tooltip: {
             trigger: 'item'
         },
@@ -37,6 +48,68 @@ function init_trainings_type_ratio_echart_callback(response) {
             data: response['data']
         }]
     })
+}
+
+function init_PFC_ratio_echart_callback(response) {
+    echarts.init(document.querySelector("#PFC-ratio")).setOption({
+        tooltip: {
+            trigger: 'item'
+        },
+        legend: {
+            top: '5%',
+            left: 'center'
+        },
+        series: [{
+            name: 'Access From',
+            type: 'pie',
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: false,
+            label: {
+                show: false,
+                position: 'center'
+            },
+            emphasis: {
+                label: {
+                    show: true,
+                    fontSize: '18',
+                    fontWeight: 'bold'
+                }
+            },
+            labelLine: {
+                show: false
+            },
+            data: response['data']
+        }]
+    })
+    // document.addEventListener("DOMContentLoaded", () => {
+    //     echarts.init(document.querySelector("#PFC-ratio")).setOption({
+    //         title: {
+    //             text: 'Referer of a Website',
+    //             subtext: 'Fake Data',
+    //             left: 'center'
+    //         },
+    //         tooltip: {
+    //             trigger: 'item'
+    //         },
+    //         legend: {
+    //             orient: 'vertical',
+    //             left: 'left'
+    //         },
+    //         series: [{
+    //             name: 'Access From',
+    //             type: 'pie',
+    //             radius: '50%',
+    //             data: response['data'],
+    //             emphasis: {
+    //                 itemStyle: {
+    //                     shadowBlur: 10,
+    //                     shadowOffsetX: 0,
+    //                     shadowColor: 'rgba(0, 0, 0, 0.5)'
+    //                 }
+    //             }
+    //         }]
+    //     });
+    // });
 }
 
 function show_toast(msg, type = "success") {
@@ -498,39 +571,7 @@ function change_filter_training_ratio(event) {
     let data_string = `period=${period}`
 
     let success_callback = response => {
-        let chart_dom = document.querySelector("#trafficChart")
-        let chart = echarts.getInstanceByDom(chart_dom)
-        chart.setOption({
-            tooltip: {
-                trigger: 'item'
-            },
-            legend: {
-                top: '5%',
-                left: 'center'
-            },
-            series: [{
-                name: 'Access From',
-                type: 'pie',
-                radius: ['40%', '70%'],
-                avoidLabelOverlap: false,
-                label: {
-                    show: false,
-                    position: 'center'
-                },
-                emphasis: {
-                    label: {
-                        show: true,
-                        fontSize: '18',
-                        fontWeight: 'bold'
-                    }
-                },
-                labelLine: {
-                    show: false
-                },
-                data: response['data']
-            }]
-        })
-        chart.resize()
+        set_echart_data("training-types-ratio", response['data'])
         document.getElementById("training-ratio-span").textContent = `| ${period}`
     }
 
@@ -621,37 +662,43 @@ function change_total_km_walking_filter(event) {
 }
 
 function load_all_statistics_of_main_page() {
-    // Init and load trainings ratio chart
-    ajax_get("/api/get_training_type_ratio",
-    "period=today",
-             init_trainings_type_ratio_echart_callback,
-            () => { show_toast("Error load training types ratio", 'error')});
-
-    let error_callback = response => { show_toast(`Error to load`, "error") }
-
     let LOAD_PERIOD = "This Month"
+
+    // Init and load trainings ratio chart
+    ajax_get("/api/get_training_type_ratio", "period=today", init_trainings_type_ratio_echart_callback, FAIL_CALLBACK);
+    load_PFC_ratio_data_by_period(LOAD_PERIOD, init_PFC_ratio_echart_callback)
+
 
     ajax_get("/api/get_avg_fats_info", `period=${LOAD_PERIOD}`, (response) => {
         update_statistic_card("fats-container", "avg-fats-filter-name", LOAD_PERIOD, response["data"])
-    }, error_callback)
+    }, FAIL_CALLBACK);
 
     ajax_get("/api/get_avg_protein_info", `period=${LOAD_PERIOD}`, (response) => {
         update_statistic_card("protein-container", "avg-protein-filter-name", LOAD_PERIOD, response["data"])
-    }, error_callback)
+    }, FAIL_CALLBACK)
 
     ajax_get("/api/get_avg_carbohydrates_info", `period=${LOAD_PERIOD}`, (response) => {
         update_statistic_card("carbohydrates-container", "avg-carbohydrates-filter-name", LOAD_PERIOD, response["data"])
-    }, error_callback)
+    }, FAIL_CALLBACK)
 
     ajax_get("/api/get_avg_calories_info", `period=${LOAD_PERIOD}`, (response) => {
         update_statistic_card("calories-container", "avg-calories-filter-name", LOAD_PERIOD, response["data"])
-    }, error_callback)
+    }, FAIL_CALLBACK)
 
     load_total_km_by_period_and_training_type(LOAD_PERIOD, "jogging")
     load_total_km_by_period_and_training_type(LOAD_PERIOD, "walking")
     load_total_km_by_period_and_training_type(LOAD_PERIOD, "swimming")
     load_total_km_by_period_and_training_type(LOAD_PERIOD, "cycling")
 
+}
+
+function change_pfc_ratio_filter(event) {
+    let period = event.target.textContent
+    let success_callback = response => {
+        set_echart_data("PFC-ratio", response['data'])
+        document.getElementById("PFC-span").textContent = `| ${period}`
+    }
+    load_PFC_ratio_data_by_period(period, success_callback)
 }
 
 function load_total_km_by_period_and_training_type(period, training_type) {
@@ -664,6 +711,11 @@ function load_total_km_by_period_and_training_type(period, training_type) {
     }
 
     ajax_get(`/api/get_total_km_by_${training_type}`, data_string, success_callback, fail_callback)
+}
+
+function load_PFC_ratio_data_by_period(period, success_callback) {
+    let data_string = `period=${period}`
+    ajax_get("/api/get_pfc_ratio", data_string, success_callback, FAIL_CALLBACK)
 }
 
 
@@ -682,6 +734,8 @@ function load_total_km_by_period_and_training_type(period, training_type) {
     on("click", ".create-or-update-dish-count", create_or_update_dish, true)
 
     on("click", ".training-ratio-filter", change_filter_training_ratio, true)
+    on("click", ".PFC-ratio-filter", change_pfc_ratio_filter, true)
+
     on("click", ".avg-calories-filter", change_avg_calories_filter, true)
     on("click", ".avg-protein-filter", change_avg_protein_filter, true)
     on("click", ".avg-carbohydrates-filter", change_avg_carbohydrates_filter, true)

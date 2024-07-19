@@ -19,7 +19,7 @@ from ajax.views import (UpdatePasswordView,
                         GetAvgProteinPerDayView,
                         GetAvgCarbohydratesPerDayView,
                         GetAvgFatsPerDayView, GetTotalKMbyCycling, GetTotalKMbyWalking, GetTotalKMbySwimming,
-                        GetTotalKMbyJogging)
+                        GetTotalKMbyJogging, GetPFCratio)
 
 urlpatterns = [
     path("user_update", UpdateUser.as_view(), name="user-update"),
@@ -44,7 +44,8 @@ urlpatterns = [
     path("get_total_km_by_cycling", GetTotalKMbyCycling.as_view(), name="get-total-km-by-cycling"),
     path("get_total_km_by_jogging", GetTotalKMbyJogging.as_view(), name="get-total-km-by-jogging"),
     path("get_total_km_by_walking", GetTotalKMbyWalking.as_view(), name="get-total-km-by-walking"),
-    path("get_total_km_by_swimming", GetTotalKMbySwimming.as_view(), name="get-total-km-by-swimming")
+    path("get_total_km_by_swimming", GetTotalKMbySwimming.as_view(), name="get-total-km-by-swimming"),
+    path("get_pfc_ratio", GetPFCratio.as_view(), name="get-pfc-ratio"),
 ]
 
 app_name = 'ajax'
