@@ -16,10 +16,11 @@
                 <i class="fa-solid fa-plus create-training-icon"></i>
               </a>
             </div>
-            <div class="exercises-container">
+            <div class="exercises-container row">
               {% for exercise in exercise_list %}
                 <a href="{% url "main:exercise-update" exercise.id %}"
-                   data-id="{{ exercise.id }}">
+                   data-id="{{ exercise.id }}"
+                   class="col-lg-4">
                   <div class="alert alert-primary fade show">
                     <div class="d-flex justify-content-between">
                       <span>
