@@ -339,7 +339,7 @@ function create_dish_count_form(event) {
                                              class="form-control weightInput"
                                              name="weight"/>
                                       <button class="btn btn-primary create-or-update-dish-count">Save</button>
-                                      <button class="btn btn-danger deleteDishCount">Delete</button>
+                                      <i class="bi bi-x-circle-fill deleteDishCount deleteIcon"></i>
                                   </div>
                                 </div>`
     list_group.appendChild(new_li_element);
