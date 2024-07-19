@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import (UserCreationForm,
+                                       AuthenticationForm)
 from django.forms import ModelForm
 from django import forms
 
@@ -73,7 +74,17 @@ class PowerTrainingForm(ModelForm):
 class ExerciseForm(ModelForm):
     class Meta:
         model = Exercise
-        fields = ["name", "description"]
+        fields = ["name", "description", "owner"]
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = clean_base_training(self.cleaned_data)
+        if hasattr(self.instance, "owner") and self.instance.owner != self.user:
+            raise forms.ValidationError("Access denied")
+        return cleaned_data
 
 
 class CyclingForm(ModelForm):
@@ -160,7 +171,16 @@ class DateSearchForm(forms.Form):
 
 
 class NameSearchForm(forms.Form):
+    choices = (
+        ("DESC", "descending"),
+        ("ASC", "ascending"),
+    )
     name = forms.CharField(
         required=False,
         max_length=128,
     )
+    sort = forms.ChoiceField(choices=choices, required=True)
+
+
+class UserLoginForm(AuthenticationForm):
+    remember_me = forms.BooleanField(required=False)

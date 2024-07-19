@@ -1,11 +1,15 @@
 from datetime import datetime
 from typing import Any
 
-from django.contrib.auth import logout
+from django.contrib.auth import logout, login as auth_login
+from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet, Q
-from django.http import HttpResponse, HttpRequest, HttpResponseRedirect, Http404
-from django.shortcuts import redirect
+from django.http import (HttpResponse,
+                         HttpRequest,
+                         HttpResponseRedirect,
+                         Http404)
+from django.shortcuts import redirect, render, get_object_or_404
 from django.views import generic
 
 from main.forms import (UserCreateForm,
@@ -18,7 +22,8 @@ from main.forms import (UserCreateForm,
                         WalkingForm,
                         MealForm,
                         DateSearchForm,
-                        NameSearchForm)
+                        NameSearchForm,
+                        UserLoginForm)
 from main.models import (User,
                          PowerTraining,
                          Exercise,
@@ -28,6 +33,21 @@ from main.models import (User,
                          Jogging,
                          Walking,
                          Meal)
+
+
+class LoginUserView(LoginView):
+    form_class = UserLoginForm
+
+    def form_valid(self, form):
+        if not self.request.POST.get('remember_me', None):
+            self.request.session.set_expiry(0)
+        auth_login(self.request, form.get_user())
+        return HttpResponseRedirect(self.get_success_url())
+
+
+def logout_view(request: HttpRequest) -> HttpResponse:
+    logout(request)
+    return HttpResponseRedirect("/accounts/login")
 
 
 class HomePageView(LoginRequiredMixin, generic.TemplateView):
@@ -58,29 +78,6 @@ class CreateUserView(generic.CreateView):
     success_url = "/"
 
 
-class CreatePowerTrainingView(LoginRequiredMixin, generic.CreateView):
-    template_name = "main/trainings/power-training/create-power-training.html"
-    model = PowerTraining
-    form_class = PowerTrainingForm
-
-    def form_valid(self, form):
-        training = form.save()
-        return redirect("main:update-power-training", pk=training.pk)
-
-
-class PowerTrainingsListView(LoginRequiredMixin, generic.ListView):
-    model = PowerTraining
-    template_name = "main/trainings/power-training/power-trainings-list.html"
-
-    def get_queryset(self):
-        queryset = PowerTraining.objects.filter(user=self.request.user)
-        return get_queryset_for_date_search_form(queryset, self.request)
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(PowerTrainingsListView, self).get_context_data(**kwargs)
-        return update_context_for_date_search_form(context, self.request)
-
-
 class ExercisesListView(LoginRequiredMixin, generic.ListView):
     model = Exercise
     template_name = "main/exercise/exercises-list.html"
@@ -101,6 +98,15 @@ class ExerciseUpdateView(LoginRequiredMixin, generic.UpdateView):
     success_url = "/exercises/"
     form_class = ExerciseForm
 
+    def post(self, request, *args, **kwargs):
+        exercise = get_object_or_404(Exercise, pk=kwargs.get("pk", -1))
+        form = ExerciseForm(request.POST, user=request.user, instance=exercise)
+        if form.is_valid():
+            form.save()
+            return redirect("main:exercises-list")
+        else:
+            return render(request, self.template_name, {"object": form.instance})
+
 
 class ExerciseCreateView(LoginRequiredMixin, generic.CreateView):
     model = Exercise
@@ -108,37 +114,13 @@ class ExerciseCreateView(LoginRequiredMixin, generic.CreateView):
     form_class = ExerciseForm
     success_url = "/exercises/"
 
-
-class PowerTrainingUpdateView(LoginRequiredMixin, generic.UpdateView):
-    model = PowerTraining
-    template_name = "main/trainings/power-training/update-power-training.html"
-    form_class = PowerTrainingForm
-    success_url = "/power-trainings/"
-
-    def get_context_data(self, **kwargs):
-        context = super(PowerTrainingUpdateView, self).get_context_data(**kwargs)
-        context["exercises"] = Exercise.objects.all()
-        return context
-
-
-class CyclingTrainingListView(LoginRequiredMixin, generic.ListView):
-    model = Cycling
-    template_name = "main/trainings/cycling_training/cycling-training-list.html"
-
-    def get_queryset(self):
-        queryset = Cycling.objects.filter(user=self.request.user)
-        return get_queryset_for_date_search_form(queryset, self.request)
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(CyclingTrainingListView, self).get_context_data(**kwargs)
-        return update_context_for_date_search_form(context, self.request)
-
-
-class CreateCyclingTrainingView(LoginRequiredMixin, generic.CreateView):
-    model = Cycling
-    form_class = CyclingForm
-    template_name = "main/trainings/cycling_training/cycling-training-form.html"
-    success_url = "/cycling-trainings/"
+    def post(self, request, *args, **kwargs):
+        form = ExerciseForm(request.POST, user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect("main:exercises-list")
+        else:
+            return render(request, self.template_name, context=self.get_context_data())
 
 
 class DishListView(LoginRequiredMixin, generic.ListView):
@@ -169,17 +151,31 @@ class UpdateDishView(LoginRequiredMixin, generic.UpdateView):
     success_url = "/dishes/"
 
 
-class UpdateCyclingTrainingView(LoginRequiredMixin, generic.UpdateView):
-    fields = "__all__"
+# Trainings list view
+class PowerTrainingsListView(LoginRequiredMixin, generic.ListView):
+    model = PowerTraining
+    template_name = "main/trainings/power-training/power-trainings-list.html"
+
+    def get_queryset(self):
+        queryset = PowerTraining.objects.filter(user=self.request.user)
+        return get_queryset_for_date_search_form(queryset, self.request)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(PowerTrainingsListView, self).get_context_data(**kwargs)
+        return update_context_for_date_search_form(context, self.request)
+
+
+class CyclingTrainingListView(LoginRequiredMixin, generic.ListView):
     model = Cycling
-    class_form = CyclingForm
-    template_name = "main/trainings/cycling_training/cycling-training-form.html"
-    success_url = "/cycling-trainings/"
+    template_name = "main/trainings/cycling_training/cycling-training-list.html"
 
+    def get_queryset(self):
+        queryset = Cycling.objects.filter(user=self.request.user)
+        return get_queryset_for_date_search_form(queryset, self.request)
 
-def logout_view(request: HttpRequest) -> HttpResponse:
-    logout(request)
-    return HttpResponseRedirect("/accounts/login")
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(CyclingTrainingListView, self).get_context_data(**kwargs)
+        return update_context_for_date_search_form(context, self.request)
 
 
 class SwimmingTrainingListView(LoginRequiredMixin, generic.ListView):
@@ -221,6 +217,17 @@ class WalkingTrainingListView(LoginRequiredMixin, generic.ListView):
         return update_context_for_date_search_form(context, self.request)
 
 
+# Create training views
+class CreatePowerTrainingView(LoginRequiredMixin, generic.CreateView):
+    template_name = "main/trainings/power-training/create-power-training.html"
+    model = PowerTraining
+    form_class = PowerTrainingForm
+
+    def form_valid(self, form):
+        training = form.save()
+        return redirect("main:update-power-training", pk=training.pk)
+
+
 class CreateSwimmingView(LoginRequiredMixin, generic.CreateView):
     model = Swimming
     form_class = SwimmingForm
@@ -240,6 +247,26 @@ class CreateWalkingView(LoginRequiredMixin, generic.CreateView):
     form_class = WalkingForm
     template_name = "base_distance_average_speed_form.html"
     success_url = "/walking-trainings/"
+
+
+class CreateCyclingTrainingView(LoginRequiredMixin, generic.CreateView):
+    model = Cycling
+    form_class = CyclingForm
+    template_name = "main/trainings/cycling_training/cycling-training-form.html"
+    success_url = "/cycling-trainings/"
+
+
+# update training views
+class UpdatePowerTrainingView(LoginRequiredMixin, generic.UpdateView):
+    model = PowerTraining
+    template_name = "main/trainings/power-training/update-power-training.html"
+    form_class = PowerTrainingForm
+    success_url = "/power-trainings/"
+
+    def get_context_data(self, **kwargs):
+        context = super(UpdatePowerTrainingView, self).get_context_data(**kwargs)
+        context["exercises"] = Exercise.objects.all()
+        return context
 
 
 class UpdateSwimmingView(LoginRequiredMixin, generic.UpdateView):
@@ -264,6 +291,15 @@ class UpdateWalkingView(LoginRequiredMixin, generic.UpdateView):
     class_form = WalkingForm
     template_name = "base_distance_average_speed_form.html"
     success_url = "/walking-trainings/"
+
+
+class UpdateCyclingTrainingView(LoginRequiredMixin, generic.UpdateView):
+    fields = "__all__"
+    model = Cycling
+    class_form = CyclingForm
+    template_name = "main/trainings/cycling_training/cycling-training-form.html"
+    success_url = "/cycling-trainings/"
+# ------
 
 
 class MealListView(LoginRequiredMixin, generic.ListView):
@@ -332,35 +368,46 @@ def update_context_for_name_search_form(base_context: dict[str, Any],
             "name": name
         }
     )
-    return base_context
+    return update_contex_for_sort(base_context, request)
 
 
-def get_queryset_for_name_search_form(base_queryset: QuerySet,
-                                      request: HttpRequest) -> QuerySet:
-
-    name = request.GET.get("name", "")
-
-    form = NameSearchForm(request.GET)
-    if not form.is_valid() or not base_queryset.count():
-        return base_queryset
-    if name:
-        base_queryset = base_queryset.filter(name__icontains=name)
-
-    return base_queryset
-
-
-def update_context_for_date_search_form(base_context: dict[str, Any],
-                                        request: HttpRequest) -> dict[str, Any]:
-    date = request.GET.get("date")
-    sort = request.GET.get("sort")
-
+def update_contex_for_sort(base_context: dict[str, Any], request: HttpRequest) -> dict[str, Any]:
+    sort = request.GET.get("sort", None)
     base_context["search_form"] = DateSearchForm(
         initial={
-            "date": date,
             "sort": sort
         }
     )
     return base_context
+
+
+def update_context_for_date_search_form(base_context: dict[str, Any],
+                                        request: HttpRequest) -> dict[str, Any]:
+    date = request.GET.get("date", None)
+
+    base_context["search_form"] = DateSearchForm(
+        initial={
+            "date": date,
+        }
+    )
+    return update_contex_for_sort(base_context, request)
+
+
+def get_queryset_for_name_search_form(base_queryset: QuerySet,
+                                      request: HttpRequest) -> QuerySet:
+    form = NameSearchForm(request.GET)
+    if not form.is_valid() or not base_queryset.count():
+        return base_queryset
+
+    if name := form.cleaned_data.get("name", None):
+        base_queryset = base_queryset.filter(name__icontains=name)
+
+    if form.cleaned_data.get("sort", None) == "DESC":
+        base_queryset = base_queryset.order_by("-name")
+    else:
+        base_queryset = base_queryset.order_by("name")
+
+    return base_queryset
 
 
 def get_queryset_for_date_search_form(base_queryset: QuerySet,
