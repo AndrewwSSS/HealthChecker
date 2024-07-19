@@ -32,7 +32,7 @@ class User(AbstractUser):
     def body_mass_index(self) -> float | None:
         if not self.weight or not self.height:
             return None
-        return self.weight / (self.height**2)
+        return round((self.weight / (self.height**2)) * 10000, 1)
 
 
 class Training(models.Model):

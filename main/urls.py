@@ -8,7 +8,7 @@ from main.views import (HomePageView,
                         ExercisesListView,
                         ExerciseUpdateView,
                         ExerciseCreateView,
-                        PowerTrainingUpdateView,
+                        UpdatePowerTrainingView,
                         CyclingTrainingListView,
                         CreateCyclingTrainingView,
                         CreatePowerTrainingView,
@@ -27,8 +27,8 @@ from main.views import (HomePageView,
                         UpdateWalkingView,
                         MealListView,
                         CreateMealView,
-                        UpdateMealView)
-from django.contrib.auth.views import LoginView
+                        UpdateMealView,
+                        LoginUserView)
 
 
 urlpatterns = [
@@ -37,13 +37,13 @@ urlpatterns = [
     path("power-trainings/", PowerTrainingsListView.as_view(), name="power-trainings-list"),
     path("power-trainings/create", CreatePowerTrainingView.as_view(), name="create-power-training"),
     path("account/registration", CreateUserView.as_view(), name="registration"),
-    path("accounts/login", LoginView.as_view(), name="login"),
+    path("accounts/login", LoginUserView.as_view(),name="login"),
     path("accounts/logout", logout_view, name="logout"),
     path("accounts/user-profile", UserProfileView.as_view(), name="user-profile"),
     path("exercises/", ExercisesListView.as_view(), name="exercises-list"),
     path("exercise/<int:pk>", ExerciseUpdateView.as_view(), name="exercise-update"),
     path("exercises/create/", ExerciseCreateView.as_view(), name="create-exercise"),
-    path("power-trainings/update/<int:pk>", PowerTrainingUpdateView.as_view(), name="update-power-training"),
+    path("power-trainings/update/<int:pk>", UpdatePowerTrainingView.as_view(), name="update-power-training"),
     path("cycling-trainings/", CyclingTrainingListView.as_view(), name="cycling-training-list"),
     path("cycling-trainings/create", CreateCyclingTrainingView.as_view(), name="create-cycling-training"),
     path("cycling-trainings/update/<int:pk>", UpdateCyclingTrainingView.as_view(), name="update-cycling-training"),

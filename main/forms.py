@@ -55,36 +55,15 @@ class UserCreateForm(UserCreationForm):
 class PowerTrainingForm(ModelForm):
     description = forms.CharField(required=False)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     class Meta:
         model = PowerTraining
-        fields = ["start", "end", "description", "user"]
-
-    def clean(self):
-        cleaned_data = clean_base_training(self.cleaned_data)
-        user = cleaned_data.get("user")
-
-        if hasattr(self.instance, "user") and user != self.instance.user:
-            raise forms.ValidationError("Access denied")
-        return cleaned_data
+        fields = ["start", "end", "description"]
 
 
 class ExerciseForm(ModelForm):
     class Meta:
         model = Exercise
-        fields = ["name", "description", "owner"]
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop("user", None)
-        super().__init__(*args, **kwargs)
-
-    def clean(self):
-        cleaned_data = clean_base_training(self.cleaned_data)
-        if hasattr(self.instance, "owner") and self.instance.owner != self.user:
-            raise forms.ValidationError("Access denied")
-        return cleaned_data
+        fields = ["name", "description"]
 
 
 class CyclingForm(ModelForm):
@@ -103,7 +82,7 @@ class CyclingForm(ModelForm):
 class DishForm(ModelForm):
     class Meta:
         model = Dish
-        fields = "__all__"
+        fields = ["name", "carbohydrates", "fats", "protein", "calories"]
 
     def clean(self):
         cleaned_data = super(DishForm, self).clean()
@@ -149,14 +128,7 @@ class WalkingForm(ModelForm):
 class MealForm(ModelForm):
     class Meta:
         model = Meal
-        fields = "__all__"
-
-    def clean(self):
-        cleaned_data = super(MealForm, self).clean()
-        user = cleaned_data["user"]
-        if hasattr(self.instance, "user") and self.instance.user != user:
-            raise forms.ValidationError("Access denied")
-        return cleaned_data
+        fields = ["date"]
 
 
 class DateSearchForm(forms.Form):

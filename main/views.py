@@ -8,7 +8,7 @@ from django.db.models import QuerySet, Q
 from django.http import (HttpResponse,
                          HttpRequest,
                          HttpResponseRedirect,
-                         Http404)
+                         Http404, HttpResponseNotFound)
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views import generic
 
@@ -98,14 +98,12 @@ class ExerciseUpdateView(LoginRequiredMixin, generic.UpdateView):
     success_url = "/exercises/"
     form_class = ExerciseForm
 
-    def post(self, request, *args, **kwargs):
-        exercise = get_object_or_404(Exercise, pk=kwargs.get("pk", -1))
-        form = ExerciseForm(request.POST, user=request.user, instance=exercise)
-        if form.is_valid():
-            form.save()
-            return redirect("main:exercises-list")
-        else:
-            return render(request, self.template_name, {"object": form.instance})
+    def form_valid(self, form):
+        exercise = form.save(commit=False)
+        if exercise.owner != self.request.user:
+            return HttpResponseNotFound("Access denied")
+        exercise.save()
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class ExerciseCreateView(LoginRequiredMixin, generic.CreateView):
@@ -114,13 +112,11 @@ class ExerciseCreateView(LoginRequiredMixin, generic.CreateView):
     form_class = ExerciseForm
     success_url = "/exercises/"
 
-    def post(self, request, *args, **kwargs):
-        form = ExerciseForm(request.POST, user=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect("main:exercises-list")
-        else:
-            return render(request, self.template_name, context=self.get_context_data())
+    def form_valid(self, form):
+        exercise = form.save(commit=False)
+        exercise.owner = self.request.user
+        exercise.save()
+        return redirect("main:exercises-list")
 
 
 class DishListView(LoginRequiredMixin, generic.ListView):
@@ -143,6 +139,12 @@ class CreateDishView(LoginRequiredMixin, generic.CreateView):
     template_name = "main/dish/create-dish.html"
     success_url = "/dishes/"
 
+    def form_valid(self, form):
+        dish = form.save(commit=False)
+        dish.user = self.request.user
+        dish.save()
+        return redirect("main:dish-list")
+
 
 class UpdateDishView(LoginRequiredMixin, generic.UpdateView):
     model = Dish
@@ -150,11 +152,19 @@ class UpdateDishView(LoginRequiredMixin, generic.UpdateView):
     template_name = "main/dish/update-dish.html"
     success_url = "/dishes/"
 
+    def form_valid(self, form):
+        dish = form.save(commit=False)
+        if dish.user != self.request.user:
+            return HttpResponseNotFound("Access denied")
+        dish.save()
+        return redirect("main:dish-list")
+
 
 # Trainings list view
 class PowerTrainingsListView(LoginRequiredMixin, generic.ListView):
     model = PowerTraining
     template_name = "main/trainings/power-training/power-trainings-list.html"
+    paginate_by = 30
 
     def get_queryset(self):
         queryset = PowerTraining.objects.filter(user=self.request.user)
@@ -168,6 +178,7 @@ class PowerTrainingsListView(LoginRequiredMixin, generic.ListView):
 class CyclingTrainingListView(LoginRequiredMixin, generic.ListView):
     model = Cycling
     template_name = "main/trainings/cycling_training/cycling-training-list.html"
+    paginate_by = 30
 
     def get_queryset(self):
         queryset = Cycling.objects.filter(user=self.request.user)
@@ -181,6 +192,7 @@ class CyclingTrainingListView(LoginRequiredMixin, generic.ListView):
 class SwimmingTrainingListView(LoginRequiredMixin, generic.ListView):
     model = Swimming
     template_name = "main/trainings/swimming_training/swimming-list.html"
+    paginate_by = 30
 
     def get_queryset(self):
         queryset = Swimming.objects.filter(user=self.request.user)
@@ -194,6 +206,7 @@ class SwimmingTrainingListView(LoginRequiredMixin, generic.ListView):
 class JoggingTrainingListView(LoginRequiredMixin, generic.ListView):
     model = Jogging
     template_name = "main/trainings/jogging_trainings/jogging-list.html"
+    paginate_by = 30
 
     def get_queryset(self):
         queryset = Jogging.objects.filter(user=self.request.user)
@@ -207,6 +220,7 @@ class JoggingTrainingListView(LoginRequiredMixin, generic.ListView):
 class WalkingTrainingListView(LoginRequiredMixin, generic.ListView):
     model = Walking
     template_name = "main/trainings/walk/walking-list.html"
+    paginate_by = 30
 
     def get_queryset(self):
         queryset = Walking.objects.filter(user=self.request.user)
@@ -224,7 +238,9 @@ class CreatePowerTrainingView(LoginRequiredMixin, generic.CreateView):
     form_class = PowerTrainingForm
 
     def form_valid(self, form):
-        training = form.save()
+        training = form.save(commit=False)
+        training.user = self.request.user
+        training.save()
         return redirect("main:update-power-training", pk=training.pk)
 
 
@@ -265,8 +281,15 @@ class UpdatePowerTrainingView(LoginRequiredMixin, generic.UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UpdatePowerTrainingView, self).get_context_data(**kwargs)
-        context["exercises"] = Exercise.objects.all()
+        context["exercises"] = Exercise.objects.filter(owner=self.request.user)
         return context
+
+    def form_valid(self, form):
+        training = form.save(commit=False)
+        if training.user != self.request.user:
+            return HttpResponseNotFound("Access Denied")
+        training.save()
+        return redirect("main:power-trainings-list")
 
 
 class UpdateSwimmingView(LoginRequiredMixin, generic.UpdateView):
@@ -349,7 +372,9 @@ class CreateMealView(LoginRequiredMixin, generic.CreateView):
         return context
 
     def form_valid(self, form):
-        meal = form.save()
+        meal = form.save(commit=False)
+        meal.user = self.request.user
+        meal.save()
         return redirect("main:update-meal", pk=meal.pk)
 
 
@@ -358,6 +383,12 @@ class UpdateMealView(LoginRequiredMixin, generic.UpdateView):
     form_class = MealForm
     template_name = "main/meal/update-meal.html"
     success_url = "/meals/"
+
+    def form_valid(self, form):
+        meal = form.save(commit=False)
+        if meal.user != self.request.user:
+            return HttpResponseNotFound("Access denied")
+        return redirect("main:meal-list")
 
 
 def update_context_for_name_search_form(base_context: dict[str, Any],
