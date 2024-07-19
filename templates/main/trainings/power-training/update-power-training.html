@@ -69,25 +69,22 @@
                     <option value="-1">No exercises yet</option>
                   {% endfor %}
                 </select>
-                <button class="btn btn-primary" id="addExercise">
-                  Add exercise
-                </button>
+                <i class="fa-solid fa-plus create-icon" id="addExercise"></i>
               </div>
             </div>
             <div id="exercise-container">
               {% for exercise in powertraining.exercises.all %}
                 <div data-exercise-id="{{ exercise.id }}">
                   <div class="card-title-container mb-3">
-                      <span>
-                        {{ exercise.exercise.name }}
-                      </span>
+                      <div class="d-flex gap-3">
+                        <span>
+                          {{ exercise.exercise.name }}
+                        </span>
+                        <i class="fa-solid fa-plus addApproach create-icon"></i>
+                      </div>
+
                     <div class="card-title-container gap-2">
-                      <button class="btn btn-primary addApproach">
-                        Add approach
-                      </button>
-                      <button class="btn btn-danger deleteExercise">
-                        Delete
-                      </button>
+                      <i class="fa-solid fa-xmark delete-element-icon delete-training-icon deleteExercise"></i>
                     </div>
                   </div>
                   <ul class="list-group mb-3" style="margin-left: 40px">

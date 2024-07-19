@@ -1296,3 +1296,9 @@ h6 {
 .create-training-icon {
   font-size: 22px;
 }
+
+.create-icon {
+  font-size: 20px;
+  color: green;
+  align-self: center;
+}
