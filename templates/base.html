@@ -316,7 +316,7 @@
 
             </div>
 
-            <!-- Average fats Card -->
+            <!-- BMI Card -->
             <div class="col-xxl-6 col-md-6">
               <div class="card info-card customers-card">
                 <div class="filter">
@@ -361,6 +361,139 @@
                       </div>
                       <div class="ps-3 align-center">
                         <h6>{% if user.body_mass_index %}{{ user.body_mass_index }}{% else %}-{% endif %}</h6>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Cycling total km Card -->
+              <div class="col-xxl-6 col-md-6">
+                <div class="card info-card revenue-card">
+
+                  <div class="filter">
+                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                      <li class="dropdown-header text-start">
+                        <h6>Filter</h6>
+                      </li>
+
+                      <li><span class="dropdown-item total-km-cycling-filter">Today</span></li>
+                      <li><span class="dropdown-item total-km-cycling-filter">This Month</span></li>
+                      <li><span class="dropdown-item total-km-cycling-filter">This Year</span></li>
+                    </ul>
+                  </div>
+
+                  <div class="card-body">
+                    <h5 class="card-title">Cycling<span id="total-km-cycling-filter-name"> | This Month</span></h5>
+
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-currency-dollar"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6 id="cycling-km-container">-</h6>
+                        <span class="text-muted small pt-2 ps-1">km</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Walking total km Card -->
+              <div class="col-xxl-6 col-md-6">
+                <div class="card info-card revenue-card">
+
+                  <div class="filter">
+                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                      <li class="dropdown-header text-start">
+                        <h6>Filter</h6>
+                      </li>
+
+                      <li><span class="dropdown-item total-km-walking-filter">Today</span></li>
+                      <li><span class="dropdown-item total-km-walking-filter">This Month</span></li>
+                      <li><span class="dropdown-item total-km-walking-filter">This Year</span></li>
+                    </ul>
+                  </div>
+
+                  <div class="card-body">
+                    <h5 class="card-title">Walking<span id="total-km-walking-filter-name"> | This Month</span></h5>
+
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-currency-dollar"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6 id="walking-km-container">-</h6>
+                        <span class="text-muted small pt-2 ps-1">km</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Jogging total km Card -->
+              <div class="col-xxl-6 col-md-6">
+                <div class="card info-card revenue-card">
+
+                  <div class="filter">
+                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                      <li class="dropdown-header text-start">
+                        <h6>Filter</h6>
+                      </li>
+
+                      <li><span class="dropdown-item total-km-jogging-filter">Today</span></li>
+                      <li><span class="dropdown-item total-km-jogging-filter">This Month</span></li>
+                      <li><span class="dropdown-item total-km-jogging-filter">This Year</span></li>
+                    </ul>
+                  </div>
+
+                  <div class="card-body">
+                    <h5 class="card-title">Jogging<span id="total-km-jogging-filter-name"> | This Month</span></h5>
+
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-currency-dollar"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6 id="jogging-km-container">-</h6>
+                        <span class="text-muted small pt-2 ps-1">km</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Swimming total km Card -->
+              <div class="col-xxl-6 col-md-6">
+                <div class="card info-card revenue-card">
+
+                  <div class="filter">
+                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                      <li class="dropdown-header text-start">
+                        <h6>Filter</h6>
+                      </li>
+
+                      <li><span class="dropdown-item total-km-swimming-filter">Today</span></li>
+                      <li><span class="dropdown-item total-km-swimming-filter">This Month</span></li>
+                      <li><span class="dropdown-item total-km-swimming-filter">This Year</span></li>
+                    </ul>
+                  </div>
+
+                  <div class="card-body">
+                    <h5 class="card-title">Swimming<span id="total-km-swimming-filter-name"> | This Month</span></h5>
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-currency-dollar"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6 id="swimming-km-container">-</h6>
+                        <span class="text-muted small pt-2 ps-1">km</span>
                       </div>
                     </div>
                   </div>

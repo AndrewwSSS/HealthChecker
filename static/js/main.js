@@ -1,7 +1,9 @@
 const SUCCESSES_ICON = '<i class="bi bi-check-circle-fill"></i>'
 const ERROR_ICON = '<i class="bi bi-x-circle-fill"></i>'
 const TOAST_SHOW_DURATION = 5000
-
+const FAIL_CALLBACK = () => {
+    show_toast(`Fail to do operation`, "error")
+}
 
 
 function init_trainings_type_ratio_echart_callback(response) {
@@ -35,6 +37,26 @@ function init_trainings_type_ratio_echart_callback(response) {
             data: response['data']
         }]
     })
+}
+
+function show_toast(msg, type = "success") {
+    let toast = document.createElement('div')
+    toast.classList.add("toastElement");
+    let toastBox = document.getElementById("toastBox");
+    toastBox.appendChild(toast);
+
+    if(type === "success") {
+        toast.classList.add("success");
+        toast.innerHTML = SUCCESSES_ICON + msg
+    }
+    else if (type === "error") {
+        toast.classList.add("error");
+        toast.innerHTML = ERROR_ICON + msg
+    }
+
+    setTimeout(function () {
+        toast.remove();
+    },TOAST_SHOW_DURATION);
 }
 
 function getCookie(name) {
@@ -168,8 +190,6 @@ function create_or_update_approach(event) {
         let fail_callback = (XMLHttpRequest, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
         ajax_post("/api/add_approach", formData, done_callback, fail_callback)
     }
-
-
 }
 
 function create_power_exercise() {
@@ -289,25 +309,7 @@ function update_user(){
     ajax_post("/api/user_update", formData, done_callback, fail_callback)
 }
 
-function show_toast(msg, type = "success") {
-    let toast = document.createElement('div')
-    toast.classList.add("toastElement");
-    let toastBox = document.getElementById("toastBox");
-    toastBox.appendChild(toast);
 
-    if(type === "success") {
-        toast.classList.add("success");
-        toast.innerHTML = SUCCESSES_ICON + msg
-    }
-    else if (type === "error") {
-        toast.classList.add("error");
-        toast.innerHTML = ERROR_ICON + msg
-}
-
-    setTimeout(function () {
-        toast.remove();
-    },TOAST_SHOW_DURATION);
-}
 
 function get_training_information(element) {
     let result = {}
@@ -488,7 +490,7 @@ function delete_meal(event) {
 
 function update_statistic_card(container_id, filter_name_id, new_period, new_data) {
     document.getElementById(container_id).innerHTML = new_data
-    document.getElementById(filter_name_id).innerHTML = `| ${new_period}`
+    document.getElementById(filter_name_id).innerHTML = ` | ${new_period}`
 }
 
 function change_filter_training_ratio(event) {
@@ -598,6 +600,25 @@ function change_avg_fats_filter(event) {
     ajax_get("/api/get_avg_fats_info", data_string, success_callback, fail_callback)
 }
 
+function change_total_km_cycling_filter(event) {
+    let period = event.target.textContent
+    load_total_km_by_period_and_training_type(period, "cycling")
+}
+
+function change_total_km_swimming_filter(event) {
+    let period = event.target.textContent
+    load_total_km_by_period_and_training_type(period, "swimming")
+}
+
+function change_total_km_jogging_filter(event) {
+    let period = event.target.textContent
+    load_total_km_by_period_and_training_type(period, "jogging")
+}
+
+function change_total_km_walking_filter(event) {
+    let period = event.target.textContent
+    load_total_km_by_period_and_training_type(period, "walking")
+}
 
 function load_all_statistics_of_main_page() {
     // Init and load trainings ratio chart
@@ -607,7 +628,8 @@ function load_all_statistics_of_main_page() {
             () => { show_toast("Error load training types ratio", 'error')});
 
     let error_callback = response => { show_toast(`Error to load`, "error") }
-    let LOAD_PERIOD = "Today"
+
+    let LOAD_PERIOD = "This Month"
 
     ajax_get("/api/get_avg_fats_info", `period=${LOAD_PERIOD}`, (response) => {
         update_statistic_card("fats-container", "avg-fats-filter-name", LOAD_PERIOD, response["data"])
@@ -624,6 +646,24 @@ function load_all_statistics_of_main_page() {
     ajax_get("/api/get_avg_calories_info", `period=${LOAD_PERIOD}`, (response) => {
         update_statistic_card("calories-container", "avg-calories-filter-name", LOAD_PERIOD, response["data"])
     }, error_callback)
+
+    load_total_km_by_period_and_training_type(LOAD_PERIOD, "jogging")
+    load_total_km_by_period_and_training_type(LOAD_PERIOD, "walking")
+    load_total_km_by_period_and_training_type(LOAD_PERIOD, "swimming")
+    load_total_km_by_period_and_training_type(LOAD_PERIOD, "cycling")
+
+}
+
+function load_total_km_by_period_and_training_type(period, training_type) {
+    let data_string = `period=${period}`
+    let success_callback = response => {
+        update_statistic_card(`${training_type}-km-container`, `total-km-${training_type}-filter-name`, period, response["data"])
+    }
+    let  fail_callback = () => {
+        show_toast(`Fail to do operation`, "error")
+    }
+
+    ajax_get(`/api/get_total_km_by_${training_type}`, data_string, success_callback, fail_callback)
 }
 
 
@@ -640,11 +680,17 @@ function load_all_statistics_of_main_page() {
     on("click", ".deleteDishCount", delete_dish_count, true)
     on("click", ".saveApproach", create_or_update_approach, true)
     on("click", ".create-or-update-dish-count", create_or_update_dish, true)
+
     on("click", ".training-ratio-filter", change_filter_training_ratio, true)
     on("click", ".avg-calories-filter", change_avg_calories_filter, true)
     on("click", ".avg-protein-filter", change_avg_protein_filter, true)
     on("click", ".avg-carbohydrates-filter", change_avg_carbohydrates_filter, true)
     on("click", ".avg-fats-filter", change_avg_fats_filter, true)
+
+    on("click", ".total-km-cycling-filter", change_total_km_cycling_filter, true)
+    on("click", ".total-km-walking-filter", change_total_km_walking_filter, true)
+    on("click", ".total-km-jogging-filter", change_total_km_jogging_filter, true)
+    on("click", ".total-km-swimming-filter", change_total_km_swimming_filter, true)
 
 
     on('click', '.toggle-sidebar-btn', function() {

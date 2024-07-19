@@ -273,10 +273,9 @@ class DeleteMealView(LoginRequiredMixin, View):
 class GetTrainingsTypeRatio(LoginRequiredMixin, View):
     @staticmethod
     def get(request: HttpRequest) -> JsonResponse:
-        period = request.GET.get("period", default=None)
-        if not period:
-            return INVALID_DATA_RESPONSE
-        period = period.lower()
+        if not (period := get_and_validate_period(request)):
+             return INVALID_DATA_RESPONSE
+        
         today = date.today()
         if period == "today":
             q_obj = Q(user=request.user, start__date=today)
@@ -345,6 +344,22 @@ def get_meals_by_period(period: str, user: User) -> QuerySet[Meal] | None:
     return user.meals.filter(q_obj)
 
 
+def get_trainings_by_period_and_user(period: str,
+                                     user: User,
+                                     training_type: type[Training]) -> QuerySet[Training] | None:
+    today = date.today()
+    if period == "today":
+        q_obj = Q(start__date=today)
+    elif period == "this month":
+        q_obj = Q(start__month=today.month,
+                  start__year=today.year)
+    elif period == "this year":
+        q_obj = Q(start__year=today.year)
+    else:
+        return None
+    return training_type.objects.filter(q_obj, user=user)
+    
+    
 def get_unique_meal_dates_count(query_set: QuerySet[Meal]) -> int:
     return query_set.annotate(unique_date=TruncDate('date')).values('unique_date').distinct().count()
 
@@ -429,4 +444,35 @@ class GetAvgFatsPerDayView(LoginRequiredMixin, View):
         }, status=200)
 
         return response
+
+
+class GetTotalKmTraining(LoginRequiredMixin, View):
+    training_type: type[Training]
+
+    def get(self, request: HttpRequest) -> JsonResponse:
+        if not (period := get_and_validate_period(request)):
+            return INVALID_DATA_RESPONSE
+        trainings = get_trainings_by_period_and_user(period, request.user, self.training_type)
+        total_kilometers = sum(training.distance for training in trainings)
+
+        response = JsonResponse({
+            "data": total_kilometers,
+        }, status=200)
+        return response
+
+
+class GetTotalKMbyCycling(GetTotalKmTraining):
+    training_type = Cycling
+
+
+class GetTotalKMbyJogging(GetTotalKmTraining):
+    training_type = Jogging
+
+
+class GetTotalKMbyWalking(GetTotalKmTraining):
+    training_type = Walking
+
+
+class GetTotalKMbySwimming(GetTotalKmTraining):
+    training_type = Swimming
 
