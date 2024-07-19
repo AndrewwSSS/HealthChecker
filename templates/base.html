@@ -117,7 +117,7 @@
         </span>
         <i class="bi bi-chevron-down ms-auto"></i>
       </a>
-      <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+      <ul id="components-nav" class="nav-content" data-bs-parent="#sidebar-nav">
         <li>
           <a href="{% url "main:power-trainings-list"%}">
             <i class="fa-solid fa-dumbbell"></i>
@@ -170,7 +170,7 @@
         </span>
         <i class="bi bi-chevron-down ms-auto"></i>
       </a>
-        <ul id="foodComponent" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <ul id="foodComponent" class="nav-content " data-bs-parent="#sidebar-nav">
         <li>
           <a href="{% url "main:dish-list"%}">
             <i class="fa-solid fa-bowl-food"></i>
@@ -191,7 +191,6 @@
     </li>
 
 
-
     <li class="nav-item">
       <a class="nav-link collapsed" href="{% url "main:exercises-list" %}">
         <i class="fa-regular fa-rectangle-list"></i>
@@ -207,14 +206,16 @@
 <!-- ====== Main content ======= -->
 <main id="main" class="main">
 {% block content %}
+    <div class="pagetitle">
+      <h1>Home page</h1>
+    </div>
     <section class="section dashboard">
       <div class="row">
         <!-- Left side columns -->
         <div class="col-lg-8">
           <div class="row">
-            <h5 class="card-titled">Food statistics</h5>
             <!-- Average calories Card -->
-            <div class="col-xxl-4 col-md-6">
+            <div class="col-xxl-6 col-md-6">
               <div class="card info-card sales-card">
                 <div class="filter">
                   <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
@@ -246,7 +247,7 @@
             </div>
 
             <!-- Average protein Card -->
-            <div class="col-xxl-4 col-md-6">
+            <div class="col-xxl-6 col-md-6">
               <div class="card info-card revenue-card">
 
                 <div class="filter">
@@ -280,7 +281,7 @@
             </div>
 
             <!-- Average carbohydrates Card -->
-            <div class="col-xxl-4 col-md-6">
+            <div class="col-xxl-6 col-md-6">
 
               <div class="card info-card customers-card">
 
@@ -316,7 +317,7 @@
             </div>
 
             <!-- Average fats Card -->
-            <div class="col-xxl-4 col-md-6">
+            <div class="col-xxl-6 col-md-6">
               <div class="card info-card customers-card">
                 <div class="filter">
                   <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
