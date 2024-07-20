@@ -242,18 +242,11 @@ class CreateDishView(CreateElementWithUserPropertyView):
     success_url = "main:dish-list"
 
 
-class UpdateDishView(LoginRequiredMixin, generic.UpdateView):
+class UpdateDishView(UpdateElementWithUserFieldView):
     model = Dish
     form_class = DishForm
     template_name = "main/dish/update-dish.html"
-    success_url = "/dishes/"
-
-    def form_valid(self, form):
-        dish = form.save(commit=False)
-        if dish.user != self.request.user:
-            return HttpResponseNotFound("Access denied")
-        dish.save()
-        return redirect("main:dish-list")
+    success_url = "main:dish-list"
 
 
 # Trainings list view
