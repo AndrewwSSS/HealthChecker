@@ -251,17 +251,16 @@ function create_or_update_approach(event) {
         formData.approach_id =li_item.getAttribute("data-approach-id")
 
         let done_callback = response => show_toast("Approach successfully added.", "success")
-        let fail_callback = (XMLHttpRequest, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
 
-        ajax_post("/api/update_approach", formData, done_callback, fail_callback)
+        ajax_post("/api/update_approach", formData, done_callback, FAIL_CALLBACK)
     } else {
         let done_callback = response => {
             event.target.textContent = "Update"
             li_item.setAttribute("data-approach-id", response["approach_id"]);
             show_toast("Approach successfully added.", "success")
         }
-        let fail_callback = (XMLHttpRequest, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
-        ajax_post("/api/add_approach", formData, done_callback, fail_callback)
+
+        ajax_post("/api/add_approach", formData, done_callback, FAIL_CALLBACK)
     }
 }
 
@@ -269,8 +268,8 @@ function create_power_exercise() {
     let select_item = document.getElementById("select_exercise")
 
     let formData = {
-        training_id: document.getElementById("training_id").getAttribute("value"),
-        exercise_id: select_item.options[select_item.selectedIndex].value,
+        training: document.getElementById("training_id").getAttribute("value"),
+        exercise: select_item.options[select_item.selectedIndex].value,
     }
 
     let done_callback = response => {
@@ -282,7 +281,7 @@ function create_power_exercise() {
             noExerciseMessage.remove()
 
         let div = document.createElement("div")
-        div.setAttribute("data-exercise-id", `${response["power_training_id"]}`)
+        div.setAttribute("data-exercise-id", `${response["id"]}`)
         div.innerHTML = (`<div class="card-title-container mb-3">
                               <span>${exercise_name}</span>
                               <div class="card-title-container gap-2">
@@ -311,7 +310,6 @@ function delete_power_exercise(event) {
 
     let formData = {
         exercise_id: exercise.getAttribute("data-exercise-id"),
-        training_id: document.getElementById("training_id").value,
     }
 
     let done_callback = response => {
@@ -321,10 +319,8 @@ function delete_power_exercise(event) {
         }
         show_toast("Exercise successfully deleted", "success")
     }
-    let fail_callback =
-        (jqXHR, textStatus, errorThrown) => show_toast(`${errorThrown}`, "error")
 
-    ajax_post("/api/delete_power_exercise", formData, done_callback, fail_callback)
+    ajax_post("/api/delete_power_exercise", formData, done_callback, FAIL_CALLBACK)
 }
 
 function delete_approach(event) {
