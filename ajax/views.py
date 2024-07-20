@@ -26,10 +26,6 @@ SUCCESS_RESPONSE = JsonResponse({
     "status": "Success",
 }, status=200)
 
-NOT_FOUND_RESPONSE = JsonResponse({
-    "status": "error",
-}, status=404)
-
 INVALID_DATA_RESPONSE = JsonResponse({
     "status": "error",
 }, status=422)
