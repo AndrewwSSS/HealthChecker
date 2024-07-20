@@ -211,11 +211,7 @@ function delete_training(event) {
         show_toast("Successfully deleted training", "success")
     }
 
-    let fail_callback = (XMLHttpRequest, textStatus, errorThrown) =>   {
-        show_toast(`${errorThrown}`, "error")
-    }
-
-    ajax_post("/api/trainings/delete_training", formData, success_callback, fail_callback)
+    ajax_post("/api/trainings/delete_training", formData, success_callback, FAIL_CALLBACK)
 }
 
 function create_approach_form(event) {
@@ -298,9 +294,8 @@ function create_power_exercise() {
 
         show_toast("Exercise added successfully", "success")
     }
-    let fail_callback = (XMLHttpRequest, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
 
-    ajax_post("/api/add_power_training_exercise", formData, done_callback, fail_callback)
+    ajax_post("/api/add_power_training_exercise", formData, done_callback, FAIL_CALLBACK)
 }
 
 function delete_power_exercise(event) {
@@ -336,8 +331,8 @@ function delete_approach(event) {
             li_item.remove();
             show_toast("Approach successfully added.", "success")
         }
-        let fail_callback = (XMLHttpRequest, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
-        ajax_post("/api/delete_approach", formData, done_callback, fail_callback)
+
+        ajax_post("/api/delete_approach", formData, done_callback, FAIL_CALLBACK)
     } else
         li_item.remove()
 }
@@ -350,8 +345,7 @@ function chane_password() {
     };
     let done_callback = response => show_toast("Password change successfully", "success")
 
-    let fail_callback = (XMLHttpRequest, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
-    ajax_post("/api/change_password", formData, done_callback, fail_callback)
+    ajax_post("/api/change_password", formData, done_callback, FAIL_CALLBACK)
 }
 
 function update_user(){
@@ -369,13 +363,8 @@ function update_user(){
 
     let done_callback =
             response => show_toast("User updated successfully.", "success");
-    let fail_callback =
-        (XMLHttpRequest, textStatus, errorThrown) => {
-            console.log(errorThrown)
-            show_toast(`${textStatus}. ${errorThrown}`, "error")
-        }
 
-    ajax_post("/api/user_update", formData, done_callback, fail_callback)
+    ajax_post("/api/user_update", formData, done_callback, FAIL_CALLBACK)
 }
 
 
@@ -432,9 +421,8 @@ function create_or_update_dish(event) {
     if (li_element.hasAttribute("data-dish-count-id")) {
         formData.dish_count = li_element.getAttribute("data-dish-count-id");
         let done_callback = response => show_toast("Successfully updated dish", "success");
-        let fail_callback = (jqXHR, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error");
 
-        ajax_post("/api/update_dish_count", formData, done_callback, fail_callback)
+        ajax_post("/api/update_dish_count", formData, done_callback, FAIL_CALLBACK)
     } else {
         let done_callback = response => {
             li_element.removeAttribute("data-dish-id")
@@ -442,10 +430,8 @@ function create_or_update_dish(event) {
             event.target.textContent = "Update"
             show_toast("Successfully added dish", "success")
         }
-        let fail_callback =
-            (jqXHR, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
 
-        ajax_post("/api/add_dish_to_meal", formData, done_callback, fail_callback)
+        ajax_post("/api/add_dish_to_meal", formData, done_callback, FAIL_CALLBACK)
     }
 }
 
@@ -465,10 +451,8 @@ function delete_dish_count(event) {
             }
             show_toast("Successfully deleted dish", "success")
         }
-        let fail_callback =
-            (jqXHR, textStatus, errorThrown) => show_toast(`${textStatus}. ${errorThrown}`, "error")
 
-        ajax_post("/api/delete_dish_count", formData, done_callback, fail_callback)
+        ajax_post("/api/delete_dish_count", formData, done_callback, FAIL_CALLBACK)
 
     } else
         li_element.remove()
@@ -500,11 +484,7 @@ function delete_exercise(event) {
         show_toast("Successfully deleted exercise", "success")
     }
 
-    let fail_callback = (XMLHttpRequest, textStatus, errorThrown) => {
-        show_toast(`${errorThrown}`, "error")
-    }
-
-    ajax_post("/api/delete_exercise", formData, success_callback, fail_callback)
+    ajax_post("/api/delete_exercise", formData, success_callback, FAIL_CALLBACK)
 
 }
 
@@ -525,11 +505,7 @@ function delete_dish(event) {
         show_toast("Successfully deleted dish", "success")
     }
 
-    let fail_callback = (XMLHttpRequest, textStatus, errorThrown) => {
-        show_toast(`${errorThrown}`, "error")
-    }
-
-    ajax_post("/api/delete_dish", formData, success_callback, fail_callback)
+    ajax_post("/api/delete_dish", formData, success_callback, FAIL_CALLBACK)
 }
 
 function delete_meal(event) {
@@ -549,11 +525,7 @@ function delete_meal(event) {
         show_toast("Successfully deleted meal")
     }
 
-    let fail_callback = (XMLHttpRequest, textStatus, errorThrown) => {
-        show_toast(`${errorThrown}`, "error")
-    }
-
-    ajax_post("/api/delete_meal", formData, success_callback, fail_callback)
+    ajax_post("/api/delete_meal", formData, success_callback, FAIL_CALLBACK)
 
 }
 
@@ -571,11 +543,7 @@ function change_filter_training_ratio(event) {
         document.getElementById("training-ratio-span").textContent = `| ${period}`
     }
 
-    let fail_callback = response => {
-        show_toast(`Error to load`, "error")
-    }
-
-    ajax_get("/api/get_training_type_ratio", data_string, success_callback, fail_callback)
+    ajax_get("/api/get_training_type_ratio", data_string, success_callback, FAIL_CALLBACK)
 }
 
 function change_avg_calories_filter(event) {
@@ -586,10 +554,7 @@ function change_avg_calories_filter(event) {
         update_statistic_card("calories-container", "avg-calories-filter-name", period, response["data"])
     }
 
-    let fail_callback = () => {
-        show_toast(`Error to load`, "error")
-    }
-    ajax_get("/api/get_avg_calories_info", data_string, success_callback, fail_callback)
+    ajax_get("/api/get_avg_calories_info", data_string, success_callback, FAIL_CALLBACK)
 }
 
 function change_avg_protein_filter(event) {
@@ -600,11 +565,8 @@ function change_avg_protein_filter(event) {
         update_statistic_card("protein-container", "avg-protein-filter-name", period, response["data"])
     }
 
-    let fail_callback = response => {
-        show_toast(`Error to load`, "error")
-    }
 
-    ajax_get("/api/get_avg_protein_info", data_string, success_callback, fail_callback)
+    ajax_get("/api/get_avg_protein_info", data_string, success_callback, FAIL_CALLBACK)
 }
 
 function change_avg_carbohydrates_filter(event) {
@@ -615,11 +577,7 @@ function change_avg_carbohydrates_filter(event) {
         update_statistic_card("carbohydrates-container", "avg-carbohydrates-filter-name", period, response["data"])
     }
 
-    let fail_callback = response => {
-        show_toast(`Error to load`, "error")
-    }
-
-    ajax_get("/api/get_avg_carbohydrates_info", data_string, success_callback, fail_callback)
+    ajax_get("/api/get_avg_carbohydrates_info", data_string, success_callback, FAIL_CALLBACK)
 }
 
 function change_avg_fats_filter(event) {
@@ -630,11 +588,7 @@ function change_avg_fats_filter(event) {
         update_statistic_card("fats-container", "avg-fats-filter-name", period, response["data"])
     }
 
-    let fail_callback = response => {
-        show_toast(`Error to load`, "error")
-    }
-
-    ajax_get("/api/get_avg_fats_info", data_string, success_callback, fail_callback)
+    ajax_get("/api/get_avg_fats_info", data_string, success_callback, FAIL_CALLBACK)
 }
 
 function change_total_km_cycling_filter(event) {
@@ -702,11 +656,8 @@ function load_total_km_by_period_and_training_type(period, training_type) {
     let success_callback = response => {
         update_statistic_card(`${training_type}-km-container`, `total-km-${training_type}-filter-name`, period, response["data"])
     }
-    let  fail_callback = () => {
-        show_toast(`Fail to do operation`, "error")
-    }
 
-    ajax_get(`/api/get_total_km_by_${training_type}`, data_string, success_callback, fail_callback)
+    ajax_get(`/api/get_total_km_by_${training_type}`, data_string, success_callback, FAIL_CALLBACK)
 }
 
 function load_PFC_ratio_data_by_period(period, success_callback) {
