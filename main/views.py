@@ -203,31 +203,18 @@ class ExercisesListView(NameSearchListView):
     template_name = "main/exercise/exercises-list.html"
 
 
-class ExerciseUpdateView(LoginRequiredMixin, generic.UpdateView):
+class ExerciseUpdateView(UpdateElementWithUserFieldView):
     model = Exercise
     template_name = "main/exercise/exercise-form.html"
-    success_url = "/exercises/"
+    success_url = "main:exercises-list"
     form_class = ExerciseForm
 
-    def form_valid(self, form):
-        exercise = form.save(commit=False)
-        if exercise.owner != self.request.user:
-            return HttpResponseNotFound("Access denied")
-        exercise.save()
-        return HttpResponseRedirect(self.get_success_url())
 
-
-class ExerciseCreateView(LoginRequiredMixin, generic.CreateView):
+class ExerciseCreateView(CreateElementWithUserPropertyView):
     model = Exercise
     template_name = "main/exercise/exercise-form.html"
     form_class = ExerciseForm
-    success_url = "/exercises/"
-
-    def form_valid(self, form):
-        exercise = form.save(commit=False)
-        exercise.owner = self.request.user
-        exercise.save()
-        return redirect("main:exercises-list")
+    success_url = "main:exercises-list"
 
 
 class DishListView(NameSearchListView):
