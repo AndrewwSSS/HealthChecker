@@ -4,7 +4,7 @@ from django.contrib.auth.forms import (UserCreationForm,
                                        AuthenticationForm)
 from django.forms import ModelForm
 from django import forms
-from pytz import timezone
+from django.utils import timezone
 
 from main.models import (User,
                          PowerTraining,
@@ -29,16 +29,15 @@ class BaseTrainingForm(ModelForm):
         cleaned_data = super().clean()
         start = cleaned_data.get('start', None)
         end = cleaned_data.get('end', None)
-
         if not start:
             return cleaned_data
-
-        # if start >= datetime.now():
-        #     raise forms.ValidationError('Start date must be less or equal than now')
-        #
-        # if end and start > end:
-        #     raise forms.ValidationError('Start must be less than end date')
-
+        if timezone.is_naive(start):
+            start = timezone.make_aware(start)
+        now = timezone.now()
+        if start > now:
+            raise forms.ValidationError('Start date must be less or equal to now')
+        if end and start >= end:
+            raise forms.ValidationError('Start must be less than end date')
         return cleaned_data
 
 
@@ -168,7 +167,7 @@ class DateSearchForm(forms.Form):
     date = forms.DateField(
         required=False,
     )
-    sort = forms.ChoiceField(choices=choices, required=True)
+    sort = forms.ChoiceField(choices=choices, required=False)
 
 
 class NameSearchForm(forms.Form):
@@ -180,7 +179,7 @@ class NameSearchForm(forms.Form):
         required=False,
         max_length=128,
     )
-    sort = forms.ChoiceField(choices=choices, required=True)
+    sort = forms.ChoiceField(choices=choices, required=False)
 
 
 class UserLoginForm(AuthenticationForm):
