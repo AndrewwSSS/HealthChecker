@@ -29,7 +29,7 @@
                         {% if meal.date.year == today.year and meal.date.month == today.month and meal.date.day == today.date.day %}
                           Today, {{ meal.date|time:"G:i" }}
                         {% else %}
-                          {{ meal.date }}
+                          {{ meal.date|date:"d/m/Y" }} {{ meal.date|time:"G:i" }}
                         {% endif %}
                       </span>
                       <i class="fa-solid fa-xmark delete-element-icon delete-meal-icon"></i>

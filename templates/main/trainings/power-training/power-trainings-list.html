@@ -2,15 +2,19 @@
 {% block title %}Power trainings{% endblock %}
 {% block create_url %}{% url "main:create-power-training" %}{% endblock %}
 {% block trainings %}
-  {% for powerTraining in powertraining_list %}
-    <a href="{% url "main:update-power-training" powerTraining.id %}"
-       data-training-id="{{ powerTraining.id }}"
+  {% for power_training in powertraining_list %}
+    <a href="{% url "main:update-power-training" power_training.id %}"
+       data-training-id="{{ power_training.id }}"
        data-training-type="PW"
        class="training-element col-lg-4">
       <div class="alert alert-primary fade show ">
         <div class="d-flex justify-content-between">
             <span>
-              {{ powerTraining.start|date:"d/m/Y" }} {{ powerTraining.start|time:"G:i" }}
+                 {% if power_training.start.year == today.year and power_training.start.month == today.month and power_training.start.day == today.date.day %}
+                   Today, {{ power_training.start|time:"G:i" }}
+                 {% else %}
+                   {{ power_training.start|date:"d/m/Y" }} {{ power_training.start|time:"G:i" }}
+                 {% endif %}
            </span>
           <i class="fa-solid fa-xmark delete-element-icon delete-training-icon"></i>
         </div>

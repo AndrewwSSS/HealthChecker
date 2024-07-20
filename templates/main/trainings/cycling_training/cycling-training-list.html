@@ -2,15 +2,19 @@
 {% block title %}Cycling trainings{% endblock %}
 {% block create_url %}{% url "main:create-cycling-training" %}{% endblock %}
 {% block trainings %}
-  {% for cyclingTraining in cycling_list%}
-    <a href="{% url "main:update-cycling-training" cyclingTraining.id %}"
+  {% for cycling in cycling_list%}
+    <a href="{% url "main:update-cycling-training" cycling.id %}"
        class="training-element col-lg-4"
-       data-training-id="{{ cyclingTraining.id }}"
+       data-training-id="{{ cycling.id }}"
        data-training-type="CY">
       <div class="alert alert-primary fade show">
         <div class="d-flex justify-content-between">
           <span>
-            {{ cyclingTraining.start }}
+             {% if cycling.start.year == today.year and cycling.start.month == today.month and cycling.start.day == today.date.day %}
+               Today, {{ cycling.start|time:"G:i" }}
+             {% else %}
+               {{ cycling.start|date:"d/m/Y" }} {{ cycling.start|time:"G:i" }}
+             {% endif %}
           </span>
           <i class="fa-solid fa-xmark delete-element-icon delete-training-icon"></i>
         </div>

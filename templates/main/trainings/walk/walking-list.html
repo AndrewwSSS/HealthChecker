@@ -2,23 +2,29 @@
 {% block title %}Walking trainings{% endblock %}
 {% block create_url %}{% url "main:create-walking-training" %}{% endblock %}
 {% block trainings %}
-  {% for walking in walking_list %}
-    <a href="{% url "main:update-walking-training" walking.id %}"
-       data-training-id="{{ walking.id }}"
-       data-training-type="WK"
-       class="training-element">
-      <div class="alert alert-primary fade show">
-        <div class="d-flex justify-content-between">
+  <div class="walking-container row">
+    {% for walking in walking_list %}
+      <a href="{% url "main:update-walking-training" walking.id %}"
+         data-training-id="{{ walking.id }}"
+         data-training-type="WK"
+         class="training-element col-lg-4">
+        <div class="alert alert-primary fade show">
+          <div class="d-flex justify-content-between">
           <span>
-            {{ walking.start }}
+             {% if walking.start.year == today.year and walking.start.month == today.month and walking.start.day == today.date.day %}
+               Today, {{ walking.start|time:"G:i" }}
+             {% else %}
+               {{ walking.start|date:"d/m/Y" }} {{ walking.start|time:"G:i" }}
+             {% endif %}
           </span>
-          <i class="fa-solid fa-xmark delete-element-icon delete-training-icon"></i>
+            <i class="fa-solid fa-xmark delete-element-icon delete-training-icon"></i>
+          </div>
         </div>
-      </div>
-    </a>
-  {% empty %}
-    <h6 class="card-title">
-      No trainings yet
-    </h6>
-  {% endfor %}
+      </a>
+    {% empty %}
+      <h6 class="card-title">
+        No trainings yet
+      </h6>
+    {% endfor %}
+  </div>
 {% endblock %}

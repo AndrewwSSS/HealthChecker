@@ -10,7 +10,11 @@
       <div class="alert alert-primary fade show">
         <div class="d-flex justify-content-between">
             <span>
-              {{ swimming.start }}
+              {% if swimming.start.year == today.year and swimming.start.month == today.month and swimming.start.day == today.date.day %}
+                Today, {{ swimming.start|time:"G:i" }}
+              {% else %}
+                {{ swimming.start|date:"d/m/Y" }} {{ swimming.start|time:"G:i" }}
+              {% endif %}
             </span>
           <i class="fa-solid fa-xmark delete-element-icon delete-training-icon"></i>
         </div>

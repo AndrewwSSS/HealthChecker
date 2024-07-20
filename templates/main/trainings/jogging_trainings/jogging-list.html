@@ -9,9 +9,11 @@
        class="training-element col-lg-4">
       <div class="alert alert-primary fade show">
         <div class="d-flex justify-content-between">
-                    <span>
-                      {{ jogging.start }}
-                    </span>
+          {% if jogging.start.year == today.year and jogging.start.month == today.month and jogging.start.day == today.date.day %}
+            Today, {{ jogging.start|time:"G:i" }}
+          {% else %}
+            {{ jogging.start|date:"d/m/Y" }} {{ jogging.start|time:"G:i" }}
+          {% endif %}
           <i class="fa-solid fa-xmark delete-element-icon delete-training-icon"></i>
         </div>
       </div>
