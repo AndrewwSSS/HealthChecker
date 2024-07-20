@@ -43,7 +43,7 @@ class Training(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ['start']
+        ordering = ['-start']
         constraints = [
             CheckConstraint(check=Q(start__lt=models.F("end")),
                             name="%(app_label)s_%(class)s_end_date_grater_than_start_date"),
@@ -60,7 +60,7 @@ class Approach(models.Model):
 
 
 class Exercise(models.Model):
-    owner = models.ForeignKey(get_user_model(),
+    user = models.ForeignKey(get_user_model(),
                               on_delete=models.CASCADE,
                               related_name="exercises")
     name = models.CharField(max_length=255, unique=True)
@@ -126,6 +126,7 @@ class Dish(models.Model):
                              related_name="dishes")
 
     class Meta:
+        ordering = ["name"]
         constraints = [
             UniqueConstraint(fields=["user", "name"], name="unique_dish_name_for_user")
         ]
@@ -168,6 +169,9 @@ class Meal(models.Model):
     user = models.ForeignKey(get_user_model(),
                              on_delete=models.CASCADE,
                              related_name="meals")
+
+    class Meta:
+        ordering = ["-date"]
 
     def get_total_calories(self):
         return sum(dish.calories for dish in self.dishes.all())
