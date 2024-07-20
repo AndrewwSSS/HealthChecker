@@ -395,7 +395,7 @@ class GetAvgProteinPerDayView(LoginRequiredMixin, View):
             avg_protein_per_day = total_protein / unique_dates_count
 
         response = JsonResponse({
-            "data": avg_protein_per_day,
+            "data": round(avg_protein_per_day, 1),
         }, status=200)
         return response
 
@@ -415,7 +415,7 @@ class GetAvgCarbohydratesPerDayView(LoginRequiredMixin, View):
             avg_carbohydrates_per_day = total_protein / unique_dates_count
 
         response = JsonResponse({
-            "data": avg_carbohydrates_per_day,
+            "data": round(avg_carbohydrates_per_day, 1),
         }, status=200)
 
         return response
@@ -436,7 +436,7 @@ class GetAvgFatsPerDayView(LoginRequiredMixin, View):
             avg_fats_per_day = total_fats / unique_dates_count
 
         response = JsonResponse({
-            "data": avg_fats_per_day,
+            "data": round(avg_fats_per_day, 1),
         }, status=200)
 
         return response
