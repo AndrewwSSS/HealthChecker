@@ -7,10 +7,10 @@ from django.http import HttpRequest, JsonResponse
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import get_object_or_404
-from django.views import View
+from django.views import View, generic
 
-from ajax.forms import UserUpdateForm, ApproachForm, DishCountForm
-from main.forms import ExerciseForm
+from ajax.forms import UserUpdateForm, ApproachForm, DishCountForm, PowerExerciseForm
+from main.forms import ExerciseForm, PowerTrainingForm
 from main.models import (Exercise,
                          Approach,
                          PowerTrainingExercise,
@@ -20,7 +20,10 @@ from main.models import (Exercise,
                          Jogging,
                          PowerTraining,
                          Dish,
-                         User, Meal, DishCount, Training)
+                         User,
+                         Meal,
+                         DishCount,
+                         Training)
 
 SUCCESS_RESPONSE = JsonResponse({
     "status": "Success",
@@ -64,17 +67,23 @@ class UpdateUser(LoginRequiredMixin, View):
         )
 
 
-class AddPowerExerciseView(LoginRequiredMixin, View):
+class CreatePowerExerciseView(LoginRequiredMixin, View):
+    form_class = PowerExerciseForm
+    model = PowerTrainingExercise
+
     @staticmethod
     def post(request: HttpRequest) -> JsonResponse:
-        exercise_id = request.POST.get("exercise_id", default=None)
-        training_id = request.POST.get("training_id", default=None)
+        exercise_id = request.POST.get("exercise", default=None)
+        training_id = request.POST.get("training", default=None)
 
         if not exercise_id or not training_id:
             return INVALID_DATA_RESPONSE
 
         exercise = get_object_or_404(Exercise, pk=exercise_id)
-
+        power_training = get_object_or_404(PowerTraining,
+                                           pk=training_id,
+                                           user=request.user)
+        # Check if exercise with same name exists
         try:
             PowerTrainingExercise.objects.get(power_training_id=training_id,
                                               exercise_id=exercise_id)
@@ -87,23 +96,25 @@ class AddPowerExerciseView(LoginRequiredMixin, View):
         return JsonResponse(
             {
                 "status": "success",
-                "power_training_id": power_training.id,
+                "id": power_training.id,
             }
         )
 
 
-class CreateApproachView(LoginRequiredMixin, View):
-    @staticmethod
-    def post(request: HttpRequest) -> JsonResponse:
-        form = ApproachForm(request.POST, request=request)
+class CreateApproachView(LoginRequiredMixin, generic.CreateView):
+    model = Approach
+    form_class = ApproachForm
 
-        if form.is_valid():
-            approach = form.save()
-            return JsonResponse({
-                "approach_id": approach.id
-            }, status=200)
-        else:
-            return INVALID_DATA_RESPONSE
+    def form_valid(self, form):
+        approach = form.save(commit=False)
+
+        get_object_or_404(PowerTrainingExercise,
+                          pk=approach.training.id,
+                          power_training__user=self.request.user)
+        approach.save()
+        return JsonResponse({
+            "approach_id": approach.id
+        }, status=200)
 
 
 class DeletePowerExerciseView(LoginRequiredMixin, View):
@@ -111,15 +122,12 @@ class DeletePowerExerciseView(LoginRequiredMixin, View):
     def post(request: HttpRequest) -> JsonResponse:
         exercise_id = request.POST.get("exercise_id",
                                        default=None)
-        training_id = request.POST.get("training_id",
-                                       default=None)
 
-        if not exercise_id or not training_id:
+        if not exercise_id:
             return INVALID_DATA_RESPONSE
 
         get_object_or_404(PowerTrainingExercise,
                           pk=exercise_id,
-                          power_training_id=training_id,
                           power_training__user=request.user).delete()
         return SUCCESS_RESPONSE
 

@@ -2,7 +2,7 @@ from django.urls import path
 
 from ajax.views import (UpdatePasswordView,
                         UpdateUser,
-                        AddPowerExerciseView,
+                        CreatePowerExerciseView,
                         CreateApproachView,
                         DeleteTrainingView,
                         DeleteApproach,
@@ -24,7 +24,7 @@ from ajax.views import (UpdatePasswordView,
 urlpatterns = [
     path("user_update", UpdateUser.as_view(), name="user-update"),
     path("change_password", UpdatePasswordView.as_view(), name="change-password"),
-    path("add_power_training_exercise", AddPowerExerciseView.as_view(), name="add_power-training-exercise"),
+    path("add_power_training_exercise", CreatePowerExerciseView.as_view(), name="add_power-training-exercise"),
     path("delete_power_exercise", DeletePowerExerciseView.as_view(), name="delete-power-exercise"),
     path("delete_approach", DeleteApproach.as_view(), name="delete-approach"),
     path("add_approach", CreateApproachView.as_view(), name="add-approach"),

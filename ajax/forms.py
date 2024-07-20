@@ -35,22 +35,9 @@ class UserUpdateForm(UserChangeForm):
 class ApproachForm(forms.ModelForm):
     weight = forms.IntegerField(required=False)
 
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
-        super(ApproachForm, self).__init__(*args, **kwargs)
-
     class Meta:
         model = Approach
         fields = "__all__"
-
-    def clean(self):
-        cleaned_data = super(ApproachForm, self).clean()
-        training = cleaned_data.get("training")
-        try:
-            PowerTraining.objects.get(user=self.request.user, exercises=training)
-        except PowerTraining.DoesNotExist:
-            raise forms.ValidationError("You have not training with this id")
-        return cleaned_data
 
 
 class DishCountForm(forms.ModelForm):
@@ -72,7 +59,7 @@ class DishCountForm(forms.ModelForm):
         return cleaned_data
 
 
-class PowerExercisesForm(forms.ModelForm):
+class PowerExerciseForm(forms.ModelForm):
     class Meta:
         model = PowerTrainingExercise
         fields = "__all__"
