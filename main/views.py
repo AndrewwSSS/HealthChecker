@@ -10,6 +10,7 @@ from django.http import (HttpResponse,
                          HttpResponseRedirect,
                          Http404, HttpResponseNotFound)
 from django.shortcuts import redirect, render, get_object_or_404
+from django.urls import NoReverseMatch
 from django.views import generic
 
 from main.forms import (UserCreateForm,
@@ -129,6 +130,31 @@ class NameSearchListView(DateSearchListView):
         return queryset
 
 
+class CreateElementWithUserPropertyView(LoginRequiredMixin, generic.CreateView):
+    def form_valid(self, form):
+        element = form.save(commit=False)
+        element.user = self.request.user
+        element.save()
+        try:
+            return redirect(self.success_url)
+        except NoReverseMatch:
+            return redirect(self.success_url, pk=element.pk)
+
+
+class UpdateElementWithUserFieldView(LoginRequiredMixin, generic.UpdateView):
+    def form_valid(self, form):
+        element = form.save(commit=False)
+        if element.user != self.request.user:
+            return render(self.request, "404.html")
+        element.save()
+        return redirect(self.success_url)
+
+    def get(self, request: HttpRequest, *args, **kwargs):
+        pk = kwargs.get("pk", None)
+        get_object_or_404(self.model, pk=pk, user=self.request.user)
+        return super().get(request, *args, **kwargs)
+
+
 class LoginUserView(LoginView):
     form_class = UserLoginForm
 
@@ -209,17 +235,11 @@ class DishListView(NameSearchListView):
     template_name = "main/dish/dish-list.html"
 
 
-class CreateDishView(LoginRequiredMixin, generic.CreateView):
+class CreateDishView(CreateElementWithUserPropertyView):
     model = Dish
     form_class = DishForm
     template_name = "main/dish/create-dish.html"
-    success_url = "/dishes/"
-
-    def form_valid(self, form):
-        dish = form.save(commit=False)
-        dish.user = self.request.user
-        dish.save()
-        return redirect("main:dish-list")
+    success_url = "main:dish-list"
 
 
 class UpdateDishView(LoginRequiredMixin, generic.UpdateView):
@@ -263,148 +283,84 @@ class WalkingTrainingListView(DateSearchTrainingListView):
 
 
 # Create training views
-class CreatePowerTrainingView(LoginRequiredMixin, generic.CreateView):
+class CreatePowerTrainingView(CreateElementWithUserPropertyView):
     template_name = "main/trainings/power-training/create-power-training.html"
     model = PowerTraining
     form_class = PowerTrainingForm
-
-    def form_valid(self, form):
-        training = form.save(commit=False)
-        training.user = self.request.user
-        training.save()
-        return redirect("main:update-power-training", pk=training.pk)
+    success_url = "main:update-power-training"
 
 
-class CreateSwimmingView(LoginRequiredMixin, generic.CreateView):
+class CreateSwimmingView(CreateElementWithUserPropertyView):
     model = Swimming
     form_class = SwimmingForm
     template_name = "base_distance_average_speed_form.html"
-    success_url = "/swimming-trainings/"
-
-    def form_valid(self, form):
-        swimming = form.save(commit=False)
-        swimming.user = self.request.user
-        swimming.save()
-        return redirect("main:swimming-training-list")
+    success_url = "main:swimming-training-list"
 
 
-class CreateJoggingView(LoginRequiredMixin, generic.CreateView):
+class CreateJoggingView(CreateElementWithUserPropertyView):
     model = Jogging
     form_class = JoggingForm
     template_name = "base_distance_average_speed_form.html"
-    success_url = "/jogging-trainings/"
-
-    def form_valid(self, form):
-        jogging = form.save(commit=False)
-        jogging.user = self.request.user
-        jogging.save()
-        return redirect("main:jogging-training-list")
+    success_url = "main:jogging-training-list"
 
 
-class CreateWalkingView(LoginRequiredMixin, generic.CreateView):
+class CreateWalkingView(CreateElementWithUserPropertyView):
     model = Walking
     form_class = WalkingForm
     template_name = "base_distance_average_speed_form.html"
-    success_url = "/walking-trainings/"
-
-    def form_valid(self, form):
-        walking = form.save(commit=False)
-        walking.user = self.request.user
-        walking.save()
-        return redirect("main:walking-training-list")
+    success_url = "main:walking-training-list"
 
 
-class CreateCyclingTrainingView(LoginRequiredMixin, generic.CreateView):
+class CreateCyclingTrainingView(CreateElementWithUserPropertyView):
     model = Cycling
     form_class = CyclingForm
     template_name = "main/trainings/cycling_training/cycling-training-form.html"
-    success_url = "/cycling-trainings/"
-
-    def form_valid(self, form):
-        cycling = form.save(commit=False)
-        cycling.user = self.request.user
-        cycling.save()
-        return redirect("main:cycling-training-list")
+    success_url = "main:cycling-training-list"
 
 
 # update training views
-class UpdatePowerTrainingView(LoginRequiredMixin, generic.UpdateView):
+class UpdatePowerTrainingView(UpdateElementWithUserFieldView):
     model = PowerTraining
     template_name = "main/trainings/power-training/update-power-training.html"
     form_class = PowerTrainingForm
-    success_url = "/power-trainings/"
+    success_url = "main:power-trainings-list"
 
     def get_context_data(self, **kwargs):
         context = super(UpdatePowerTrainingView, self).get_context_data(**kwargs)
-        context["exercises"] = Exercise.objects.filter(owner=self.request.user)
+        context["exercises"] = Exercise.objects.filter(user=self.request.user)
         return context
 
-    def form_valid(self, form):
-        training = form.save(commit=False)
-        if training.user != self.request.user:
-            return HttpResponseNotFound("Access Denied")
-        training.save()
-        return redirect("main:power-trainings-list")
 
-
-class UpdateSwimmingView(LoginRequiredMixin, generic.UpdateView):
+class UpdateSwimmingView(UpdateElementWithUserFieldView):
     fields = SwimmingForm.Meta.fields
     model = Swimming
     class_form = SwimmingForm
     template_name = "base_distance_average_speed_form.html"
-    success_url = "/swimming-trainings/"
-
-    def form_valid(self, form):
-        swimming = form.save(commit=False)
-        if swimming.user != self.request.user:
-            return HttpResponseNotFound("Access Denied")
-        swimming.save()
-        return redirect("main:swimming-training-list")
+    success_url = "main:swimming-training-list"
 
 
-class UpdateJoggingView(LoginRequiredMixin, generic.UpdateView):
+class UpdateJoggingView(UpdateElementWithUserFieldView):
     fields = JoggingForm.Meta.fields
     model = Jogging
     class_form = JoggingForm
     template_name = "base_distance_average_speed_form.html"
-    success_url = "/jogging-trainings/"
-
-    def form_valid(self, form):
-        jogging = form.save(commit=False)
-        if jogging.user != self.request.user:
-            return HttpResponseNotFound("Access Denied")
-        jogging.save()
-        return redirect("main:swimming-training-list")
+    success_url = "main:swimming-training-list"
 
 
-class UpdateWalkingView(LoginRequiredMixin, generic.UpdateView):
+class UpdateWalkingView(UpdateElementWithUserFieldView):
     fields = WalkingForm.Meta.fields
     model = Walking
     class_form = WalkingForm
     template_name = "base_distance_average_speed_form.html"
-    success_url = "/walking-trainings/"
-
-    def form_valid(self, form):
-        walking = form.save(commit=False)
-        if walking.user != self.request.user:
-            return HttpResponseNotFound("Access Denied")
-        walking.save()
-        return redirect("main:walking-training-list")
+    success_url = "main:walking-training-list"
 
 
-class UpdateCyclingTrainingView(LoginRequiredMixin, generic.UpdateView):
+class UpdateCyclingTrainingView(UpdateElementWithUserFieldView):
     fields = CyclingForm.Meta.fields
     model = Cycling
     class_form = CyclingForm
     template_name = "main/trainings/cycling_training/cycling-training-form.html"
-    success_url = "/cycling-trainings/"
-
-    def form_valid(self, form):
-        training = form.save(commit=False)
-        if training.user != self.request.user:
-            return HttpResponseNotFound("Access Denied")
-        training.save()
-        return redirect("main:cycling-training-list")
+    success_url = "main:cycling-training-list"
 # ------
 
 
@@ -413,31 +369,20 @@ class MealListView(DateSearchListView):
     template_name = "main/meal/meal-list.html"
 
 
-class CreateMealView(LoginRequiredMixin, generic.CreateView):
+class CreateMealView(CreateElementWithUserPropertyView):
     model = Meal
     form_class = MealForm
     template_name = "main/meal/create-meal.html"
+    success_url = "main:update-meal"
 
     def get_context_data(self, **kwargs):
         context = super(CreateMealView, self).get_context_data(**kwargs)
         context["default_date"] = datetime.now()
         return context
 
-    def form_valid(self, form):
-        meal = form.save(commit=False)
-        meal.user = self.request.user
-        meal.save()
-        return redirect("main:update-meal", pk=meal.pk)
 
-
-class UpdateMealView(LoginRequiredMixin, generic.UpdateView):
+class UpdateMealView(UpdateElementWithUserFieldView):
     model = Meal
     form_class = MealForm
     template_name = "main/meal/update-meal.html"
-    success_url = "/meals/"
-
-    def form_valid(self, form):
-        meal = form.save(commit=False)
-        if meal.user != self.request.user:
-            return HttpResponseNotFound("Access denied")
-        return redirect("main:meal-list")
+    success_url = "main:meal-list"
