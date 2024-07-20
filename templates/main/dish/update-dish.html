@@ -8,6 +8,11 @@
           <div class="card-body pt-3" >
             <div class="row justify-content-center">
               <div class="col-xl-8">
+                {% if form.errors %}
+                  {{ form.errors }}
+                {% endif %}
+              </div>
+              <div class="col-xl-8">
                 <form action="" method="post">
                 {% csrf_token %}
                 <div class="row mb-3">
