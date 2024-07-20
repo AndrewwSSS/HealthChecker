@@ -1,12 +1,9 @@
-from django.contrib.auth.forms import UserChangeForm
 from django import forms
+from django.contrib.auth.forms import UserChangeForm
 
 from main.models import (User,
                          Approach,
-                         PowerTraining,
-                         Meal,
                          DishCount,
-                         Exercise,
                          PowerTrainingExercise)
 
 
