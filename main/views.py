@@ -317,13 +317,7 @@ class UpdatePowerTrainingView(LoginRequiredMixin, generic.UpdateView):
 
 
 class UpdateSwimmingView(LoginRequiredMixin, generic.UpdateView):
-    fields = [
-        "start",
-        "end",
-        "description",
-        "average_speed",
-        "distance"
-    ]
+    fields = SwimmingForm.Meta.fields
     model = Swimming
     class_form = SwimmingForm
     template_name = "base_distance_average_speed_form.html"
@@ -338,13 +332,7 @@ class UpdateSwimmingView(LoginRequiredMixin, generic.UpdateView):
 
 
 class UpdateJoggingView(LoginRequiredMixin, generic.UpdateView):
-    fields = [
-        "start",
-        "end",
-        "description",
-        "average_speed",
-        "distance"
-    ]
+    fields = JoggingForm.Meta.fields
     model = Jogging
     class_form = JoggingForm
     template_name = "base_distance_average_speed_form.html"
@@ -359,13 +347,7 @@ class UpdateJoggingView(LoginRequiredMixin, generic.UpdateView):
 
 
 class UpdateWalkingView(LoginRequiredMixin, generic.UpdateView):
-    fields = [
-        "start",
-        "end",
-        "description",
-        "average_speed",
-        "distance"
-    ]
+    fields = WalkingForm.Meta.fields
     model = Walking
     class_form = WalkingForm
     template_name = "base_distance_average_speed_form.html"
@@ -376,18 +358,11 @@ class UpdateWalkingView(LoginRequiredMixin, generic.UpdateView):
         if walking.user != self.request.user:
             return HttpResponseNotFound("Access Denied")
         walking.save()
-        return redirect("main:swimming-training-list")
+        return redirect("main:walking-training-list")
 
 
 class UpdateCyclingTrainingView(LoginRequiredMixin, generic.UpdateView):
-    fields = [
-        "start",
-        "end",
-        "description",
-        "average_speed",
-        "climb",
-        "distance"
-    ]
+    fields = CyclingForm.Meta.fields
     model = Cycling
     class_form = CyclingForm
     template_name = "main/trainings/cycling_training/cycling-training-form.html"

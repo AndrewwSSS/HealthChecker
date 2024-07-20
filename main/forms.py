@@ -4,6 +4,7 @@ from django.contrib.auth.forms import (UserCreationForm,
                                        AuthenticationForm)
 from django.forms import ModelForm
 from django import forms
+from pytz import timezone
 
 from main.models import (User,
                          PowerTraining,
@@ -14,6 +15,36 @@ from main.models import (User,
                          Swimming,
                          Walking,
                          Meal)
+
+
+class BaseTrainingForm(ModelForm):
+    class Meta:
+        fields = [
+            "start",
+            "end",
+            "description",
+        ]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start = cleaned_data.get('start', None)
+        end = cleaned_data.get('end', None)
+
+        if not start:
+            return cleaned_data
+
+        # if start >= datetime.now():
+        #     raise forms.ValidationError('Start date must be less or equal than now')
+        #
+        # if end and start > end:
+        #     raise forms.ValidationError('Start must be less than end date')
+
+        return cleaned_data
+
+
+class DistanceAverageSpeedTrainingForm(BaseTrainingForm):
+    class Meta:
+        fields = BaseTrainingForm.Meta.fields + ["average_speed", "distance"]
 
 
 def clean_base_training(cleaned_data) -> dict:
@@ -52,12 +83,12 @@ class UserCreateForm(UserCreationForm):
         fields = UserCreationForm.Meta.fields
 
 
-class PowerTrainingForm(ModelForm):
+class PowerTrainingForm(BaseTrainingForm):
     description = forms.CharField(required=False)
 
     class Meta:
         model = PowerTraining
-        fields = ["start", "end", "description"]
+        fields = BaseTrainingForm.Meta.fields
 
 
 class ExerciseForm(ModelForm):
@@ -66,21 +97,18 @@ class ExerciseForm(ModelForm):
         fields = ["name", "description"]
 
 
-class CyclingForm(ModelForm):
+class CyclingForm(DistanceAverageSpeedTrainingForm):
     description = forms.CharField(required=False)
 
     class Meta:
         model = Cycling
-        fields = ["start",
-                  "end",
-                  "description",
-                  "average_speed",
-                  "climb",
-                  "distance"]
+        fields = DistanceAverageSpeedTrainingForm.Meta.fields + ["climb"]
 
     def clean(self):
-        cleaned_data = clean_distance_average_speed_trainings(self.cleaned_data)
-        climb = cleaned_data.get("climb")
+        cleaned_data = super(DistanceAverageSpeedTrainingForm, self).clean()
+        climb = cleaned_data.get("climb", None)
+        if not climb:
+            raise forms.ValidationError("Climb is required field")
         if climb < 0:
             raise forms.ValidationError("Climb must be greater than zero")
         return cleaned_data
@@ -108,52 +136,22 @@ class DishForm(ModelForm):
         return cleaned_data
 
 
-class JoggingForm(ModelForm):
+class JoggingForm(DistanceAverageSpeedTrainingForm):
     class Meta:
         model = Jogging
-        fields = [
-            "start",
-            "end",
-            "description",
-            "average_speed",
-            "distance"
-        ]
-
-    def clean(self):
-        cleaned_data = clean_distance_average_speed_trainings(self.cleaned_data)
-        return cleaned_data
+        fields = DistanceAverageSpeedTrainingForm.Meta.fields
 
 
-class SwimmingForm(ModelForm):
+class SwimmingForm(DistanceAverageSpeedTrainingForm):
     class Meta:
         model = Swimming
-        fields = [
-            "start",
-            "end",
-            "description",
-            "average_speed",
-            "distance"
-        ]
-
-    def clean(self):
-        cleaned_data = clean_distance_average_speed_trainings(self.cleaned_data)
-        return cleaned_data
+        fields = DistanceAverageSpeedTrainingForm.Meta.fields
 
 
-class WalkingForm(ModelForm):
+class WalkingForm(DistanceAverageSpeedTrainingForm):
     class Meta:
         model = Walking
-        fields = [
-            "start",
-            "end",
-            "description",
-            "average_speed",
-            "distance"
-        ]
-
-    def clean(self):
-        cleaned_data = clean_distance_average_speed_trainings(self.cleaned_data)
-        return cleaned_data
+        fields = DistanceAverageSpeedTrainingForm.Meta.fields
 
 
 class MealForm(ModelForm):
