@@ -565,7 +565,6 @@ function change_avg_protein_filter(event) {
         update_statistic_card("protein-container", "avg-protein-filter-name", period, response["data"])
     }
 
-
     ajax_get("/api/get_avg_protein_info", data_string, success_callback, FAIL_CALLBACK)
 }
 
@@ -612,6 +611,10 @@ function change_total_km_walking_filter(event) {
 }
 
 function load_all_statistics_of_main_page() {
+    if (!document.getElementById("training-types-ratio")) {
+        return
+    }
+
     let LOAD_PERIOD = "This Month"
 
     // Init and load trainings ratio chart
