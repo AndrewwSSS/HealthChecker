@@ -244,7 +244,7 @@ function create_or_update_approach(event) {
         training: li_item.parentElement.parentElement.getAttribute("data-exercise-id"),
     }
     if (li_item.hasAttribute("data-approach-id")) {
-        formData.approach_id =li_item.getAttribute("data-approach-id")
+        formData.id = li_item.getAttribute("data-approach-id")
 
         let done_callback = response => show_toast("Approach successfully added.", "success")
 

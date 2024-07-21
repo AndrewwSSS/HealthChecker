@@ -235,9 +235,20 @@ class DeleteDishCountView(LoginRequiredMixin, View):
 class UpdateApproachView(LoginRequiredMixin, View):
     @staticmethod
     def post(request: HttpRequest) -> JsonResponse:
-        form = ApproachForm(request.POST, request=request)
+        approach_id = request.POST.get("id", default=None)
+        if not approach_id:
+            return INVALID_DATA_RESPONSE
+        approach_queryset = Approach.objects.select_for_update().filter(id=approach_id)
+        if not approach_queryset.exists():
+            return INVALID_DATA_RESPONSE
+        approach = approach_queryset.first()
+
+        form = ApproachForm(request.POST, instance=approach)
         if form.is_valid():
-            form.save()
+            approach = form.save(commit=False)
+            if approach.training.power_training.user != request.user:
+                return INVALID_DATA_RESPONSE
+            approach.save()
             return SUCCESS_RESPONSE
         else:
             return INVALID_DATA_RESPONSE
