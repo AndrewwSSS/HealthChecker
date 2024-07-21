@@ -160,19 +160,19 @@ class DishCount(models.Model):
 
     @property
     def calories(self) -> float:
-        return self.dish.calories * (self.weight / 100)
+        return round(self.dish.calories * (self.weight / 100), 1)
 
     @property
     def fats(self) -> float:
-        return self.dish.fats * (self.weight / 100)
+        return round(self.dish.fats * (self.weight / 100), 1)
 
     @property
     def carbohydrates(self) -> float:
-        return self.dish.carbohydrates * (self.weight / 100)
+        return round(self.dish.carbohydrates * (self.weight / 100), 1)
 
     @property
     def protein(self) -> float:
-        return self.dish.protein * (self.weight / 100)
+        return round(self.dish.protein * (self.weight / 100), 1)
 
 
 class Meal(models.Model):
