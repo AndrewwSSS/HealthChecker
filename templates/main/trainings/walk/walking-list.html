@@ -11,11 +11,7 @@
         <div class="alert alert-primary fade show">
           <div class="d-flex justify-content-between">
           <span>
-             {% if walking.start.year == today.year and walking.start.month == today.month and walking.start.day == today.date.day %}
-               Today, {{ walking.start|time:"G:i" }}
-             {% else %}
-               {{ walking.start|date:"d/m/Y" }} {{ walking.start|time:"G:i" }}
-             {% endif %}
+             {{ walking }}
           </span>
             <i class="fa-solid fa-xmark delete-element-icon delete-training-icon"></i>
           </div>

@@ -10,11 +10,7 @@
       <div class="alert alert-primary fade show ">
         <div class="d-flex justify-content-between">
             <span>
-                 {% if power_training.start.year == today.year and power_training.start.month == today.month and power_training.start.day == today.date.day %}
-                   Today, {{ power_training.start|time:"G:i" }}
-                 {% else %}
-                   {{ power_training.start|date:"d/m/Y" }} {{ power_training.start|time:"G:i" }}
-                 {% endif %}
+               {{ power_training }}
            </span>
           <i class="fa-solid fa-xmark delete-element-icon delete-training-icon"></i>
         </div>

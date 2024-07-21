@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
@@ -9,6 +9,7 @@ from django.db.models import (ForeignKey,
                               CheckConstraint,
                               Q,
                               Sum)
+from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -49,6 +50,15 @@ class Training(models.Model):
                             name="%(app_label)s_%(class)s_end_date_grater_than_start_date"),
         ]
 
+    def __str__(self):
+        now = timezone.now()
+        if self.start.date() == (now - timedelta(days=1)).date():
+            return f"Yesterday, {self.start.strftime("%H:%M")}"
+        elif self.start.date() == now.date():
+            return f"Today, {self.start.strftime("%H:%M")}"
+        else:
+            return self.start.strftime("%d/%m/%Y %H:%M")
+
 
 class Approach(models.Model):
     weight = models.FloatField(default=0,
@@ -68,9 +78,6 @@ class Exercise(models.Model):
 
     class Meta:
         ordering = ['-name']
-
-    def __str__(self):
-        return self.name
 
 
 class PowerTrainingExercise(models.Model):

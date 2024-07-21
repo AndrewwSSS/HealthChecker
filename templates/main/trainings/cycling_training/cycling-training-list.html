@@ -10,11 +10,7 @@
       <div class="alert alert-primary fade show">
         <div class="d-flex justify-content-between">
           <span>
-             {% if cycling.start.year == today.year and cycling.start.month == today.month and cycling.start.day == today.date.day %}
-               Today, {{ cycling.start|time:"G:i" }}
-             {% else %}
-               {{ cycling.start|date:"d/m/Y" }} {{ cycling.start|time:"G:i" }}
-             {% endif %}
+             {{ cycling }}
           </span>
           <i class="fa-solid fa-xmark delete-element-icon delete-training-icon"></i>
         </div>
