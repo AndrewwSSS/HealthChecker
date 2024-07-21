@@ -53,8 +53,6 @@ class UserCreateForm(UserCreationForm):
 
 
 class PowerTrainingForm(BaseTrainingForm):
-    description = forms.CharField(required=False)
-
     class Meta:
         model = PowerTraining
         fields = BaseTrainingForm.Meta.fields
@@ -69,11 +67,9 @@ class ExerciseForm(ModelForm):
         cleaned_data = super().clean()
         name = cleaned_data.get('name', None)
 
-        if not self.instance.id:
-            try:
-                Exercise.objects.get(name=name)
-            except Exercise.DoesNotExist:
-                pass
+        if not self.instance.id and Exercise.objects.filter(name=name).exists():
+            raise forms.ValidationError('Exercise with this name already exists')
+
         return cleaned_data
 
 
@@ -120,11 +116,8 @@ class DishForm(ModelForm):
         if not name:
             return cleaned_data
 
-        try:
-            Dish.objects.get(name=name)
-            raise forms.ValidationError("Dish with same name already exists")
-        except Dish.DoesNotExist:
-            pass
+        if Dish.objects.filter(name=name).exists():
+            raise forms.ValidationError("Dish with this name already exists")
 
         return cleaned_data
 
