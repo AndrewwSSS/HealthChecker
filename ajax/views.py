@@ -63,7 +63,7 @@ class UpdateUser(LoginRequiredMixin, View):
             {
                 "status": "error",
                 "errors": form.errors,
-            }
+            }, status=422
         )
 
 
