@@ -252,7 +252,7 @@ function create_or_update_approach(event) {
     } else {
         let done_callback = response => {
             event.target.textContent = "Update"
-            li_item.setAttribute("data-approach-id", response["approach_id"]);
+            li_item.setAttribute("data-approach-id", response["id"]);
             show_toast("Approach successfully added.", "success")
         }
 
@@ -304,7 +304,7 @@ function delete_power_exercise(event) {
     let exercise_container = exercise.parentElement
 
     let formData = {
-        exercise_id: exercise.getAttribute("data-exercise-id"),
+        exercise: exercise.getAttribute("data-exercise-id"),
     }
 
     let done_callback = response => {
@@ -324,8 +324,8 @@ function delete_approach(event) {
 
     if (li_item.hasAttribute("data-approach-id")) {
         let formData = {
-            approach_id: li_item.getAttribute("data-approach-id"),
-            exercise_id: ul_item.parentElement.getAttribute("data-exercise-id"),
+            approach: li_item.getAttribute("data-approach-id"),
+            exercise: ul_item.parentElement.getAttribute("data-exercise-id"),
         }
         let done_callback = response => {
             li_item.remove();
@@ -426,7 +426,7 @@ function create_or_update_dish(event) {
     } else {
         let done_callback = response => {
             li_element.removeAttribute("data-dish-id")
-            li_element.setAttribute("data-dish-count-id", response["dish_count_id"]);
+            li_element.setAttribute("data-dish-count-id", response["id"]);
             event.target.textContent = "Update"
             show_toast("Successfully added dish", "success")
         }
@@ -494,7 +494,7 @@ function delete_dish(event) {
     let container = dish_element.parentElement
 
     let formData = {
-        dish_id: dish_element.dataset.id,
+        id: dish_element.dataset.id,
     }
 
     let success_callback = response => {
@@ -514,7 +514,7 @@ function delete_meal(event) {
     let container = meal_element.parentElement
 
     let formData = {
-        meal_id: meal_element.dataset.id
+        id: meal_element.dataset.id
     }
 
     let success_callback = response => {

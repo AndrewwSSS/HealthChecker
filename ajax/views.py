@@ -83,20 +83,17 @@ class CreatePowerExerciseView(LoginRequiredMixin, View):
         power_training = get_object_or_404(PowerTraining,
                                            pk=training_id,
                                            user=request.user)
-        # Check if exercise with same name exists
-        try:
-            PowerTrainingExercise.objects.get(power_training_id=training_id,
-                                              exercise_id=exercise_id)
-            return INVALID_DATA_RESPONSE
-        except PowerTrainingExercise.DoesNotExist:
-            pass
 
-        power_training = PowerTrainingExercise.objects.create(exercise=exercise,
-                                                              power_training_id=training_id)
+        # Check if exercise with same name exists
+        if power_training.exercises.filter(exercise_id=exercise.id).exists():
+            return INVALID_DATA_RESPONSE
+
+        power_training_exercise = PowerTrainingExercise.objects.create(exercise=exercise,
+                                                                       power_training_id=training_id)
         return JsonResponse(
             {
                 "status": "success",
-                "id": power_training.id,
+                "id": power_training_exercise.id,
             }
         )
 
@@ -113,14 +110,14 @@ class CreateApproachView(LoginRequiredMixin, generic.CreateView):
                           power_training__user=self.request.user)
         approach.save()
         return JsonResponse({
-            "approach_id": approach.id
+            "id": approach.id
         }, status=200)
 
 
 class DeletePowerExerciseView(LoginRequiredMixin, View):
     @staticmethod
     def post(request: HttpRequest) -> JsonResponse:
-        exercise_id = request.POST.get("exercise_id",
+        exercise_id = request.POST.get("exercise",
                                        default=None)
 
         if not exercise_id:
@@ -135,8 +132,8 @@ class DeletePowerExerciseView(LoginRequiredMixin, View):
 class DeleteApproach(LoginRequiredMixin, View):
     @staticmethod
     def post(request: HttpRequest) -> JsonResponse:
-        approach = request.POST.get("approach_id", default=None)
-        exercise = request.POST.get("exercise_id", default=None)
+        approach = request.POST.get("approach", default=None)
+        exercise = request.POST.get("exercise", default=None)
 
         if not approach or not exercise:
             return INVALID_DATA_RESPONSE
@@ -181,14 +178,14 @@ class DeleteTrainingView(LoginRequiredMixin, View):
         return SUCCESS_RESPONSE
 
 
-class AddDishCountView(LoginRequiredMixin, View):
+class CreateDishCountView(LoginRequiredMixin, View):
     @staticmethod
     def post(request: HttpRequest) -> JsonResponse:
         form = DishCountForm(request.POST, user=request.user)
         if form.is_valid():
             dish_count = form.save()
             return JsonResponse({
-                "dish_count_id": dish_count.id,
+                "id": dish_count.id,
             }, status=200)
         else:
             return INVALID_DATA_RESPONSE
@@ -198,18 +195,23 @@ class UpdateDishCountView(LoginRequiredMixin, View):
     @staticmethod
     def post(request: HttpRequest) -> JsonResponse:
         dish_count_id = request.POST.get("dish_count", default=None)
+        weight = request.POST.get("weight", default=None)
 
-        if not dish_count_id:
+        if not dish_count_id or not weight:
             return INVALID_DATA_RESPONSE
-        dish_count = get_object_or_404(DishCount, pk=dish_count_id)
-        form = DishCountForm(request.POST,
-                             user=request.user,
-                             instance=dish_count)
-        if form.is_valid():
-            form.save()
-            return SUCCESS_RESPONSE
-        else:
+
+        dish_count_queryset = DishCount.objects.select_for_update().filter(id=dish_count_id)
+        if not dish_count_queryset.exists():
             return INVALID_DATA_RESPONSE
+
+        dish_count = dish_count_queryset.first()
+
+        if dish_count.meal.user != request.user:
+            return INVALID_DATA_RESPONSE
+
+        dish_count.weight = weight
+        dish_count.save()
+        return SUCCESS_RESPONSE
 
 
 class DeleteDishCountView(LoginRequiredMixin, View):
@@ -218,7 +220,12 @@ class DeleteDishCountView(LoginRequiredMixin, View):
         dish_count_id = request.POST.get("dish_count", default=None)
         if not dish_count_id:
             return INVALID_DATA_RESPONSE
-        dish_count = get_object_or_404(DishCount, id=dish_count_id)
+
+        dish_count_queryset = DishCount.objects.select_for_update().filter(id=dish_count_id)
+        if not dish_count_queryset.exists():
+            return INVALID_DATA_RESPONSE
+
+        dish_count = dish_count_queryset.first()
         if dish_count.meal.user != request.user:
             return INVALID_DATA_RESPONSE
         dish_count.delete()
@@ -246,14 +253,14 @@ class DeleteExerciseView(LoginRequiredMixin, View):
 
         get_object_or_404(Exercise,
                           id=exercise_id,
-                          owner=request.user).delete()
+                          user=request.user).delete()
         return SUCCESS_RESPONSE
 
 
 class DeleteDishView(LoginRequiredMixin, View):
     @staticmethod
     def post(request: HttpRequest) -> JsonResponse:
-        dish_id = request.POST.get("dish_id", default=None)
+        dish_id = request.POST.get("id", default=None)
         if not dish_id:
             return INVALID_DATA_RESPONSE
         get_object_or_404(Dish,
@@ -265,7 +272,7 @@ class DeleteDishView(LoginRequiredMixin, View):
 class DeleteMealView(LoginRequiredMixin, View):
     @staticmethod
     def post(request: HttpRequest) -> JsonResponse:
-        meal_id = request.POST.get("meal_id", default=None)
+        meal_id = request.POST.get("id", default=None)
         if not meal_id:
             return INVALID_DATA_RESPONSE
         get_object_or_404(Meal,
@@ -274,12 +281,12 @@ class DeleteMealView(LoginRequiredMixin, View):
         return SUCCESS_RESPONSE
 
 
-class GetTrainingsTypeRatio(LoginRequiredMixin, View):
+class GetTrainingsTypeRatioView(LoginRequiredMixin, View):
     @staticmethod
     def get(request: HttpRequest) -> JsonResponse:
         if not (period := get_and_validate_period(request)):
-             return INVALID_DATA_RESPONSE
-        
+            return INVALID_DATA_RESPONSE
+
         today = date.today()
         if period == "today":
             q_obj = Q(user=request.user, start__date=today)
@@ -362,8 +369,8 @@ def get_trainings_by_period_and_user(period: str,
     else:
         return None
     return training_type.objects.filter(q_obj, user=user)
-    
-    
+
+
 def get_unique_meal_dates_count(query_set: QuerySet[Meal]) -> int:
     return query_set.annotate(unique_date=TruncDate('date')).values('unique_date').distinct().count()
 
@@ -383,7 +390,7 @@ class GetAvgCaloriesPerDayInfo(LoginRequiredMixin, View):
             avg_calories_per_day = total_calories / unique_dates_count
 
         response = JsonResponse({
-            "data": avg_calories_per_day,
+            "data": round(avg_calories_per_day, 1),
         }, status=200)
         return response
 
