@@ -22,7 +22,7 @@ from ajax.views import (UpdatePasswordView,
                         GetTotalKMbyJogging, GetPFCratio)
 
 urlpatterns = [
-    path("user_update", UpdateUser.as_view(), name="user-update"),
+    path("user_update", UpdateUser.as_view(), name="update-user"),
     path("change_password", UpdatePasswordView.as_view(), name="change-password"),
     path("add_power_training_exercise", CreatePowerExerciseView.as_view(), name="add_power-training-exercise"),
     path("delete_power_exercise", DeletePowerExerciseView.as_view(), name="delete-power-exercise"),
