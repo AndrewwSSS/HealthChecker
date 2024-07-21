@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta, datetime
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
@@ -10,6 +10,16 @@ from django.db.models import (ForeignKey,
                               Q,
                               Sum)
 from django.utils import timezone
+
+
+def convert_datetime_to_string(value) -> str:
+    now = timezone.now()
+    if value.date() == (now - timedelta(days=1)).date():
+        return f"Yesterday, {value.strftime("%H:%M")}"
+    elif value.date() == now.date():
+        return f"Today, {value.strftime("%H:%M")}"
+    else:
+        return value.strftime("%d/%m/%Y %H:%M")
 
 
 class User(AbstractUser):
@@ -51,13 +61,7 @@ class Training(models.Model):
         ]
 
     def __str__(self):
-        now = timezone.now()
-        if self.start.date() == (now - timedelta(days=1)).date():
-            return f"Yesterday, {self.start.strftime("%H:%M")}"
-        elif self.start.date() == now.date():
-            return f"Today, {self.start.strftime("%H:%M")}"
-        else:
-            return self.start.strftime("%d/%m/%Y %H:%M")
+        return convert_datetime_to_string(self.start)
 
 
 class Approach(models.Model):
@@ -147,7 +151,7 @@ class DishCount(models.Model):
     meal = models.ForeignKey("Meal",
                              on_delete=models.CASCADE,
                              related_name="dishes")
-    weight = models.FloatField(validators=[MinValueValidator(1)])
+    weight = models.IntegerField(validators=[MinValueValidator(1)])
 
     class Meta:
         constraints = [
@@ -192,4 +196,5 @@ class Meal(models.Model):
     def get_total_carbohydrates(self):
         return sum(dish.carbohydrates for dish in self.dishes.all())
 
-
+    def __str__(self):
+        return convert_datetime_to_string(self.date)
