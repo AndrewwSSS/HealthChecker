@@ -4,7 +4,13 @@ from django.utils import timezone
 
 from django.test import TestCase
 
-from main.models import User, PowerTraining, Dish, Meal, DishCount
+from ajax.tests.view_tests import UserRequiredMixin
+from main.models import (User,
+                         PowerTraining,
+                         Dish,
+                         Meal,
+                         DishCount,
+                         Exercise)
 
 
 class BaseTestCaseWithUser(TestCase):
@@ -256,3 +262,11 @@ class DishCountTests(BaseTestCaseWithUser):
         self.assertEqual(self.dish_count_2.protein, 20)
         self.assertEqual(self.dish_count_3.protein, 12.8)
 
+
+class ExerciseTests(UserRequiredMixin, TestCase):
+    def test_exercise_str(self):
+        self.exercise = Exercise.objects.create(
+            user=self.user,
+            name="Test"
+        )
+        self.assertEqual(str(self.exercise), "Test")
