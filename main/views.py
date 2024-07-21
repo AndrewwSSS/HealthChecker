@@ -45,7 +45,7 @@ class BaseListView(LoginRequiredMixin, generic.ListView):
         return context
 
 
-class DateSearchListView(BaseListView):
+class DateSearchListViewMixin(BaseListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         date = self.request.GET.get("date", None)
@@ -78,7 +78,7 @@ class DateSearchListView(BaseListView):
         return queryset
 
 
-class DateSearchTrainingListView(DateSearchListView):
+class DateSearchTrainingListView(DateSearchListViewMixin):
     def get_queryset(self):
         queryset = self.model.objects.filter(user=self.request.user)
         form = DateSearchForm(self.request.GET)
@@ -87,9 +87,7 @@ class DateSearchTrainingListView(DateSearchListView):
             return queryset
 
         if date := form.cleaned_data["date"]:
-            queryset = queryset.filter(start__day=date.day,
-                                       start__month=date.month,
-                                       start__year=date.year)
+            queryset = queryset.filter(start__date=date)
         sort_type = form.cleaned_data.get("sort", None)
         if sort_type == "DESC":
             queryset = queryset.order_by("-start")
@@ -99,7 +97,7 @@ class DateSearchTrainingListView(DateSearchListView):
         return queryset
 
 
-class NameSearchListView(DateSearchListView):
+class NameSearchListView(DateSearchListViewMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         date = self.request.GET.get("name", None)
@@ -130,7 +128,7 @@ class NameSearchListView(DateSearchListView):
         return queryset
 
 
-class CreateElementWithUserPropertyView(LoginRequiredMixin, generic.CreateView):
+class CreateElementWithUserFieldView(LoginRequiredMixin, generic.CreateView):
     def form_valid(self, form):
         element = form.save(commit=False)
         element.user = self.request.user
@@ -210,7 +208,7 @@ class ExerciseUpdateView(UpdateElementWithUserFieldView):
     form_class = ExerciseForm
 
 
-class ExerciseCreateView(CreateElementWithUserPropertyView):
+class ExerciseCreateView(CreateElementWithUserFieldView):
     model = Exercise
     template_name = "main/exercise/exercise-form.html"
     form_class = ExerciseForm
@@ -222,7 +220,7 @@ class DishListView(NameSearchListView):
     template_name = "main/dish/dish-list.html"
 
 
-class CreateDishView(CreateElementWithUserPropertyView):
+class CreateDishView(CreateElementWithUserFieldView):
     model = Dish
     form_class = DishForm
     template_name = "main/dish/create-dish.html"
@@ -263,35 +261,35 @@ class WalkingTrainingListView(DateSearchTrainingListView):
 
 
 # Create training views
-class CreatePowerTrainingView(CreateElementWithUserPropertyView):
+class CreatePowerTrainingView(CreateElementWithUserFieldView):
     template_name = "main/trainings/power-training/create-power-training.html"
     model = PowerTraining
     form_class = PowerTrainingForm
     success_url = "main:update-power-training"
 
 
-class CreateSwimmingView(CreateElementWithUserPropertyView):
+class CreateSwimmingView(CreateElementWithUserFieldView):
     model = Swimming
     form_class = SwimmingForm
     template_name = "base_distance_average_speed_form.html"
     success_url = "main:swimming-training-list"
 
 
-class CreateJoggingView(CreateElementWithUserPropertyView):
+class CreateJoggingView(CreateElementWithUserFieldView):
     model = Jogging
     form_class = JoggingForm
     template_name = "base_distance_average_speed_form.html"
     success_url = "main:jogging-training-list"
 
 
-class CreateWalkingView(CreateElementWithUserPropertyView):
+class CreateWalkingView(CreateElementWithUserFieldView):
     model = Walking
     form_class = WalkingForm
     template_name = "base_distance_average_speed_form.html"
     success_url = "main:walking-training-list"
 
 
-class CreateCyclingTrainingView(CreateElementWithUserPropertyView):
+class CreateCyclingTrainingView(CreateElementWithUserFieldView):
     model = Cycling
     form_class = CyclingForm
     template_name = "main/trainings/cycling_training/cycling-training-form.html"
@@ -344,12 +342,12 @@ class UpdateCyclingTrainingView(UpdateElementWithUserFieldView):
 # ------
 
 
-class MealListView(DateSearchListView):
+class MealListView(DateSearchListViewMixin):
     model = Meal
     template_name = "main/meal/meal-list.html"
 
 
-class CreateMealView(CreateElementWithUserPropertyView):
+class CreateMealView(CreateElementWithUserFieldView):
     model = Meal
     form_class = MealForm
     template_name = "main/meal/create-meal.html"
