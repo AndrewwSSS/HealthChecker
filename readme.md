@@ -1,0 +1,19 @@
+# HealtChecker
+
+This project will help you to monitor your trainings and meals
+
+## Installation
+
+Python3 must be already installed
+
+```shell
+git clone https://github.com/AndrewwSSS/HealthChecker/
+cd HealthChecker
+python -m venv venv
+pip install -r requirements.txt
+python manage.py runserver
+```
+
+## Demo
+
+![image](https://github.com/user-attachments/assets/486df161-abcb-4217-ba17-aa4d4b18167c)
