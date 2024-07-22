@@ -279,18 +279,20 @@ function create_power_exercise() {
         let div = document.createElement("div")
         div.setAttribute("data-exercise-id", `${response["id"]}`)
         div.innerHTML = (`<div class="card-title-container mb-3">
-                              <span>${exercise_name}</span>
+                               <div class="d-flex gap-3">
+                                  <span>${exercise_name}</span>
+                                  <div class="card-title-container gap-2">
+                                      <i class="fa-solid fa-plus addApproach create-icon"></i>
+                                  </div>
+                               </div>
                               <div class="card-title-container gap-2">
-                                  <button class="btn btn-primary addApproach">Add approach</button>
-                                  <button class="btn btn-danger deleteExercise">Delete</button>
+                                <i class="fa-solid fa-xmark delete-element-icon delete-exercise"></i>
                               </div>
                           </div>
                           <ul class="list-group mb-3"></ul>`)
         exercise_container.appendChild(div)
         on("click", ".addApproach", create_approach_form, true)
-        on("click", ".deleteExercise", delete_power_exercise, true)
-        // card.querySelector(".deleteExercise").addEventListener('click', delete_exercise);
-        // card.querySelector(".addApproach").addEventListener('click', add_approach_form);
+        on("click", ".delete-exercise", delete_power_exercise, true)
 
         show_toast("Exercise added successfully", "success")
     }
@@ -675,7 +677,7 @@ function load_PFC_ratio_data_by_period(period, success_callback) {
     on("click", ".deleteApproach", delete_approach, true);
     on("click", ".addApproach", create_approach_form, true)
     on("click", "#addExercise", create_power_exercise, true)
-    on("click", ".deleteExercise", delete_power_exercise, true)
+    on("click", ".delete-exercise", delete_power_exercise, true)
     on("click", "#change-password-btn", chane_password)
     on("click", "#changeUserBtn", update_user)
     on("click", "#addDish", create_dish_count_form)
