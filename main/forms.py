@@ -1,9 +1,7 @@
-from datetime import datetime
-
+from django import forms
 from django.contrib.auth.forms import (UserCreationForm,
                                        AuthenticationForm)
 from django.forms import ModelForm
-from django import forms
 from django.utils import timezone
 
 from main.models import (User,
