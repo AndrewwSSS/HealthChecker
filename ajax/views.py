@@ -1,16 +1,18 @@
 from datetime import date
 
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q, Avg, QuerySet
-from django.db.models.functions import TruncDate
-from django.http import HttpRequest, JsonResponse
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q, QuerySet
+from django.db.models.functions import TruncDate
+from django.http import HttpRequest, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views import View, generic
 
-from ajax.forms import UserUpdateForm, ApproachForm, DishCountForm, PowerExerciseForm
-from main.forms import ExerciseForm, PowerTrainingForm
+from ajax.forms import (UserUpdateForm,
+                        ApproachForm,
+                        DishCountForm,
+                        PowerExerciseForm)
 from main.models import (Exercise,
                          Approach,
                          PowerTrainingExercise,

@@ -1,9 +1,14 @@
 from django.test import TestCase
 from django.utils import timezone
 
-from main.forms import DateSearchForm, BaseTrainingForm, PowerTrainingForm, DistanceAverageSpeedTrainingForm, \
-    JoggingForm, ExerciseForm, CyclingForm, DishForm
-from main.models import User, Exercise, Dish
+from main.forms import (PowerTrainingForm,
+                        JoggingForm,
+                        ExerciseForm,
+                        CyclingForm,
+                        DishForm)
+from main.models import (User,
+                         Exercise,
+                         Dish)
 
 
 class BaseTrainingFormTests(TestCase):

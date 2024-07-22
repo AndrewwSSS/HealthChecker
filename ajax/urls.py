@@ -18,8 +18,12 @@ from ajax.views import (UpdatePasswordView,
                         GetAvgCaloriesPerDayInfo,
                         GetAvgProteinPerDayView,
                         GetAvgCarbohydratesPerDayView,
-                        GetAvgFatsPerDayView, GetTotalKMbyCycling, GetTotalKMbyWalking, GetTotalKMbySwimming,
-                        GetTotalKMbyJogging, GetPFCratio)
+                        GetAvgFatsPerDayView,
+                        GetTotalKMbyCycling,
+                        GetTotalKMbyWalking,
+                        GetTotalKMbySwimming,
+                        GetTotalKMbyJogging,
+                        GetPFCratio)
 
 urlpatterns = [
     path("user_update", UpdateUser.as_view(), name="update-user"),

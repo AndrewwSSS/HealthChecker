@@ -4,7 +4,10 @@ from django.utils import timezone
 
 from ajax.tests.view_tests import UserRequiredMixin
 from main.forms import DateSearchForm
-from main.models import User, PowerTraining, Meal, Dish, Exercise
+from main.models import (User,
+                         PowerTraining,
+                         Meal, Dish,
+                         Exercise)
 
 
 class DateSearchTrainingListViewTests(UserRequiredMixin, TestCase):
