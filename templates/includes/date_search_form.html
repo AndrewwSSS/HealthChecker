@@ -1,0 +1,50 @@
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">
+      Search
+    </h5>
+    <form method="get" id="date-search-form">
+      <input class="form-control mb-3"
+             type="date"
+             name="date"
+             placeholder="Enter date to find"
+             value="{% if search_form.initial.date %}{{ search_form.initial.date }}{% endif %}" />
+
+      <div class="text-center">
+        <input class="btn btn-success text-center"
+               type="submit"
+               value="Search"/>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">
+      Sort
+    </h5>
+    <div class="form-check">
+      <input class="form-check-input"
+             type="radio"
+             name="sort"
+             id="oldest_sort"
+             form="date-search-form"
+             value="ASC" {% if search_form.initial.sort == "ASC" %}checked{% endif %}>
+      <label class="form-check-label" for="oldest_sort">
+        Oldest first
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input"
+             type="radio"
+             name="sort"
+             id="newest_sort"
+             form="date-search-form"
+             value="DESC" {% if search_form.initial.sort != "ASC" %}checked{% endif %}/>
+      <label class="form-check-label" for="newest_sort">
+        Newest first
+      </label>
+    </div>
+  </div>
+</div>

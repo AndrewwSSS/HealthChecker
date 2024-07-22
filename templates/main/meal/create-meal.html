@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+   <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-body pt-3">
+          <div class="row justify-content-center">
+            <div class="col-lg-8">
+              <form action="" method="post">
+                {% if form.errors %}
+                  {{ form.errors }}
+                {% endif %}
+                {% csrf_token %}
+                <div class="row mb-3">
+                  <label for="inputStartDate" class="col-md-3 col-lg-3 col-form-label text-center">
+                    Date
+                  </label>
+                  <div class="col-md-9 col-lg-9">
+                    <input type="datetime-local"
+                           placeholder="dd/mm/yyyy H:M"
+                           id="inputStartDate"
+                           name="date"
+                           class="form-control"
+                           value="{% if default_date %}{{ default_date|date:"Y-m-d" }}T{{ default_date|time:"G:i" }}{% endif %}">
+                  </div>
+                </div>
+                <div class="text-center">
+                  <input type="submit" class="btn btn-primary" value="{% if object %}Update{% else %}Create{% endif %}">
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>  
+{% endblock %}

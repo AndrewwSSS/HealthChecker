@@ -1,0 +1,33 @@
+{% extends "base_training_form.html" %}
+{% block otherFields %}
+    <div class="row mb-3">
+      <label for="inputAverageSpeed" class="col-md-3 col-lg-3 col-form-label text-center">
+        AVG speed
+      </label>
+      <div class="col-md-9 col-lg-9">
+        <input type="number"
+               id="inputAverageSpeed"
+               name="average_speed"
+               class="form-control"
+               placeholder="km/h"
+               value="{% if object %}{{ object.average_speed }}{% endif %}">
+      </div>
+
+    </div>
+    <div class="row mb-3">
+      <label for="inputDistance" class="col-md-3 col-lg-3 col-form-label text-center">
+        Distance
+      </label>
+      <div class="col-md-9 col-lg-9">
+        <input type="number"
+               id="inputDistance"
+               name="distance"
+               class="form-control"
+               placeholder="km"
+               value="{% if object %}{{ object.distance }}{% endif %}">
+      </div>
+    </div>
+
+  {% block AdditionalFields %}
+  {% endblock %}
+{% endblock %}
