@@ -539,6 +539,7 @@ class UpdateApproachViewTests(LoginRequiredPostMixin, UserRequiredMixin, TestCas
     url = reverse("api:update-approach")
 
     def setUp(self):
+        super().setUp()
         self.power_training = PowerTraining.objects.create(
             user=self.user,
             start=timezone.now(),
@@ -548,23 +549,22 @@ class UpdateApproachViewTests(LoginRequiredPostMixin, UserRequiredMixin, TestCas
             name="Test exercise",
         )
         self.power_training_exercise = PowerTrainingExercise.objects.create(
-            user=self.user,
             exercise=self.exercise,
             power_training=self.power_training
         )
         self.approach_weight = 100
         self.approach_repeats = 22
         self.approach = Approach.objects.create(
-            user=self.user,
-            exercise=self.power_training_exercise,
+            training=self.power_training_exercise,
             weight=100,
-            repeats=10
+            repeats=self.approach_repeats
         )
 
     def test_update_approach(self):
         form_data = {
             "weight": 122,
-            "training": self.power_training_exercise.id,
+            "id": self.approach.id,
+            "training": self.approach.training.id,
             "repeats": 22
         }
         response = self.client.post(self.url, form_data)
@@ -577,12 +577,12 @@ class UpdateApproachViewTests(LoginRequiredPostMixin, UserRequiredMixin, TestCas
         self.client.force_login(self.another_user)
         form_data = {
             "weight": 122,
-            "training": self.power_training_exercise.id,
+            "id": self.approach.id,
             "repeats": 22
         }
         response = self.client.post(self.url, form_data)
         self.approach.refresh_from_db()
-        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(response.status_code, 200)
         self.assertEqual(self.approach.weight, self.approach_weight)
         self.assertEqual(self.approach.repeats, self.approach_repeats)
 
@@ -619,6 +619,7 @@ class DeleteDishViewTests(LoginRequiredPostMixin, UserRequiredMixin, TestCase):
     url = reverse("api:delete-dish")
 
     def setUp(self):
+        super().setUp()
         self.dish = Dish.objects.create(
             name="Test dish",
             calories=100,
@@ -650,6 +651,7 @@ class DeleteMealViewTests(LoginRequiredPostMixin, UserRequiredMixin, TestCase):
     url = reverse("api:delete-meal")
 
     def setUp(self):
+        super().setUp()
         self.meal = Meal.objects.create(
             date=timezone.now(),
             user=self.user,
