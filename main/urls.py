@@ -30,7 +30,6 @@ from main.views import (HomePageView,
                         UpdateMealView,
                         LoginUserView)
 
-
 urlpatterns = [
     path("", HomePageView.as_view(), name="home"),
     path("home/", HomePageView.as_view(), name="home"),
