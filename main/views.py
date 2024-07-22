@@ -154,8 +154,9 @@ class LoginUserView(LoginView):
     form_class = UserLoginForm
 
     def form_valid(self, form):
-        if not self.request.POST.get('remember_me', None):
+        if not form.cleaned_data.get('remember_me', None):
             self.request.session.set_expiry(0)
+            self.request.session.modified = True
         auth_login(self.request, form.get_user())
         return HttpResponseRedirect(self.get_success_url())
 
