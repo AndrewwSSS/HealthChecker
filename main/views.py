@@ -6,7 +6,9 @@ from django.contrib.auth.views import LoginView
 from django.http import (HttpResponse,
                          HttpRequest,
                          HttpResponseRedirect)
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import (redirect,
+                              render,
+                              get_object_or_404)
 from django.urls import NoReverseMatch
 from django.views import generic
 
