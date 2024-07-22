@@ -1,14 +1,11 @@
 from datetime import datetime
-from typing import Any
 
 from django.contrib.auth import logout, login as auth_login
-from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import QuerySet, Q
+from django.contrib.auth.views import LoginView
 from django.http import (HttpResponse,
                          HttpRequest,
-                         HttpResponseRedirect,
-                         Http404, HttpResponseNotFound)
+                         HttpResponseRedirect)
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import NoReverseMatch
 from django.views import generic
