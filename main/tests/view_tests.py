@@ -3,9 +3,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from ajax.tests.view_tests import UserRequiredMixin
-from main.forms import DateSearchForm
-from main.models import (User,
-                         PowerTraining,
+from main.models import (PowerTraining,
                          Meal, Dish,
                          Exercise)
 
@@ -83,14 +81,14 @@ class NameSearchListViewTests(UserRequiredMixin, TestCase):
 
     def test_search_dishes_by_name(self):
         url = reverse("main:dish-list")
-        response = self.client.get(url + f"?name=ri")
+        response = self.client.get(url + "?name=ri")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, str(self.dish_1))
         self.assertNotContains(response, str(self.dish_2))
 
     def test_search_exercises_by_name(self):
         url = reverse("main:exercises-list")
-        response = self.client.get(url + f"?name=pull")
+        response = self.client.get(url + "?name=pull")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, str(self.exercise_1))
         self.assertNotContains(response, str(self.exercise_2))

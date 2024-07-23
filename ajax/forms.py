@@ -8,10 +8,14 @@ from main.models import (User,
 
 
 class UserUpdateForm(UserChangeForm):
-    birth_date = forms.DateField(required=False,
-                                 widget=forms.DateInput(attrs={'type': 'date'}))
-    weight = forms.IntegerField(required=False,
-                                widget=forms.NumberInput(attrs={'type': 'number'}))
+    birth_date = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
+    weight = forms.IntegerField(
+        required=False,
+        widget=forms.NumberInput(attrs={'type': 'number'})
+    )
     height = forms.IntegerField(required=False,)
     sex = forms.CharField(required=False)
 
@@ -60,4 +64,3 @@ class PowerExerciseForm(forms.ModelForm):
     class Meta:
         model = PowerTrainingExercise
         fields = "__all__"
-

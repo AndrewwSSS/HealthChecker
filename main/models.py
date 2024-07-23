@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import timedelta
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
@@ -7,8 +7,7 @@ from django.db import models
 from django.db.models import (ForeignKey,
                               UniqueConstraint,
                               CheckConstraint,
-                              Q,
-                              Sum)
+                              Q)
 from django.utils import timezone
 
 
@@ -34,10 +33,20 @@ class User(AbstractUser):
         null=True
     )
     birth_date = models.DateField(null=True,)
-    weight = models.FloatField(null=True,
-                               validators=[MinValueValidator(20), MaxValueValidator(400)])
-    height = models.IntegerField(null=True,
-                                 validators=[MinValueValidator(140), MaxValueValidator(250)])
+    weight = models.FloatField(
+        null=True,
+        validators=[
+            MinValueValidator(20),
+            MaxValueValidator(400)
+        ]
+    )
+    height = models.IntegerField(
+        null=True,
+        validators=[
+             MinValueValidator(140),
+             MaxValueValidator(250)
+        ]
+    )
 
     @property
     def body_mass_index(self) -> float | None:
@@ -56,8 +65,10 @@ class Training(models.Model):
         abstract = True
         ordering = ['-start']
         constraints = [
-            CheckConstraint(check=Q(start__lt=models.F("end")),
-                            name="%(app_label)s_%(class)s_end_date_grater_than_start_date"),
+            CheckConstraint(
+                check=Q(start__lt=models.F("end")),
+                name="%(app_label)s_%(class)s_end_date_grater_than_start_date"
+            ),
         ]
 
     def __str__(self):
@@ -142,7 +153,8 @@ class Dish(models.Model):
     class Meta:
         ordering = ["name"]
         constraints = [
-            UniqueConstraint(fields=["user", "name"], name="unique_dish_name_for_user")
+            UniqueConstraint(fields=["user", "name"],
+                             name="unique_dish_name_for_user")
         ]
 
     def __str__(self):
@@ -158,7 +170,8 @@ class DishCount(models.Model):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=["dish", "meal"], name="unique_dish_for_meal"),
+            UniqueConstraint(fields=["dish", "meal"],
+                             name="unique_dish_for_meal"),
         ]
 
     @property

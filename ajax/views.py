@@ -90,8 +90,12 @@ class CreatePowerExerciseView(LoginRequiredMixin, View):
         if power_training.exercises.filter(exercise_id=exercise.id).exists():
             return INVALID_DATA_RESPONSE
 
-        power_training_exercise = PowerTrainingExercise.objects.create(exercise=exercise,
-                                                                       power_training_id=training_id)
+        power_training_exercise = (
+            PowerTrainingExercise.objects.create(
+                exercise=exercise,
+                power_training_id=training_id
+            )
+        )
         return JsonResponse(
             {
                 "status": "success",
@@ -202,7 +206,8 @@ class UpdateDishCountView(LoginRequiredMixin, View):
         if not dish_count_id or not weight:
             return INVALID_DATA_RESPONSE
 
-        dish_count_queryset = DishCount.objects.select_for_update().filter(id=dish_count_id)
+        dish_count_queryset = (DishCount.objects.select_for_update()
+                               .filter(id=dish_count_id))
         if not dish_count_queryset.exists():
             return INVALID_DATA_RESPONSE
 
@@ -223,7 +228,8 @@ class DeleteDishCountView(LoginRequiredMixin, View):
         if not dish_count_id:
             return INVALID_DATA_RESPONSE
 
-        dish_count_queryset = DishCount.objects.select_for_update().filter(id=dish_count_id)
+        dish_count_queryset = (DishCount.objects.select_for_update()
+                               .filter(id=dish_count_id))
         if not dish_count_queryset.exists():
             return INVALID_DATA_RESPONSE
 
@@ -240,7 +246,8 @@ class UpdateApproachView(LoginRequiredMixin, View):
         approach_id = request.POST.get("id", default=None)
         if not approach_id:
             return INVALID_DATA_RESPONSE
-        approach_queryset = Approach.objects.select_for_update().filter(id=approach_id)
+        approach_queryset = (Approach.objects.select_for_update()
+                             .filter(id=approach_id))
         if not approach_queryset.exists():
             return INVALID_DATA_RESPONSE
         approach = approach_queryset.first()
@@ -370,7 +377,8 @@ def get_meals_by_period(period: str, user: User) -> QuerySet[Meal] | None:
 
 def get_trainings_by_period_and_user(period: str,
                                      user: User,
-                                     training_type: type[Training]) -> QuerySet[Training] | None:
+                                     training_type: type[Training])\
+        -> QuerySet[Training] | None:
     today = date.today()
     if period == "today":
         q_obj = Q(start__date=today)
@@ -385,14 +393,15 @@ def get_trainings_by_period_and_user(period: str,
 
 
 def get_unique_meal_dates_count(query_set: QuerySet[Meal]) -> int:
-    return query_set.annotate(unique_date=TruncDate('date')).values('unique_date').distinct().count()
+    return (query_set.annotate(unique_date=TruncDate('date'))
+            .values('unique_date').distinct().count())
 
 
 class GetAvgCaloriesPerDayInfo(LoginRequiredMixin, View):
     @staticmethod
     def get(request: HttpRequest) -> JsonResponse:
         if (not (period := get_and_validate_period(request)) or
-                (user_meals := get_meals_by_period(period, request.user)) is None):
+           (user_meals := get_meals_by_period(period, request.user)) is None):
             return INVALID_DATA_RESPONSE
 
         total_calories = sum(meal.get_total_calories() for meal in user_meals)
@@ -412,7 +421,7 @@ class GetAvgProteinPerDayView(LoginRequiredMixin, View):
     @staticmethod
     def get(request: HttpRequest) -> JsonResponse:
         if (not (period := get_and_validate_period(request)) or
-                (user_meals := get_meals_by_period(period, request.user)) is None):
+           (user_meals := get_meals_by_period(period, request.user)) is None):
             return INVALID_DATA_RESPONSE
 
         total_protein = sum(meal.get_total_protein() for meal in user_meals)
@@ -432,10 +441,12 @@ class GetAvgCarbohydratesPerDayView(LoginRequiredMixin, View):
     @staticmethod
     def get(request: HttpRequest) -> JsonResponse:
         if (not (period := get_and_validate_period(request)) or
-                (user_meals := get_meals_by_period(period, request.user)) is None):
+           (user_meals := get_meals_by_period(period, request.user)) is None):
             return INVALID_DATA_RESPONSE
 
-        total_protein = sum(meal.get_total_carbohydrates() for meal in user_meals)
+        total_protein = sum(
+            meal.get_total_carbohydrates() for meal in user_meals
+        )
         unique_dates_count = get_unique_meal_dates_count(user_meals)
 
         avg_carbohydrates_per_day = 0
@@ -453,7 +464,7 @@ class GetAvgFatsPerDayView(LoginRequiredMixin, View):
     @staticmethod
     def get(request: HttpRequest) -> JsonResponse:
         if (not (period := get_and_validate_period(request)) or
-                (user_meals := get_meals_by_period(period, request.user)) is None):
+           (user_meals := get_meals_by_period(period, request.user)) is None):
             return INVALID_DATA_RESPONSE
 
         total_fats = sum(meal.get_total_fats() for meal in user_meals)
@@ -476,7 +487,9 @@ class GetTotalKmTraining(LoginRequiredMixin, View):
     def get(self, request: HttpRequest) -> JsonResponse:
         if not (period := get_and_validate_period(request)):
             return INVALID_DATA_RESPONSE
-        trainings = get_trainings_by_period_and_user(period, request.user, self.training_type)
+        trainings = get_trainings_by_period_and_user(
+            period, request.user, self.training_type
+        )
         total_kilometers = sum(training.distance for training in trainings)
 
         response = JsonResponse({
@@ -510,9 +523,15 @@ class GetPFCratio(LoginRequiredMixin, View):
 
         meals = get_meals_by_period(period, request.user)
 
-        protein_weight = sum(meal.get_total_protein() for meal in meals)
-        carbohydrates_weight = sum(meal.get_total_carbohydrates() for meal in meals)
-        fats_weight = sum(meal.get_total_fats() for meal in meals)
+        protein_weight = sum(
+            meal.get_total_protein() for meal in meals
+        )
+        carbohydrates_weight = sum(
+            meal.get_total_carbohydrates() for meal in meals
+        )
+        fats_weight = sum(
+            meal.get_total_fats() for meal in meals
+        )
 
         response = JsonResponse({
             "data": [

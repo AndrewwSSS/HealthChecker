@@ -15,7 +15,10 @@ from main.models import (User,
 
 class BaseTestCaseWithUser(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username='user1', password='<PASSW-4ORD>',)
+        self.user = User.objects.create_user(
+            username='user1',
+            password='<PASSW-4ORD>'
+        )
 
 
 class UserTests(TestCase):

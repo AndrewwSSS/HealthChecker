@@ -242,7 +242,8 @@ class PowerTrainingsListView(DateSearchTrainingListView):
 
 class CyclingTrainingListView(DateSearchTrainingListView):
     model = Cycling
-    template_name = "main/trainings/cycling_training/cycling-training-list.html"
+    template_name = ("main/trainings/cycling_training/"
+                     "cycling-training-list.html")
 
 
 class SwimmingTrainingListView(DateSearchTrainingListView):
@@ -292,7 +293,8 @@ class CreateWalkingView(CreateElementWithUserFieldView):
 class CreateCyclingTrainingView(CreateElementWithUserFieldView):
     model = Cycling
     form_class = CyclingForm
-    template_name = "main/trainings/cycling_training/cycling-training-form.html"
+    template_name = ("main/trainings/cycling_training/"
+                     "cycling-training-form.html")
     success_url = "main:cycling-training-list"
 
 
@@ -304,7 +306,8 @@ class UpdatePowerTrainingView(UpdateElementWithUserFieldView):
     success_url = "main:power-trainings-list"
 
     def get_context_data(self, **kwargs):
-        context = super(UpdatePowerTrainingView, self).get_context_data(**kwargs)
+        context = (super(UpdatePowerTrainingView, self)
+                   .get_context_data(**kwargs))
         context["exercises"] = Exercise.objects.filter(user=self.request.user)
         return context
 
@@ -337,7 +340,8 @@ class UpdateCyclingTrainingView(UpdateElementWithUserFieldView):
     fields = CyclingForm.Meta.fields
     model = Cycling
     class_form = CyclingForm
-    template_name = "main/trainings/cycling_training/cycling-training-form.html"
+    template_name = ("main/trainings/cycling_training/"
+                     "cycling-training-form.html")
     success_url = "main:cycling-training-list"
 # ------
 

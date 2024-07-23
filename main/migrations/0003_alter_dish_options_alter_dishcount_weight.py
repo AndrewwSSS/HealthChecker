@@ -18,6 +18,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='dishcount',
             name='weight',
-            field=models.IntegerField(validators=[django.core.validators.MinValueValidator(1)]),
+            field=models.IntegerField(
+                validators=[django.core.validators.MinValueValidator(1)]
+            ),
         ),
     ]
