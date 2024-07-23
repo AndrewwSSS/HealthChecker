@@ -4,11 +4,30 @@
       Search
     </h5>
     <form method="get" id="date-search-form">
-      <input class="form-control mb-3"
-             type="date"
-             name="date"
-             placeholder="Enter date to find"
-             value="{% if search_form.initial.date %}{{ search_form.initial.date }}{% endif %}" />
+      <div class="row mb-3">
+        <label for="inputStartDate" class="col-md-3 col-lg-3 col-form-label text-center">
+          From
+        </label>
+        <div class="col-md-9 col-lg-9">
+          <input type="date"
+                 id="inputStartDate"
+                 name="start_date"
+                 class="form-control"
+                 value="{% if search_form.initial.start_date %}{{ search_form.initial.start_date }}{% endif %}">
+        </div>
+      </div>
+      <div class="row mb-3">
+        <label for="inputStartDate" class="col-md-3 col-lg-3 col-form-label text-center">
+          To
+        </label>
+        <div class="col-md-9 col-lg-9">
+          <input type="date"
+                 id="inputStartDate"
+                 name="end_date"
+                 class="form-control"
+                 value="{% if search_form.initial.end_date %}{{ search_form.initial.end_date }}{% endif %}">
+        </div>
+      </div>
 
       <div class="text-center">
         <input class="btn btn-success text-center"

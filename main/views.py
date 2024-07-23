@@ -47,12 +47,14 @@ class BaseListView(LoginRequiredMixin, generic.ListView):
 class DateSearchListViewMixin(BaseListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        date = self.request.GET.get("date", None)
+        start_date = self.request.GET.get("start_date", None)
+        end_date = self.request.GET.get("end_date", None)
         sort = self.request.GET.get("sort", None)
 
         context["search_form"] = DateSearchForm(
             initial={
-                "date": date,
+                "start_date": start_date,
+                "end_date": end_date,
                 "sort": sort
             }
         )
@@ -65,10 +67,18 @@ class DateSearchListViewMixin(BaseListView):
         if not form.is_valid() or not queryset.count():
             return queryset
 
-        if date := form.cleaned_data["date"]:
-            queryset = queryset.filter(date__day=date.day,
-                                       date__month=date.month,
-                                       date__year=date.year)
+        start_date = form.cleaned_data.get("start_date", None)
+        end_date = form.cleaned_data.get("end_date", None)
+
+        if start_date:
+            if end_date:
+                queryset = queryset.filter(date__date__gte=start_date, date__date__lte=end_date)
+            else:
+                queryset = queryset.filter(date__date__gte=start_date)
+        else:
+            if end_date:
+                queryset = queryset.filter(date__date__lte=end_date)
+
         sort_type = form.cleaned_data.get("sort", None)
         if sort_type == "DESC":
             queryset = queryset.order_by("-date")
@@ -83,10 +93,20 @@ class DateSearchTrainingListView(DateSearchListViewMixin):
         form = DateSearchForm(self.request.GET)
 
         if not form.is_valid() or not queryset.count():
+            print(form.errors)
             return queryset
 
-        if date := form.cleaned_data["date"]:
-            queryset = queryset.filter(start__date=date)
+        start_date = form.cleaned_data.get("start_date", None)
+        end_date = form.cleaned_data.get("end_date", None)
+        if start_date:
+            if end_date:
+                queryset = queryset.filter(start__date__gte=start_date, start__date__lte=end_date)
+            else:
+                queryset = queryset.filter(start__date__gte=start_date)
+        else:
+            if end_date:
+                queryset = queryset.filter(start__date__lte=end_date)
+
         sort_type = form.cleaned_data.get("sort", None)
         if sort_type == "DESC":
             queryset = queryset.order_by("-start")

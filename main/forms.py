@@ -154,10 +154,29 @@ class DateSearchForm(forms.Form):
         ("DESC", "descending"),
         ("ASC", "ascending"),
     )
-    date = forms.DateField(
+    start_date = forms.DateField(
+        required=False,
+    )
+    end_date = forms.DateField(
         required=False,
     )
     sort = forms.ChoiceField(choices=choices, required=False)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get("start_date", None)
+        end_date = cleaned_data.get("end_date", None)
+
+        if start_date and start_date > timezone.now().date():
+            raise forms.ValidationError("Start date must be less "
+                                        "or equal than now")
+        if end_date and end_date > timezone.now().date():
+            raise forms.ValidationError("End date must be less "
+                                        "or equal than now")
+        if end_date and start_date and start_date > end_date:
+            raise forms.ValidationError("End date must be grater than "
+                                        "start date")
+        return cleaned_data
 
 
 class NameSearchForm(forms.Form):
