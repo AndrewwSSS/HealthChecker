@@ -2,6 +2,16 @@
 
 This project will help you to monitor your trainings and meals
 
+## Uploaded project
+
+https://healthchecker.onrender.com/
+
+Test account:
+```shell
+username: test_user
+password: test_user_password1
+```
+
 ## Installation
 
 Python3 must be already installed
