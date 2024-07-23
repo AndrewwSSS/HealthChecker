@@ -27,7 +27,7 @@ from ajax.views import (UpdatePasswordView,
 
 urlpatterns = [
     path(
-        "user_update/",
+        "user_update",
         UpdateUser.as_view(),
         name="update-user"
     ),
