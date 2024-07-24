@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block content %}
+  <div class="pagetitle">
+    <h1>Profile</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/home">Home</a></li>
+        <li class="breadcrumb-item">Users</li>
+        <li class="breadcrumb-item active">Profile</li>
+      </ol>
+    </nav>
+  </div>
+  <section class="section profile">
+    <div class="row justify-content-center">
+      <div class="col-xl-8 col-md-8">
+        <div class="card">
+          <div class="card-body pt-3">
+            <!-- Bordered Tabs -->
+            <ul class="nav nav-tabs nav-tabs-bordered">
+              <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
+              </li>
+
+            </ul>
+            <div class="tab-content pt-2">
+              <div class="tab-pane fade active show profile-edit pt-3" id="profile-edit">
+                <!-- Profile Edit Form -->
+                <div class="row justify-content-center">
+                  <div class="col-xl-8">
+                    <div class="row mb-3">
+                      <label for="yourUsername" class="col-md-3 col-lg-3 col-form-label text-center">
+                        Username
+                      </label>
+                      <div class="col-md-8 col-lg-9">
+                        <input type="text"
+                               name="username"
+                               class="form-control"
+                               id="username"
+                               value="{{ user.username }}" required>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="first_name" class="col-md-3 col-lg-3 col-form-label text-center">
+                        First name
+                      </label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="last_name" type="text" class="form-control" id="first_name" value="{{ user.first_name }}">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="last_name" class="col-md-3 col-lg-3 col-form-label text-center">Last name</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="last_name" type="text" class="form-control" id="last_name" value="{{ user.last_name }}">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="Email" class="col-md-3 col-lg-3 col-form-label text-center">Email</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="email" type="email" class="form-control" id="Email" value="{{ user.email }}">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="birthDate" class="col-md-3 col-lg-3 col-form-label text-center">birth date</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="birth_date"
+                               type="date"
+                               class="form-control"
+                               id="birth_date"
+                               value="{% if user.birth_date %}{{ user.birth_date }}{% endif %}">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="weight" class="col-md-3 col-lg-3 col-form-label text-center">Weight</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="weight"
+                               type="number"
+                               class="form-control"
+                               id="weight"
+                               value="{% if user.weight%}{{ user.weight }}{% endif %}">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="height" class="col-md-3 col-lg-3 col-form-label text-center">Height</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="height"
+                               type="number"
+                               class="form-control"
+                               id="height"
+                               value="{% if user.height %}{{ user.height }}{% endif %}">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="sex" class="col-md-3 col-lg-3 col-form-label text-center">Sex</label>
+                      <div class="col-md-8 col-lg-9">
+                        <select name="sex" id="sex" class="form-select">
+                          <option value="">Not set</option>
+                          <option value="M" {% if user.sex == "M" %}selected{% endif %}>Male</option>
+                          <option value="F" {% if user.sex == "F" %}selected{% endif %}>Female</option>
+                          <option value="U" {% if user.sex == "U" %}selected{% endif %}>Unsure</option>
+                        </select>
+                      </div>
+                    </div>
+
+
+                    <div class="text-center">
+                      <button type="submit" id="changeUserBtn" class="btn btn-primary formSendButton">Save Changes</button>
+                    </div>
+                  </div>
+                  </div>
+              </div>
+
+              <div class="tab-pane fade pt-3" id="profile-change-password">
+                <div class="row justify-content-center">
+                  <div class="col-xl-8">
+                    <!-- Change Password Form -->
+                    <div id="change-password-form">
+                      {% csrf_token %}
+                      <div class="row mb-3">
+                        <label for="currentPassword" class="col-md-4 col-lg-4 col-form-label text-center">Current Password</label>
+                        <div class="col-md-8 col-lg-8">
+                          <input name="password" type="password" class="form-control" id="currentPassword">
+                        </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <label for="newPassword" class="col-md-4 col-lg-4 col-form-label text-center">New Password</label>
+                        <div class="col-md-8 col-lg-8">
+                          <input name="newpassword" type="password" class="form-control" id="newPassword">
+                        </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <label for="renewPassword" class="col-md-4 col-lg-4 col-form-label text-center">Re-enter New Password</label>
+                        <div class="col-md-8 col-lg-8">
+                          <input name="renewpassword" type="password" class="form-control" id="renewPassword">
+                        </div>
+                      </div>
+
+                      <div class="text-center">
+                        <button type="submit"
+                                class="btn btn-primary formSendButton"
+                                id="change-password-btn">
+                          Change Password
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+              </div>
+
+            </div><!-- End Bordered Tabs -->
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+{% endblock %}

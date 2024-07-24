@@ -1,0 +1,69 @@
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">
+      Search
+    </h5>
+    <form method="get" id="date-search-form">
+      <div class="row mb-3">
+        <label for="inputStartDate" class="col-md-3 col-lg-3 col-form-label text-center">
+          From
+        </label>
+        <div class="col-md-9 col-lg-9">
+          <input type="date"
+                 id="inputStartDate"
+                 name="start_date"
+                 class="form-control"
+                 value="{% if search_form.initial.start_date %}{{ search_form.initial.start_date }}{% endif %}">
+        </div>
+      </div>
+      <div class="row mb-3">
+        <label for="inputStartDate" class="col-md-3 col-lg-3 col-form-label text-center">
+          To
+        </label>
+        <div class="col-md-9 col-lg-9">
+          <input type="date"
+                 id="inputStartDate"
+                 name="end_date"
+                 class="form-control"
+                 value="{% if search_form.initial.end_date %}{{ search_form.initial.end_date }}{% endif %}">
+        </div>
+      </div>
+
+      <div class="text-center">
+        <input class="btn btn-success text-center"
+               type="submit"
+               value="Search"/>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">
+      Sort
+    </h5>
+    <div class="form-check">
+      <input class="form-check-input"
+             type="radio"
+             name="sort"
+             id="oldest_sort"
+             form="date-search-form"
+             value="ASC" {% if search_form.initial.sort == "ASC" %}checked{% endif %}>
+      <label class="form-check-label" for="oldest_sort">
+        Oldest first
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input"
+             type="radio"
+             name="sort"
+             id="newest_sort"
+             form="date-search-form"
+             value="DESC" {% if search_form.initial.sort != "ASC" %}checked{% endif %}/>
+      <label class="form-check-label" for="newest_sort">
+        Newest first
+      </label>
+    </div>
+  </div>
+</div>

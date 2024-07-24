@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="section">
+    <div class="row justify-content-center">
+      <div class="col-lg-4">
+        {% include "includes/search_by_name_form.html" %}
+      </div>
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title-container">
+              <h5 class="card-title">
+                Dishes
+              </h5>
+              <div class="d-flex h-50">
+                <a href="{% url "main:create-dish" %}">
+                  <i class="fa-solid fa-plus create-training-icon"></i>
+                </a>
+              </div>
+            </div>
+            <div class="dishes-container row">
+              {% for dish in dish_list%}
+                <a href="{% url "main:update-dish" dish.id %}"
+                   data-id="{{ dish.id }}"
+                   class="col-lg-4">
+                  <div class="alert alert-primary fade show">
+                    <div class="d-flex justify-content-between">
+                    <span>
+                      {{ dish.name }}
+                    </span>
+                      <i class="fa-solid fa-xmark delete-element-icon delete-dish-icon"></i>
+                    </div>
+                  </div>
+                </a>
+              {% empty %}
+                <h6 class="card-title">
+                  No dishes yet
+                </h6>
+              {% endfor %}
+              {% include "includes/pagination.html" %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

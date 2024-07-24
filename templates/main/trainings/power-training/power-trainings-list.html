@@ -1,0 +1,24 @@
+{% extends "base_training_list.html" %}
+{% block title %}Power trainings{% endblock %}
+{% block create_url %}{% url "main:create-power-training" %}{% endblock %}
+{% block trainings %}
+  {% for power_training in powertraining_list %}
+    <a href="{% url "main:update-power-training" power_training.id %}"
+       data-training-id="{{ power_training.id }}"
+       data-training-type="PW"
+       class="training-element col-lg-4">
+      <div class="alert alert-primary fade show ">
+        <div class="d-flex justify-content-between">
+            <span>
+               {{ power_training }}
+           </span>
+          <i class="fa-solid fa-xmark delete-element-icon delete-training-icon"></i>
+        </div>
+      </div>
+    </a>
+  {% empty %}
+    <h6 class="card-title">
+      No trainings yet
+    </h6>
+  {% endfor %}
+{% endblock %}
