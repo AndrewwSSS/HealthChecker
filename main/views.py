@@ -3,6 +3,7 @@ from datetime import datetime
 from django.contrib.auth import logout, login as auth_login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
+from django.db.models import F
 from django.http import (HttpResponse,
                          HttpRequest,
                          HttpResponseRedirect)
