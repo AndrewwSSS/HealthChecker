@@ -618,7 +618,6 @@ function load_all_statistics_of_main_page() {
 
 function change_pfc_ratio_filter(event) {
     let period = event.target.textContent
-    console.log("1")
     let success_callback = response => {
         set_echart_data("PFC-ratio", response['data'])
         document.getElementById("PFC-span").textContent = `| ${period}`
