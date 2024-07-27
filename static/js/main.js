@@ -279,11 +279,9 @@ function create_power_exercise() {
         let div = document.createElement("div")
         div.setAttribute("data-exercise-id", `${response["id"]}`)
         div.innerHTML = (`<div class="card-title-container mb-3">
-                               <div class="d-flex gap-3">
+                              <div class="d-flex gap-3">
                                   <span>${exercise_name}</span>
-                                  <div class="card-title-container gap-2">
-                                      <i class="fa-solid fa-plus addApproach create-icon"></i>
-                                  </div>
+                                  <i class="fa-solid fa-plus addApproach create-icon"></i>
                                </div>
                               <div class="card-title-container gap-2">
                                 <i class="fa-solid fa-xmark delete-element-icon delete-exercise"></i>
