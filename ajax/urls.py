@@ -1,13 +1,23 @@
 from django.urls import path
 
+from ajax.training_views import CreateApproachView
+from ajax.training_views import CreatePowerExerciseView
+from ajax.training_views import DeleteApproach
+from ajax.training_views import DeletePowerExerciseView
+from ajax.training_views import DeleteTrainingView
+from ajax.user_statistics_views import GetAvgCaloriesPerDayInfo
+from ajax.user_statistics_views import GetAvgCarbohydratesPerDayView
+from ajax.user_statistics_views import GetAvgFatsPerDayView
+from ajax.user_statistics_views import GetAvgProteinPerDayView
+from ajax.user_statistics_views import GetPFCratio
+from ajax.user_statistics_views import GetTotalKMbyCycling
+from ajax.user_statistics_views import GetTotalKMbyJogging
+from ajax.user_statistics_views import GetTotalKMbySwimming
+from ajax.user_statistics_views import GetTotalKMbyWalking
+from ajax.user_statistics_views import GetTrainingsTypeRatioView
+from ajax.user_views import UpdatePasswordView
+from ajax.user_views import UpdateUser
 from ajax.views import (
-    UpdatePasswordView,
-    UpdateUser,
-    CreatePowerExerciseView,
-    CreateApproachView,
-    DeleteTrainingView,
-    DeleteApproach,
-    DeletePowerExerciseView,
     CreateDishCountView,
     DeleteDishCountView,
     UpdateApproachView,
@@ -15,16 +25,6 @@ from ajax.views import (
     DeleteExerciseView,
     DeleteDishView,
     DeleteMealView,
-    GetTrainingsTypeRatioView,
-    GetAvgCaloriesPerDayInfo,
-    GetAvgProteinPerDayView,
-    GetAvgCarbohydratesPerDayView,
-    GetAvgFatsPerDayView,
-    GetTotalKMbyCycling,
-    GetTotalKMbyWalking,
-    GetTotalKMbySwimming,
-    GetTotalKMbyJogging,
-    GetPFCratio,
 )
 
 urlpatterns = [
