@@ -16,6 +16,9 @@ password: test_user_password1
 
 Python3 must be already installed
 
+Before running project you should setup environment variable:
+DJANGO_SECRET_KEY
+
 ```shell
 git clone https://github.com/AndrewwSSS/HealthChecker/
 cd HealthChecker
