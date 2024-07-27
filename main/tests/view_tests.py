@@ -3,9 +3,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from ajax.tests.view_tests import UserRequiredMixin
-from main.models import (PowerTraining,
-                         Meal, Dish,
-                         Exercise)
+from main.models import PowerTraining, Meal, Dish, Exercise
 
 
 class DateSearchTrainingListViewTests(UserRequiredMixin, TestCase):
@@ -55,19 +53,19 @@ class NameSearchListViewTests(UserRequiredMixin, TestCase):
         super().setUp()
         self.dish_1 = Dish.objects.create(
             user=self.user,
-            name='Rice',
+            name="Rice",
             calories=100,
             fats=43,
             protein=20,
-            carbohydrates=10
+            carbohydrates=10,
         )
         self.dish_2 = Dish.objects.create(
             user=self.user,
-            name='Cucumber',
+            name="Cucumber",
             calories=100,
             fats=43,
             protein=20,
-            carbohydrates=10
+            carbohydrates=10,
         )
 
         self.exercise_1 = Exercise.objects.create(

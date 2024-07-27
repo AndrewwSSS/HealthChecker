@@ -58,10 +58,10 @@ class TrainingTests(BaseTestCaseWithUser):
         )
 
         self.assertEqual(str(training_1),
-                         f"Today, {training_1.start.strftime("%H:%M")}")
+                         f"Today, {training_1.start.strftime('%H:%M')}")
 
         self.assertEqual(str(training_2),
-                         f"Yesterday, {training_2.start.strftime("%H:%M")}")
+                         f"Yesterday, {training_2.start.strftime('%H:%M')}")
 
         self.assertEqual(str(training_3),
                          training_3.start.strftime("%d/%m/%Y %H:%M"))
@@ -154,10 +154,10 @@ class MealTests(BaseTestCaseWithUser):
 
     def test_meal_str(self):
         self.assertEqual(str(self.meal_1),
-                         f"Today, {self.meal_1.date.strftime("%H:%M")}")
+                         f"Today, {self.meal_1.date.strftime('%H:%M')}")
 
         self.assertEqual(str(self.meal_2),
-                         f"Yesterday, {self.meal_2.date.strftime("%H:%M")}")
+                         f"Yesterday, {self.meal_2.date.strftime('%H:%M')}")
 
         self.assertEqual(str(self.meal_3),
                          self.meal_3.date.strftime("%d/%m/%Y %H:%M"))

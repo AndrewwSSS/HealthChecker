@@ -14,204 +14,590 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('auth', '0012_alter_user_first_name_max_length'),
+        ("auth", "0012_alter_user_first_name_max_length"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='User',
+            name="User",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('is_superuser', models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status')),
-                ('username', models.CharField(error_messages={'unique': 'A user with that username already exists.'}, help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.', max_length=150, unique=True, validators=[django.contrib.auth.validators.UnicodeUsernameValidator()], verbose_name='username')),
-                ('first_name', models.CharField(blank=True, max_length=150, verbose_name='first name')),
-                ('last_name', models.CharField(blank=True, max_length=150, verbose_name='last name')),
-                ('email', models.EmailField(blank=True, max_length=254, verbose_name='email address')),
-                ('is_staff', models.BooleanField(default=False, help_text='Designates whether the user can log into this admin site.', verbose_name='staff status')),
-                ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active')),
-                ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
-                ('sex', models.CharField(choices=[('F', 'Female'), ('M', 'Male'), ('U', 'Unsure')], max_length=1, null=True)),
-                ('birth_date', models.DateField(null=True)),
-                ('weight', models.FloatField(null=True, validators=[django.core.validators.MinValueValidator(20), django.core.validators.MaxValueValidator(400)])),
-                ('height', models.IntegerField(null=True, validators=[django.core.validators.MinValueValidator(140), django.core.validators.MaxValueValidator(250)])),
-                ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.group', verbose_name='groups')),
-                ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.permission', verbose_name='user permissions')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("password", models.CharField(max_length=128, verbose_name="password")),
+                (
+                    "last_login",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="last login"
+                    ),
+                ),
+                (
+                    "is_superuser",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates that this user has all permissions without explicitly assigning them.",
+                        verbose_name="superuser status",
+                    ),
+                ),
+                (
+                    "username",
+                    models.CharField(
+                        error_messages={
+                            "unique": "A user with that username already exists."
+                        },
+                        help_text="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
+                        max_length=150,
+                        unique=True,
+                        validators=[
+                            django.contrib.auth.validators.UnicodeUsernameValidator()
+                        ],
+                        verbose_name="username",
+                    ),
+                ),
+                (
+                    "first_name",
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="first name"
+                    ),
+                ),
+                (
+                    "last_name",
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="last name"
+                    ),
+                ),
+                (
+                    "email",
+                    models.EmailField(
+                        blank=True, max_length=254, verbose_name="email address"
+                    ),
+                ),
+                (
+                    "is_staff",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates whether the user can log into this admin site.",
+                        verbose_name="staff status",
+                    ),
+                ),
+                (
+                    "is_active",
+                    models.BooleanField(
+                        default=True,
+                        help_text="Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
+                        verbose_name="active",
+                    ),
+                ),
+                (
+                    "date_joined",
+                    models.DateTimeField(
+                        default=django.utils.timezone.now, verbose_name="date joined"
+                    ),
+                ),
+                (
+                    "sex",
+                    models.CharField(
+                        choices=[("F", "Female"), ("M", "Male"), ("U", "Unsure")],
+                        max_length=1,
+                        null=True,
+                    ),
+                ),
+                ("birth_date", models.DateField(null=True)),
+                (
+                    "weight",
+                    models.FloatField(
+                        null=True,
+                        validators=[
+                            django.core.validators.MinValueValidator(20),
+                            django.core.validators.MaxValueValidator(400),
+                        ],
+                    ),
+                ),
+                (
+                    "height",
+                    models.IntegerField(
+                        null=True,
+                        validators=[
+                            django.core.validators.MinValueValidator(140),
+                            django.core.validators.MaxValueValidator(250),
+                        ],
+                    ),
+                ),
+                (
+                    "groups",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.group",
+                        verbose_name="groups",
+                    ),
+                ),
+                (
+                    "user_permissions",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="Specific permissions for this user.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.permission",
+                        verbose_name="user permissions",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'user',
-                'verbose_name_plural': 'users',
-                'abstract': False,
+                "verbose_name": "user",
+                "verbose_name_plural": "users",
+                "abstract": False,
             },
             managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
+                ("objects", django.contrib.auth.models.UserManager()),
             ],
         ),
         migrations.CreateModel(
-            name='Cycling',
+            name="Cycling",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('start', models.DateTimeField()),
-                ('end', models.DateTimeField(blank=True, null=True)),
-                ('description', models.TextField(blank=True)),
-                ('average_speed', models.FloatField(validators=[django.core.validators.MinValueValidator(1)])),
-                ('distance', models.FloatField(validators=[django.core.validators.MinValueValidator(1)])),
-                ('climb', models.FloatField(validators=[django.core.validators.MinValueValidator(1)])),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("start", models.DateTimeField()),
+                ("end", models.DateTimeField(blank=True, null=True)),
+                ("description", models.TextField(blank=True)),
+                (
+                    "average_speed",
+                    models.FloatField(
+                        validators=[django.core.validators.MinValueValidator(1)]
+                    ),
+                ),
+                (
+                    "distance",
+                    models.FloatField(
+                        validators=[django.core.validators.MinValueValidator(1)]
+                    ),
+                ),
+                (
+                    "climb",
+                    models.FloatField(
+                        validators=[django.core.validators.MinValueValidator(1)]
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['start'],
-                'abstract': False,
+                "ordering": ["start"],
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Dish',
+            name="Dish",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('calories', models.FloatField(validators=[django.core.validators.MinValueValidator(0.1)])),
-                ('protein', models.FloatField(validators=[django.core.validators.MinValueValidator(0.1)])),
-                ('carbohydrates', models.FloatField(validators=[django.core.validators.MinValueValidator(0.1)])),
-                ('fats', models.FloatField(validators=[django.core.validators.MinValueValidator(0.1)])),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='dishes', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "calories",
+                    models.FloatField(
+                        validators=[django.core.validators.MinValueValidator(0.1)]
+                    ),
+                ),
+                (
+                    "protein",
+                    models.FloatField(
+                        validators=[django.core.validators.MinValueValidator(0.1)]
+                    ),
+                ),
+                (
+                    "carbohydrates",
+                    models.FloatField(
+                        validators=[django.core.validators.MinValueValidator(0.1)]
+                    ),
+                ),
+                (
+                    "fats",
+                    models.FloatField(
+                        validators=[django.core.validators.MinValueValidator(0.1)]
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="dishes",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Exercise',
+            name="Exercise",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, unique=True)),
-                ('description', models.TextField(blank=True)),
-                ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='exercises', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, unique=True)),
+                ("description", models.TextField(blank=True)),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="exercises",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Jogging',
+            name="Jogging",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('start', models.DateTimeField()),
-                ('end', models.DateTimeField(blank=True, null=True)),
-                ('description', models.TextField(blank=True)),
-                ('average_speed', models.FloatField(validators=[django.core.validators.MinValueValidator(1)])),
-                ('distance', models.FloatField(validators=[django.core.validators.MinValueValidator(1)])),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("start", models.DateTimeField()),
+                ("end", models.DateTimeField(blank=True, null=True)),
+                ("description", models.TextField(blank=True)),
+                (
+                    "average_speed",
+                    models.FloatField(
+                        validators=[django.core.validators.MinValueValidator(1)]
+                    ),
+                ),
+                (
+                    "distance",
+                    models.FloatField(
+                        validators=[django.core.validators.MinValueValidator(1)]
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['start'],
-                'abstract': False,
+                "ordering": ["start"],
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Meal',
+            name="Meal",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateTimeField()),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='meals', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("date", models.DateTimeField()),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="meals",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='DishCount',
+            name="DishCount",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('weight', models.FloatField(validators=[django.core.validators.MinValueValidator(1)])),
-                ('dish', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='main.dish')),
-                ('meal', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='dishes', to='main.meal')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "weight",
+                    models.FloatField(
+                        validators=[django.core.validators.MinValueValidator(1)]
+                    ),
+                ),
+                (
+                    "dish",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="main.dish"
+                    ),
+                ),
+                (
+                    "meal",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="dishes",
+                        to="main.meal",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='PowerTraining',
+            name="PowerTraining",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('start', models.DateTimeField()),
-                ('end', models.DateTimeField(blank=True, null=True)),
-                ('description', models.TextField(blank=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("start", models.DateTimeField()),
+                ("end", models.DateTimeField(blank=True, null=True)),
+                ("description", models.TextField(blank=True)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['start'],
-                'abstract': False,
+                "ordering": ["start"],
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='PowerTrainingExercise',
+            name="PowerTrainingExercise",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('exercise', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='main.exercise')),
-                ('power_training', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='exercises', to='main.powertraining')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "exercise",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="main.exercise"
+                    ),
+                ),
+                (
+                    "power_training",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="exercises",
+                        to="main.powertraining",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Approach',
+            name="Approach",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('weight', models.FloatField(default=0, validators=[django.core.validators.MinValueValidator(0)])),
-                ('repeats', models.IntegerField(validators=[django.core.validators.MinValueValidator(1)])),
-                ('training', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='approaches', to='main.powertrainingexercise')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "weight",
+                    models.FloatField(
+                        default=0,
+                        validators=[django.core.validators.MinValueValidator(0)],
+                    ),
+                ),
+                (
+                    "repeats",
+                    models.IntegerField(
+                        validators=[django.core.validators.MinValueValidator(1)]
+                    ),
+                ),
+                (
+                    "training",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="approaches",
+                        to="main.powertrainingexercise",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Swimming',
+            name="Swimming",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('start', models.DateTimeField()),
-                ('end', models.DateTimeField(blank=True, null=True)),
-                ('description', models.TextField(blank=True)),
-                ('average_speed', models.FloatField(validators=[django.core.validators.MinValueValidator(1)])),
-                ('distance', models.FloatField(validators=[django.core.validators.MinValueValidator(1)])),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("start", models.DateTimeField()),
+                ("end", models.DateTimeField(blank=True, null=True)),
+                ("description", models.TextField(blank=True)),
+                (
+                    "average_speed",
+                    models.FloatField(
+                        validators=[django.core.validators.MinValueValidator(1)]
+                    ),
+                ),
+                (
+                    "distance",
+                    models.FloatField(
+                        validators=[django.core.validators.MinValueValidator(1)]
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['start'],
-                'abstract': False,
+                "ordering": ["start"],
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Walking',
+            name="Walking",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('start', models.DateTimeField()),
-                ('end', models.DateTimeField(blank=True, null=True)),
-                ('description', models.TextField(blank=True)),
-                ('average_speed', models.FloatField(validators=[django.core.validators.MinValueValidator(1)])),
-                ('distance', models.FloatField(validators=[django.core.validators.MinValueValidator(1)])),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("start", models.DateTimeField()),
+                ("end", models.DateTimeField(blank=True, null=True)),
+                ("description", models.TextField(blank=True)),
+                (
+                    "average_speed",
+                    models.FloatField(
+                        validators=[django.core.validators.MinValueValidator(1)]
+                    ),
+                ),
+                (
+                    "distance",
+                    models.FloatField(
+                        validators=[django.core.validators.MinValueValidator(1)]
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['start'],
-                'abstract': False,
+                "ordering": ["start"],
+                "abstract": False,
             },
         ),
         migrations.AddConstraint(
-            model_name='cycling',
-            constraint=models.CheckConstraint(check=models.Q(('start__lt', models.F('end'))), name='main_cycling_end_date_grater_than_start_date'),
+            model_name="cycling",
+            constraint=models.CheckConstraint(
+                check=models.Q(("start__lt", models.F("end"))),
+                name="main_cycling_end_date_grater_than_start_date",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='dish',
-            constraint=models.UniqueConstraint(fields=('user', 'name'), name='unique_dish_name_for_user'),
+            model_name="dish",
+            constraint=models.UniqueConstraint(
+                fields=("user", "name"), name="unique_dish_name_for_user"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='jogging',
-            constraint=models.CheckConstraint(check=models.Q(('start__lt', models.F('end'))), name='main_jogging_end_date_grater_than_start_date'),
+            model_name="jogging",
+            constraint=models.CheckConstraint(
+                check=models.Q(("start__lt", models.F("end"))),
+                name="main_jogging_end_date_grater_than_start_date",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='dishcount',
-            constraint=models.UniqueConstraint(fields=('dish', 'meal'), name='unique_dish_for_meal'),
+            model_name="dishcount",
+            constraint=models.UniqueConstraint(
+                fields=("dish", "meal"), name="unique_dish_for_meal"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='powertraining',
-            constraint=models.CheckConstraint(check=models.Q(('start__lt', models.F('end'))), name='main_powertraining_end_date_grater_than_start_date'),
+            model_name="powertraining",
+            constraint=models.CheckConstraint(
+                check=models.Q(("start__lt", models.F("end"))),
+                name="main_powertraining_end_date_grater_than_start_date",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='powertrainingexercise',
-            constraint=models.UniqueConstraint(fields=('exercise', 'power_training'), name='unique_power_training_exercise'),
+            model_name="powertrainingexercise",
+            constraint=models.UniqueConstraint(
+                fields=("exercise", "power_training"),
+                name="unique_power_training_exercise",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='swimming',
-            constraint=models.CheckConstraint(check=models.Q(('start__lt', models.F('end'))), name='main_swimming_end_date_grater_than_start_date'),
+            model_name="swimming",
+            constraint=models.CheckConstraint(
+                check=models.Q(("start__lt", models.F("end"))),
+                name="main_swimming_end_date_grater_than_start_date",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='walking',
-            constraint=models.CheckConstraint(check=models.Q(('start__lt', models.F('end'))), name='main_walking_end_date_grater_than_start_date'),
+            model_name="walking",
+            constraint=models.CheckConstraint(
+                check=models.Q(("start__lt", models.F("end"))),
+                name="main_walking_end_date_grater_than_start_date",
+            ),
         ),
     ]

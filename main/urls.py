@@ -1,34 +1,36 @@
 from django.urls import path
 
-from main.views import (HomePageView,
-                        CreateUserView,
-                        logout_view,
-                        UserProfileView,
-                        PowerTrainingsListView,
-                        ExercisesListView,
-                        ExerciseUpdateView,
-                        ExerciseCreateView,
-                        UpdatePowerTrainingView,
-                        CyclingTrainingListView,
-                        CreateCyclingTrainingView,
-                        CreatePowerTrainingView,
-                        DishListView,
-                        CreateDishView,
-                        UpdateDishView,
-                        UpdateCyclingTrainingView,
-                        SwimmingTrainingListView,
-                        WalkingTrainingListView,
-                        JoggingTrainingListView,
-                        CreateSwimmingView,
-                        CreateWalkingView,
-                        CreateJoggingView,
-                        UpdateSwimmingView,
-                        UpdateJoggingView,
-                        UpdateWalkingView,
-                        MealListView,
-                        CreateMealView,
-                        UpdateMealView,
-                        LoginUserView)
+from main.views import (
+    HomePageView,
+    CreateUserView,
+    logout_view,
+    UserProfileView,
+    PowerTrainingsListView,
+    ExercisesListView,
+    ExerciseUpdateView,
+    ExerciseCreateView,
+    UpdatePowerTrainingView,
+    CyclingTrainingListView,
+    CreateCyclingTrainingView,
+    CreatePowerTrainingView,
+    DishListView,
+    CreateDishView,
+    UpdateDishView,
+    UpdateCyclingTrainingView,
+    SwimmingTrainingListView,
+    WalkingTrainingListView,
+    JoggingTrainingListView,
+    CreateSwimmingView,
+    CreateWalkingView,
+    CreateJoggingView,
+    UpdateSwimmingView,
+    UpdateJoggingView,
+    UpdateWalkingView,
+    MealListView,
+    CreateMealView,
+    UpdateMealView,
+    LoginUserView,
+)
 
 urlpatterns = [
     path(
@@ -44,12 +46,12 @@ urlpatterns = [
     path(
         "power-trainings/",
         PowerTrainingsListView.as_view(),
-        name="power-trainings-list"
+        name="power-trainings-list",
     ),
     path(
         "power-trainings/create",
         CreatePowerTrainingView.as_view(),
-        name="create-power-training"
+        name="create-power-training",
     ),
     path(
         "account/registration",
@@ -89,22 +91,22 @@ urlpatterns = [
     path(
         "power-trainings/update/<int:pk>",
         UpdatePowerTrainingView.as_view(),
-        name="update-power-training"
+        name="update-power-training",
     ),
     path(
         "cycling-trainings/",
         CyclingTrainingListView.as_view(),
-        name="cycling-training-list"
+        name="cycling-training-list",
     ),
     path(
         "cycling-trainings/create",
         CreateCyclingTrainingView.as_view(),
-        name="create-cycling-training"
+        name="create-cycling-training",
     ),
     path(
         "cycling-trainings/update/<int:pk>",
         UpdateCyclingTrainingView.as_view(),
-        name="update-cycling-training"
+        name="update-cycling-training",
     ),
     path(
         "dishes/",
@@ -124,47 +126,47 @@ urlpatterns = [
     path(
         "swimming-trainings/",
         SwimmingTrainingListView.as_view(),
-        name="swimming-training-list"
+        name="swimming-training-list",
     ),
     path(
         "walking-trainings/",
         WalkingTrainingListView.as_view(),
-        name="walking-training-list"
+        name="walking-training-list",
     ),
     path(
         "jogging-trainings/",
         JoggingTrainingListView.as_view(),
-        name="jogging-training-list"
+        name="jogging-training-list",
     ),
     path(
         "swimming-trainings/create",
         CreateSwimmingView.as_view(),
-        name="create-swimming-training"
+        name="create-swimming-training",
     ),
     path(
         "walking-trainings/create",
         CreateWalkingView.as_view(),
-        name="create-walking-training"
+        name="create-walking-training",
     ),
     path(
         "jogging-traings/create",
         CreateJoggingView.as_view(),
-        name="create-jogging-training"
+        name="create-jogging-training",
     ),
     path(
         "swimming-trainings/update/<int:pk>",
         UpdateSwimmingView.as_view(),
-        name="update-swimming-training"
+        name="update-swimming-training",
     ),
     path(
         "jogging-traings/update/<int:pk>",
         UpdateJoggingView.as_view(),
-        name="update-jogging-training"
+        name="update-jogging-training",
     ),
     path(
         "walking-trainings/update/<int:pk>",
         UpdateWalkingView.as_view(),
-        name="update-walking-training"
+        name="update-walking-training",
     ),
     path(
         "meals/",
@@ -180,7 +182,7 @@ urlpatterns = [
         "meals/update/<int:pk>",
         UpdateMealView.as_view(),
         name="update-meal"
-    )
+    ),
 ]
 
 app_name = "main"

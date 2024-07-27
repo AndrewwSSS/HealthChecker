@@ -6,41 +6,41 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0001_initial'),
+        ("main", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='cycling',
-            options={'ordering': ['-start']},
+            name="cycling",
+            options={"ordering": ["-start"]},
         ),
         migrations.AlterModelOptions(
-            name='exercise',
-            options={'ordering': ['-name']},
+            name="exercise",
+            options={"ordering": ["-name"]},
         ),
         migrations.AlterModelOptions(
-            name='jogging',
-            options={'ordering': ['-start']},
+            name="jogging",
+            options={"ordering": ["-start"]},
         ),
         migrations.AlterModelOptions(
-            name='meal',
-            options={'ordering': ['-date']},
+            name="meal",
+            options={"ordering": ["-date"]},
         ),
         migrations.AlterModelOptions(
-            name='powertraining',
-            options={'ordering': ['-start']},
+            name="powertraining",
+            options={"ordering": ["-start"]},
         ),
         migrations.AlterModelOptions(
-            name='swimming',
-            options={'ordering': ['-start']},
+            name="swimming",
+            options={"ordering": ["-start"]},
         ),
         migrations.AlterModelOptions(
-            name='walking',
-            options={'ordering': ['-start']},
+            name="walking",
+            options={"ordering": ["-start"]},
         ),
         migrations.RenameField(
-            model_name='exercise',
-            old_name='owner',
-            new_name='user',
+            model_name="exercise",
+            old_name="owner",
+            new_name="user",
         ),
     ]

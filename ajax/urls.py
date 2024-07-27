@@ -1,29 +1,31 @@
 from django.urls import path
 
-from ajax.views import (UpdatePasswordView,
-                        UpdateUser,
-                        CreatePowerExerciseView,
-                        CreateApproachView,
-                        DeleteTrainingView,
-                        DeleteApproach,
-                        DeletePowerExerciseView,
-                        CreateDishCountView,
-                        DeleteDishCountView,
-                        UpdateApproachView,
-                        UpdateDishCountView,
-                        DeleteExerciseView,
-                        DeleteDishView,
-                        DeleteMealView,
-                        GetTrainingsTypeRatioView,
-                        GetAvgCaloriesPerDayInfo,
-                        GetAvgProteinPerDayView,
-                        GetAvgCarbohydratesPerDayView,
-                        GetAvgFatsPerDayView,
-                        GetTotalKMbyCycling,
-                        GetTotalKMbyWalking,
-                        GetTotalKMbySwimming,
-                        GetTotalKMbyJogging,
-                        GetPFCratio)
+from ajax.views import (
+    UpdatePasswordView,
+    UpdateUser,
+    CreatePowerExerciseView,
+    CreateApproachView,
+    DeleteTrainingView,
+    DeleteApproach,
+    DeletePowerExerciseView,
+    CreateDishCountView,
+    DeleteDishCountView,
+    UpdateApproachView,
+    UpdateDishCountView,
+    DeleteExerciseView,
+    DeleteDishView,
+    DeleteMealView,
+    GetTrainingsTypeRatioView,
+    GetAvgCaloriesPerDayInfo,
+    GetAvgProteinPerDayView,
+    GetAvgCarbohydratesPerDayView,
+    GetAvgFatsPerDayView,
+    GetTotalKMbyCycling,
+    GetTotalKMbyWalking,
+    GetTotalKMbySwimming,
+    GetTotalKMbyJogging,
+    GetPFCratio,
+)
 
 urlpatterns = [
     path(
@@ -39,33 +41,30 @@ urlpatterns = [
     path(
         "add_power_training_exercise",
         CreatePowerExerciseView.as_view(),
-        name="create-power-training-exercise"
+        name="create-power-training-exercise",
     ),
     path(
         "delete_power_exercise",
         DeletePowerExerciseView.as_view(),
-        name="delete-power-exercise"
+        name="delete-power-exercise",
     ),
     path(
         "delete_approach",
         DeleteApproach.as_view(),
-        name="delete-approach"
-    ),
+        name="delete-approach"),
     path(
         "add_approach",
         CreateApproachView.as_view(),
-        name="create-approach"
-    ),
+        name="create-approach"),
     path(
         "trainings/delete_training",
         DeleteTrainingView.as_view(),
-        name="delete-training"
+        name="delete-training",
     ),
     path(
         "add_dish_to_meal",
         CreateDishCountView.as_view(),
-        name="create-dish-count"
-    ),
+        name="create-dish-count"),
     path(
         "delete_dish_count",
         DeleteDishCountView.as_view(),
@@ -99,22 +98,22 @@ urlpatterns = [
     path(
         "get_training_type_ratio/",
         GetTrainingsTypeRatioView.as_view(),
-        name="get-training-type-ratio"
+        name="get-training-type-ratio",
     ),
     path(
         "get_avg_calories_info/",
         GetAvgCaloriesPerDayInfo.as_view(),
-        name="get-calories-info"
+        name="get-calories-info",
     ),
     path(
         "get_avg_protein_info/",
         GetAvgProteinPerDayView.as_view(),
-        name="get-avg-protein-info"
+        name="get-avg-protein-info",
     ),
     path(
         "get_avg_carbohydrates_info/",
         GetAvgCarbohydratesPerDayView.as_view(),
-        name="get-avg-carbohydrates-info"
+        name="get-avg-carbohydrates-info",
     ),
     path(
         "get_avg_fats_info/",
@@ -124,22 +123,22 @@ urlpatterns = [
     path(
         "get_total_km_by_cycling/",
         GetTotalKMbyCycling.as_view(),
-        name="get-total-km-by-cycling"
+        name="get-total-km-by-cycling",
     ),
     path(
         "get_total_km_by_jogging/",
         GetTotalKMbyJogging.as_view(),
-        name="get-total-km-by-jogging"
+        name="get-total-km-by-jogging",
     ),
     path(
         "get_total_km_by_walking/",
         GetTotalKMbyWalking.as_view(),
-        name="get-total-km-by-walking"
+        name="get-total-km-by-walking",
     ),
     path(
         "get_total_km_by_swimming/",
         GetTotalKMbySwimming.as_view(),
-        name="get-total-km-by-swimming"
+        name="get-total-km-by-swimming",
     ),
     path(
         "get_pfc_ratio/",
@@ -148,4 +147,4 @@ urlpatterns = [
     ),
 ]
 
-app_name = 'ajax'
+app_name = "ajax"

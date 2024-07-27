@@ -9,31 +9,41 @@ from django.http import HttpRequest, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views import View, generic
 
-from ajax.forms import (UserUpdateForm,
-                        ApproachForm,
-                        DishCountForm,
-                        PowerExerciseForm)
-from main.models import (Exercise,
-                         Approach,
-                         PowerTrainingExercise,
-                         Cycling,
-                         Swimming,
-                         Walking,
-                         Jogging,
-                         PowerTraining,
-                         Dish,
-                         User,
-                         Meal,
-                         DishCount,
-                         Training)
+from ajax.forms import (
+    UserUpdateForm,
+    ApproachForm,
+    DishCountForm,
+    PowerExerciseForm
+)
+from main.models import (
+    Exercise,
+    Approach,
+    PowerTrainingExercise,
+    Cycling,
+    Swimming,
+    Walking,
+    Jogging,
+    PowerTraining,
+    Dish,
+    User,
+    Meal,
+    DishCount,
+    Training,
+)
 
-SUCCESS_RESPONSE = JsonResponse({
-    "status": "Success",
-}, status=200)
+SUCCESS_RESPONSE = JsonResponse(
+    {
+        "status": "Success",
+    },
+    status=200,
+)
 
-INVALID_DATA_RESPONSE = JsonResponse({
-    "status": "error",
-}, status=422)
+INVALID_DATA_RESPONSE = JsonResponse(
+    {
+        "status": "error",
+    },
+    status=422,
+)
 
 
 class UpdatePasswordView(LoginRequiredMixin, View):
@@ -43,14 +53,20 @@ class UpdatePasswordView(LoginRequiredMixin, View):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
-            return JsonResponse({
-                "status": "success",
-            }, status=200)
+            return JsonResponse(
+                {
+                    "status": "success",
+                },
+                status=200,
+            )
 
-        return JsonResponse({
-            "status": "error",
-            "errors": form.errors,
-        }, status=422)
+        return JsonResponse(
+            {
+                "status": "error",
+                "errors": form.errors,
+            },
+            status=422,
+        )
 
 
 class UpdateUser(LoginRequiredMixin, View):
@@ -65,7 +81,8 @@ class UpdateUser(LoginRequiredMixin, View):
             {
                 "status": "error",
                 "errors": form.errors,
-            }, status=422
+            },
+            status=422,
         )
 
 
@@ -82,19 +99,16 @@ class CreatePowerExerciseView(LoginRequiredMixin, View):
             return INVALID_DATA_RESPONSE
 
         exercise = get_object_or_404(Exercise, pk=exercise_id)
-        power_training = get_object_or_404(PowerTraining,
-                                           pk=training_id,
-                                           user=request.user)
+        power_training = get_object_or_404(
+            PowerTraining, pk=training_id, user=request.user
+        )
 
         # Check if exercise with same name exists
         if power_training.exercises.filter(exercise_id=exercise.id).exists():
             return INVALID_DATA_RESPONSE
 
-        power_training_exercise = (
-            PowerTrainingExercise.objects.create(
-                exercise=exercise,
-                power_training_id=training_id
-            )
+        power_training_exercise = PowerTrainingExercise.objects.create(
+            exercise=exercise, power_training_id=training_id
         )
         return JsonResponse(
             {
@@ -111,27 +125,28 @@ class CreateApproachView(LoginRequiredMixin, generic.CreateView):
     def form_valid(self, form):
         approach = form.save(commit=False)
 
-        get_object_or_404(PowerTrainingExercise,
-                          pk=approach.training.id,
-                          power_training__user=self.request.user)
+        get_object_or_404(
+            PowerTrainingExercise,
+            pk=approach.training.id,
+            power_training__user=self.request.user,
+        )
         approach.save()
-        return JsonResponse({
-            "id": approach.id
-        }, status=200)
+        return JsonResponse({"id": approach.id}, status=200)
 
 
 class DeletePowerExerciseView(LoginRequiredMixin, View):
     @staticmethod
     def post(request: HttpRequest) -> JsonResponse:
-        exercise_id = request.POST.get("exercise",
-                                       default=None)
+        exercise_id = request.POST.get("exercise", default=None)
 
         if not exercise_id:
             return INVALID_DATA_RESPONSE
 
-        get_object_or_404(PowerTrainingExercise,
-                          pk=exercise_id,
-                          power_training__user=request.user).delete()
+        get_object_or_404(
+            PowerTrainingExercise,
+            pk=exercise_id,
+            power_training__user=request.user
+        ).delete()
         return SUCCESS_RESPONSE
 
 
@@ -144,43 +159,40 @@ class DeleteApproach(LoginRequiredMixin, View):
         if not approach or not exercise:
             return INVALID_DATA_RESPONSE
 
-        get_object_or_404(Approach,
-                          id=approach,
-                          training__power_training__user_id=request.user.id,
-                          training_id=exercise).delete()
+        get_object_or_404(
+            Approach,
+            id=approach,
+            training__power_training__user_id=request.user.id,
+            training_id=exercise,
+        ).delete()
         return SUCCESS_RESPONSE
 
 
 class DeleteTrainingView(LoginRequiredMixin, View):
     @staticmethod
     def post(request) -> JsonResponse:
-        training_type = request.POST.get("type",
-                                         default=None)
-        training_id = request.POST.get("id",
-                                       default=None)
+        training_type = request.POST.get("type", default=None)
+        training_id = request.POST.get("id", default=None)
         if not training_type or not training_id:
             return INVALID_DATA_RESPONSE
 
+        training_class = None
         if training_type == "PW":
-            get_object_or_404(PowerTraining,
-                              pk=training_id,
-                              user=request.user).delete()
+            training_class = PowerTraining
         elif training_type == "CY":
-            get_object_or_404(Cycling,
-                              pk=training_id,
-                              user=request.user).delete()
+            training_class = Cycling
         elif training_type == "SW":
-            get_object_or_404(Swimming,
-                              pk=training_id,
-                              user=request.user).delete()
+            training_class = Swimming
         elif training_type == "WK":
-            get_object_or_404(Walking,
-                              pk=training_id,
-                              user=request.user).delete()
+            training_class = Walking
         elif training_type == "JG":
-            get_object_or_404(Jogging,
-                              pk=training_id,
-                              user=request.user).delete()
+            training_class = Jogging
+        else:
+            return INVALID_DATA_RESPONSE
+        get_object_or_404(
+            training_class,
+            pk=training_id,
+            user=request.user).delete()
         return SUCCESS_RESPONSE
 
 
@@ -190,9 +202,12 @@ class CreateDishCountView(LoginRequiredMixin, View):
         form = DishCountForm(request.POST, user=request.user)
         if form.is_valid():
             dish_count = form.save()
-            return JsonResponse({
-                "id": dish_count.id,
-            }, status=200)
+            return JsonResponse(
+                {
+                    "id": dish_count.id,
+                },
+                status=200,
+            )
         else:
             return INVALID_DATA_RESPONSE
 
@@ -206,8 +221,9 @@ class UpdateDishCountView(LoginRequiredMixin, View):
         if not dish_count_id or not weight:
             return INVALID_DATA_RESPONSE
 
-        dish_count_queryset = (DishCount.objects.select_for_update()
-                               .filter(id=dish_count_id))
+        dish_count_queryset = DishCount.objects.select_for_update().filter(
+            id=dish_count_id
+        )
         if not dish_count_queryset.exists():
             return INVALID_DATA_RESPONSE
 
@@ -228,8 +244,9 @@ class DeleteDishCountView(LoginRequiredMixin, View):
         if not dish_count_id:
             return INVALID_DATA_RESPONSE
 
-        dish_count_queryset = (DishCount.objects.select_for_update()
-                               .filter(id=dish_count_id))
+        dish_count_queryset = DishCount.objects.select_for_update().filter(
+            id=dish_count_id
+        )
         if not dish_count_queryset.exists():
             return INVALID_DATA_RESPONSE
 
@@ -271,9 +288,7 @@ class DeleteExerciseView(LoginRequiredMixin, View):
         if not exercise_id:
             return INVALID_DATA_RESPONSE
 
-        get_object_or_404(Exercise,
-                          id=exercise_id,
-                          user=request.user).delete()
+        get_object_or_404(Exercise, id=exercise_id, user=request.user).delete()
         return SUCCESS_RESPONSE
 
 
@@ -283,9 +298,7 @@ class DeleteDishView(LoginRequiredMixin, View):
         dish_id = request.POST.get("id", default=None)
         if not dish_id:
             return INVALID_DATA_RESPONSE
-        get_object_or_404(Dish,
-                          id=dish_id,
-                          user=request.user).delete()
+        get_object_or_404(Dish, id=dish_id, user=request.user).delete()
         return SUCCESS_RESPONSE
 
 
@@ -295,9 +308,7 @@ class DeleteMealView(LoginRequiredMixin, View):
         meal_id = request.POST.get("id", default=None)
         if not meal_id:
             return INVALID_DATA_RESPONSE
-        get_object_or_404(Meal,
-                          id=meal_id,
-                          user=request.user).delete()
+        get_object_or_404(Meal, id=meal_id, user=request.user).delete()
         return SUCCESS_RESPONSE
 
 
@@ -311,12 +322,13 @@ class GetTrainingsTypeRatioView(LoginRequiredMixin, View):
         if period == "today":
             q_obj = Q(user=request.user, start__date=today)
         elif period == "this month":
-            q_obj = Q(user=request.user,
-                      start__month=today.month,
-                      start__year=today.year)
+            q_obj = Q(
+                user=request.user,
+                start__month=today.month,
+                start__year=today.year
+            )
         elif period == "this year":
-            q_obj = Q(user=request.user,
-                      start__year=today.year)
+            q_obj = Q(user=request.user, start__year=today.year)
         else:
             return INVALID_DATA_RESPONSE
 
@@ -350,7 +362,9 @@ class GetTrainingsTypeRatioView(LoginRequiredMixin, View):
                         "value": swimming,
                     },
                 ]
-            }, status=200)
+            },
+            status=200,
+        )
         return response
 
 
@@ -366,8 +380,7 @@ def get_meals_by_period(period: str, user: User) -> QuerySet[Meal] | None:
     if period == "today":
         q_obj = Q(date__date=today)
     elif period == "this month":
-        q_obj = Q(date__month=today.month,
-                  date__year=today.year)
+        q_obj = Q(date__month=today.month, date__year=today.year)
     elif period == "this year":
         q_obj = Q(date__year=today.year)
     else:
@@ -375,16 +388,14 @@ def get_meals_by_period(period: str, user: User) -> QuerySet[Meal] | None:
     return user.meals.filter(q_obj)
 
 
-def get_trainings_by_period_and_user(period: str,
-                                     user: User,
-                                     training_type: type[Training])\
-        -> QuerySet[Training] | None:
+def get_trainings_by_period_and_user(
+    period: str, user: User, training_type: type[Training]
+) -> QuerySet[Training] | None:
     today = date.today()
     if period == "today":
         q_obj = Q(start__date=today)
     elif period == "this month":
-        q_obj = Q(start__month=today.month,
-                  start__year=today.year)
+        q_obj = Q(start__month=today.month, start__year=today.year)
     elif period == "this year":
         q_obj = Q(start__year=today.year)
     else:
@@ -393,15 +404,21 @@ def get_trainings_by_period_and_user(period: str,
 
 
 def get_unique_meal_dates_count(query_set: QuerySet[Meal]) -> int:
-    return (query_set.annotate(unique_date=TruncDate('date'))
-            .values('unique_date').distinct().count())
+    return (
+        query_set.annotate(unique_date=TruncDate("date"))
+        .values("unique_date")
+        .distinct()
+        .count()
+    )
 
 
 class GetAvgCaloriesPerDayInfo(LoginRequiredMixin, View):
     @staticmethod
     def get(request: HttpRequest) -> JsonResponse:
-        if (not (period := get_and_validate_period(request)) or
-           (user_meals := get_meals_by_period(period, request.user)) is None):
+        if (
+            not (period := get_and_validate_period(request))
+            or not (user_meals := get_meals_by_period(period, request.user))
+        ):
             return INVALID_DATA_RESPONSE
 
         total_calories = sum(meal.get_total_calories() for meal in user_meals)
@@ -411,17 +428,22 @@ class GetAvgCaloriesPerDayInfo(LoginRequiredMixin, View):
         if unique_dates_count:
             avg_calories_per_day = total_calories / unique_dates_count
 
-        response = JsonResponse({
-            "data": round(avg_calories_per_day, 1),
-        }, status=200)
+        response = JsonResponse(
+            {
+                "data": round(avg_calories_per_day, 1),
+            },
+            status=200,
+        )
         return response
 
 
 class GetAvgProteinPerDayView(LoginRequiredMixin, View):
     @staticmethod
     def get(request: HttpRequest) -> JsonResponse:
-        if (not (period := get_and_validate_period(request)) or
-           (user_meals := get_meals_by_period(period, request.user)) is None):
+        if (
+            not (period := get_and_validate_period(request))
+            or not (user_meals := get_meals_by_period(period, request.user))
+        ):
             return INVALID_DATA_RESPONSE
 
         total_protein = sum(meal.get_total_protein() for meal in user_meals)
@@ -431,17 +453,22 @@ class GetAvgProteinPerDayView(LoginRequiredMixin, View):
         if unique_dates_count:
             avg_protein_per_day = total_protein / unique_dates_count
 
-        response = JsonResponse({
-            "data": round(avg_protein_per_day, 1),
-        }, status=200)
+        response = JsonResponse(
+            {
+                "data": round(avg_protein_per_day, 1),
+            },
+            status=200,
+        )
         return response
 
 
 class GetAvgCarbohydratesPerDayView(LoginRequiredMixin, View):
     @staticmethod
     def get(request: HttpRequest) -> JsonResponse:
-        if (not (period := get_and_validate_period(request)) or
-           (user_meals := get_meals_by_period(period, request.user)) is None):
+        if (
+            not (period := get_and_validate_period(request))
+            or not (user_meals := get_meals_by_period(period, request.user))
+        ):
             return INVALID_DATA_RESPONSE
 
         total_protein = sum(
@@ -453,9 +480,12 @@ class GetAvgCarbohydratesPerDayView(LoginRequiredMixin, View):
         if unique_dates_count:
             avg_carbohydrates_per_day = total_protein / unique_dates_count
 
-        response = JsonResponse({
-            "data": round(avg_carbohydrates_per_day, 1),
-        }, status=200)
+        response = JsonResponse(
+            {
+                "data": round(avg_carbohydrates_per_day, 1),
+            },
+            status=200,
+        )
 
         return response
 
@@ -463,8 +493,10 @@ class GetAvgCarbohydratesPerDayView(LoginRequiredMixin, View):
 class GetAvgFatsPerDayView(LoginRequiredMixin, View):
     @staticmethod
     def get(request: HttpRequest) -> JsonResponse:
-        if (not (period := get_and_validate_period(request)) or
-           (user_meals := get_meals_by_period(period, request.user)) is None):
+        if (
+            not (period := get_and_validate_period(request))
+            or not (user_meals := get_meals_by_period(period, request.user))
+        ):
             return INVALID_DATA_RESPONSE
 
         total_fats = sum(meal.get_total_fats() for meal in user_meals)
@@ -474,9 +506,12 @@ class GetAvgFatsPerDayView(LoginRequiredMixin, View):
         if unique_dates_count:
             avg_fats_per_day = total_fats / unique_dates_count
 
-        response = JsonResponse({
-            "data": round(avg_fats_per_day, 1),
-        }, status=200)
+        response = JsonResponse(
+            {
+                "data": round(avg_fats_per_day, 1),
+            },
+            status=200,
+        )
 
         return response
 
@@ -492,9 +527,12 @@ class GetTotalKmTraining(LoginRequiredMixin, View):
         )
         total_kilometers = sum(training.distance for training in trainings)
 
-        response = JsonResponse({
-            "data": total_kilometers,
-        }, status=200)
+        response = JsonResponse(
+            {
+                "data": total_kilometers,
+            },
+            status=200,
+        )
         return response
 
 
@@ -517,11 +555,10 @@ class GetTotalKMbySwimming(GetTotalKmTraining):
 class GetPFCratio(LoginRequiredMixin, View):
     @staticmethod
     def get(request: HttpRequest) -> JsonResponse:
-        if (not (period := get_and_validate_period(request)) or
-                (meals := get_meals_by_period(period, request.user) is None)):
+        if not (period := get_and_validate_period(request)) or not (
+            meals := get_meals_by_period(period, request.user)
+        ):
             return INVALID_DATA_RESPONSE
-
-        meals = get_meals_by_period(period, request.user)
 
         protein_weight = sum(
             meal.get_total_protein() for meal in meals
@@ -533,20 +570,23 @@ class GetPFCratio(LoginRequiredMixin, View):
             meal.get_total_fats() for meal in meals
         )
 
-        response = JsonResponse({
-            "data": [
-                {
-                    "name": "protein",
-                    "value": int(protein_weight),
-                },
-                {
-                    "name": "carbohydrates",
-                    "value": int(carbohydrates_weight)
-                },
-                {
-                    "name": "fats",
-                    "value": int(fats_weight)
-                },
-            ]
-        }, status=200)
+        response = JsonResponse(
+            {
+                "data": [
+                    {
+                        "name": "protein",
+                        "value": int(protein_weight),
+                    },
+                    {
+                        "name": "carbohydrates",
+                        "value": int(carbohydrates_weight)
+                    },
+                    {
+                        "name": "fats",
+                        "value": int(fats_weight)
+                    },
+                ]
+            },
+            status=200,
+        )
         return response

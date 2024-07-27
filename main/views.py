@@ -3,37 +3,36 @@ from datetime import datetime
 from django.contrib.auth import logout, login as auth_login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
-from django.db.models import F
-from django.http import (HttpResponse,
-                         HttpRequest,
-                         HttpResponseRedirect)
-from django.shortcuts import (redirect,
-                              render,
-                              get_object_or_404)
+from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import NoReverseMatch
 from django.views import generic
 
-from main.forms import (UserCreateForm,
-                        PowerTrainingForm,
-                        ExerciseForm,
-                        CyclingForm,
-                        DishForm,
-                        SwimmingForm,
-                        JoggingForm,
-                        WalkingForm,
-                        MealForm,
-                        DateSearchForm,
-                        NameSearchForm,
-                        UserLoginForm)
-from main.models import (User,
-                         PowerTraining,
-                         Exercise,
-                         Cycling,
-                         Dish,
-                         Swimming,
-                         Jogging,
-                         Walking,
-                         Meal)
+from main.forms import (
+    UserCreateForm,
+    PowerTrainingForm,
+    ExerciseForm,
+    CyclingForm,
+    DishForm,
+    SwimmingForm,
+    JoggingForm,
+    WalkingForm,
+    MealForm,
+    DateSearchForm,
+    NameSearchForm,
+    UserLoginForm,
+)
+from main.models import (
+    User,
+    PowerTraining,
+    Exercise,
+    Cycling,
+    Dish,
+    Swimming,
+    Jogging,
+    Walking,
+    Meal,
+)
 
 
 class BaseListView(LoginRequiredMixin, generic.ListView):
@@ -73,7 +72,9 @@ class DateSearchListViewMixin(BaseListView):
 
         if start_date:
             if end_date:
-                queryset = queryset.filter(date__date__gte=start_date, date__date__lte=end_date)
+                queryset = queryset.filter(
+                    date__date__gte=start_date, date__date__lte=end_date
+                )
             else:
                 queryset = queryset.filter(date__date__gte=start_date)
         else:
@@ -101,7 +102,9 @@ class DateSearchTrainingListView(DateSearchListViewMixin):
         end_date = form.cleaned_data.get("end_date", None)
         if start_date:
             if end_date:
-                queryset = queryset.filter(start__date__gte=start_date, start__date__lte=end_date)
+                queryset = queryset.filter(
+                    start__date__gte=start_date, start__date__lte=end_date
+                )
             else:
                 queryset = queryset.filter(start__date__gte=start_date)
         else:
@@ -177,7 +180,7 @@ class LoginUserView(LoginView):
     form_class = UserLoginForm
 
     def form_valid(self, form):
-        if not form.cleaned_data.get('remember_me', None):
+        if not form.cleaned_data.get("remember_me", None):
             self.request.session.set_expiry(0)
             self.request.session.modified = True
         auth_login(self.request, form.get_user())
@@ -329,7 +332,8 @@ class UpdatePowerTrainingView(UpdateElementWithUserFieldView):
     def get_context_data(self, **kwargs):
         context = (super(UpdatePowerTrainingView, self)
                    .get_context_data(**kwargs))
-        context["exercises"] = Exercise.objects.filter(user=self.request.user)
+        context["exercises"] = (Exercise.objects
+                                .filter(user=self.request.user))
         return context
 
 
@@ -364,6 +368,8 @@ class UpdateCyclingTrainingView(UpdateElementWithUserFieldView):
     template_name = ("main/trainings/cycling_training/"
                      "cycling-training-form.html")
     success_url = "main:cycling-training-list"
+
+
 # ------
 
 

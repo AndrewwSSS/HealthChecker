@@ -4,18 +4,20 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.utils import timezone
 
-from main.models import (User,
-                         Exercise,
-                         PowerTraining,
-                         PowerTrainingExercise,
-                         Approach,
-                         Swimming,
-                         Walking,
-                         Jogging,
-                         Cycling,
-                         Meal,
-                         Dish,
-                         DishCount)
+from main.models import (
+    User,
+    Exercise,
+    PowerTraining,
+    PowerTrainingExercise,
+    Approach,
+    Swimming,
+    Walking,
+    Jogging,
+    Cycling,
+    Meal,
+    Dish,
+    DishCount,
+)
 
 
 class LoginRequiredPostMixin(object):
@@ -36,19 +38,21 @@ class UserRequiredMixin(object):
     def setUp(self):
         self.user_password = "<PASSWO32RD>"
         self.user = User.objects.create_user(
-            username='testuser',
+            username="testuser",
             password=self.user_password,
         )
         self.another_user = User.objects.create_user(
-            username='Aboba_user',
+            username="Aboba_user",
             password="<PASS432WORD>",
         )
         self.client.force_login(self.user)
 
 
-class UpdatePasswordViewTests(LoginRequiredPostMixin,
-                              UserRequiredMixin,
-                              TestCase):
+class UpdatePasswordViewTests(
+    LoginRequiredPostMixin,
+    UserRequiredMixin,
+    TestCase
+):
     url = reverse("api:change-password")
 
     def test_change_password(self):
@@ -106,9 +110,11 @@ class UpdateUserTests(LoginRequiredGetMixin, UserRequiredMixin, TestCase):
         self.assertNotEqual(self.user.username, self.another_user.username)
 
 
-class CreatePowerExerciseViewTests(LoginRequiredPostMixin,
-                                   UserRequiredMixin,
-                                   TestCase):
+class CreatePowerExerciseViewTests(
+    LoginRequiredPostMixin,
+    UserRequiredMixin,
+    TestCase
+):
     url = reverse("api:create-power-training-exercise")
 
     def setUp(self):
@@ -118,8 +124,7 @@ class CreatePowerExerciseViewTests(LoginRequiredPostMixin,
             user=self.user,
         )
         self.power_training = PowerTraining.objects.create(
-            start=timezone.now(),
-            user=self.user
+            start=timezone.now(), user=self.user
         )
 
     def test_create_power_exercise(self):
@@ -130,8 +135,11 @@ class CreatePowerExerciseViewTests(LoginRequiredPostMixin,
 
         response = self.client.post(self.url, form_data)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(self.power_training.exercises
-                        .filter(id=response.json()["id"]).exists())
+        self.assertTrue(
+            self.power_training.exercises.filter(
+                id=response.json()["id"]
+            ).exists()
+        )
 
     def test_create_power_exercise_duplicate(self):
         PowerTrainingExercise.objects.create(
@@ -146,9 +154,11 @@ class CreatePowerExerciseViewTests(LoginRequiredPostMixin,
         self.assertNotEqual(response.status_code, 200)
 
 
-class CreateApproachViewTests(LoginRequiredPostMixin,
-                              UserRequiredMixin,
-                              TestCase):
+class CreateApproachViewTests(
+    LoginRequiredPostMixin,
+    UserRequiredMixin,
+    TestCase
+):
     url = reverse("api:create-approach")
 
     def setUp(self):
@@ -158,8 +168,7 @@ class CreateApproachViewTests(LoginRequiredPostMixin,
             user=self.user,
         )
         self.power_training = PowerTraining.objects.create(
-            start=timezone.now(),
-            user=self.user
+            start=timezone.now(), user=self.user
         )
         self.power_exercise = PowerTrainingExercise.objects.create(
             exercise=self.exercise,
@@ -176,8 +185,9 @@ class CreateApproachViewTests(LoginRequiredPostMixin,
         response = self.client.post(self.url, form_data)
         self.power_exercise.refresh_from_db()
         self.assertEqual(response.status_code, 200)
-        approach_queryset = (self.power_exercise.approaches
-                             .filter(id=response.json()["id"]))
+        approach_queryset = self.power_exercise.approaches.filter(
+            id=response.json()["id"]
+        )
         self.assertTrue(approach_queryset.exists())
         approach = approach_queryset.first()
         self.assertEqual(approach.weight, 100)
@@ -192,14 +202,17 @@ class CreateApproachViewTests(LoginRequiredPostMixin,
         }
         response = self.client.post(self.url, form_data)
         self.assertNotEqual(response.status_code, 200)
-        approach_queryset = (self.power_exercise.approaches
-                             .filter(id=self.power_exercise.id))
+        approach_queryset = self.power_exercise.approaches.filter(
+            id=self.power_exercise.id
+        )
         self.assertFalse(approach_queryset.exists())
 
 
-class DeleteApproachViewTests(LoginRequiredPostMixin,
-                              UserRequiredMixin,
-                              TestCase):
+class DeleteApproachViewTests(
+    LoginRequiredPostMixin,
+    UserRequiredMixin,
+    TestCase
+):
     url = reverse("api:delete-approach")
 
     def setUp(self):
@@ -209,8 +222,7 @@ class DeleteApproachViewTests(LoginRequiredPostMixin,
             user=self.user,
         )
         self.power_training = PowerTraining.objects.create(
-            start=timezone.now(),
-            user=self.user
+            start=timezone.now(), user=self.user
         )
         self.power_exercise = PowerTrainingExercise.objects.create(
             exercise=self.exercise,
@@ -230,8 +242,11 @@ class DeleteApproachViewTests(LoginRequiredPostMixin,
         response = self.client.post(self.url, form_data)
         self.power_exercise.refresh_from_db()
         self.assertEqual(response.status_code, 200)
-        self.assertFalse(self.power_exercise.approaches
-                         .filter(id=self.approach.id).exists())
+        self.assertFalse(
+            self.power_exercise.approaches.filter(
+                id=self.approach.id
+            ).exists()
+        )
 
     def test_delete_approach_another_user(self):
         self.client.force_login(self.another_user)
@@ -243,13 +258,18 @@ class DeleteApproachViewTests(LoginRequiredPostMixin,
         response = self.client.post(self.url, form_data)
         self.power_exercise.refresh_from_db()
         self.assertNotEqual(response.status_code, 200)
-        self.assertTrue(self.power_exercise.approaches
-                        .filter(id=self.approach.id).exists())
+        self.assertTrue(
+            self.power_exercise.approaches.filter(
+                id=self.approach.id
+            ).exists()
+        )
 
 
-class DeletePowerTrainingExerciseViewTests(LoginRequiredPostMixin,
-                                           UserRequiredMixin,
-                                           TestCase):
+class DeletePowerTrainingExerciseViewTests(
+    LoginRequiredPostMixin,
+    UserRequiredMixin,
+    TestCase
+):
     url = reverse("api:delete-power-exercise")
 
     def setUp(self):
@@ -259,8 +279,7 @@ class DeletePowerTrainingExerciseViewTests(LoginRequiredPostMixin,
             user=self.user,
         )
         self.power_training = PowerTraining.objects.create(
-            start=timezone.now(),
-            user=self.user
+            start=timezone.now(), user=self.user
         )
         self.power_exercise = PowerTrainingExercise.objects.create(
             exercise=self.exercise,
@@ -275,8 +294,11 @@ class DeletePowerTrainingExerciseViewTests(LoginRequiredPostMixin,
         response = self.client.post(self.url, form_data)
         self.power_training.refresh_from_db()
         self.assertEqual(response.status_code, 200)
-        self.assertFalse(self.power_training.exercises
-                         .filter(id=self.power_exercise.id).exists())
+        self.assertFalse(
+            self.power_training.exercises.filter(
+                id=self.power_exercise.id
+            ).exists()
+        )
 
     def test_delete_power_exercise_another_user(self):
         self.client.force_login(self.another_user)
@@ -287,13 +309,18 @@ class DeletePowerTrainingExerciseViewTests(LoginRequiredPostMixin,
         response = self.client.post(self.url, form_data)
         self.power_training.refresh_from_db()
         self.assertNotEqual(response.status_code, 200)
-        self.assertTrue(self.power_training.exercises
-                        .filter(id=self.power_exercise.id).exists())
+        self.assertTrue(
+            self.power_training.exercises.filter(
+                id=self.power_exercise.id
+            ).exists()
+        )
 
 
-class DeleteTrainingViewTests(LoginRequiredPostMixin,
-                              UserRequiredMixin,
-                              TestCase):
+class DeleteTrainingViewTests(
+    LoginRequiredPostMixin,
+    UserRequiredMixin,
+    TestCase
+):
     url = reverse("api:delete-training")
 
     def setUp(self):
@@ -321,7 +348,7 @@ class DeleteTrainingViewTests(LoginRequiredPostMixin,
             distance=10,
             climb=10,
             average_speed=10,
-            user=self.user
+            user=self.user,
         )
         self.power_training = PowerTraining.objects.create(
             start=timezone.now(),
@@ -329,106 +356,80 @@ class DeleteTrainingViewTests(LoginRequiredPostMixin,
         )
 
     def test_delete_swimming(self):
-        form_data = {
-            "id": self.swimming.id,
-            "type": "SW"
-        }
+        form_data = {"id": self.swimming.id, "type": "SW"}
         response = self.client.post(self.url, form_data)
         self.assertEqual(response.status_code, 200)
         self.assertFalse(Swimming.objects.filter(id=self.swimming.id).exists())
 
     def test_delete_jogging(self):
-        form_data = {
-            "id": self.jogging.id,
-            "type": "JG"
-        }
+        form_data = {"id": self.jogging.id, "type": "JG"}
         response = self.client.post(self.url, form_data)
         self.assertEqual(response.status_code, 200)
         self.assertFalse(Jogging.objects.filter(id=self.jogging.id).exists())
 
     def test_delete_walking(self):
-        form_data = {
-            "id": self.walking.id,
-            "type": "WK"
-        }
+        form_data = {"id": self.walking.id, "type": "WK"}
         response = self.client.post(self.url, form_data)
         self.assertEqual(response.status_code, 200)
         self.assertFalse(Walking.objects.filter(id=self.walking.id).exists())
 
     def test_delete_cycling(self):
-        form_data = {
-            "id": self.cycling.id,
-            "type": "CY"
-        }
+        form_data = {"id": self.cycling.id, "type": "CY"}
         response = self.client.post(self.url, form_data)
         self.assertEqual(response.status_code, 200)
         self.assertFalse(Cycling.objects.filter(id=self.cycling.id).exists())
 
     def test_delete_power_training(self):
-        form_data = {
-            "id": self.power_training.id,
-            "type": "PW"
-        }
+        form_data = {"id": self.power_training.id, "type": "PW"}
         response = self.client.post(self.url, form_data)
         self.assertEqual(response.status_code, 200)
-        self.assertFalse(PowerTraining.objects
-                         .filter(id=self.power_training.id).exists())
+        self.assertFalse(
+            PowerTraining.objects.filter(id=self.power_training.id).exists()
+        )
 
     def test_delete_swimming_another_user(self):
         self.client.force_login(self.another_user)
-        form_data = {
-            "id": self.swimming.id,
-            "type": "SW"
-        }
+        form_data = {"id": self.swimming.id, "type": "SW"}
         response = self.client.post(self.url, form_data)
         self.assertNotEqual(response.status_code, 200)
         self.assertTrue(Swimming.objects.filter(id=self.swimming.id).exists())
 
     def test_delete_jogging_another_user(self):
         self.client.force_login(self.another_user)
-        form_data = {
-            "id": self.jogging.id,
-            "type": "JG"
-        }
+        form_data = {"id": self.jogging.id, "type": "JG"}
         response = self.client.post(self.url, form_data)
         self.assertNotEqual(response.status_code, 200)
         self.assertTrue(Jogging.objects.filter(id=self.jogging.id).exists())
 
     def test_delete_walking_another_user(self):
         self.client.force_login(self.another_user)
-        form_data = {
-            "id": self.walking.id,
-            "type": "WK"
-        }
+        form_data = {"id": self.walking.id, "type": "WK"}
         response = self.client.post(self.url, form_data)
         self.assertNotEqual(response.status_code, 200)
         self.assertTrue(Walking.objects.filter(id=self.walking.id).exists())
 
     def test_delete_cycling_another_user(self):
         self.client.force_login(self.another_user)
-        form_data = {
-            "id": self.cycling.id,
-            "type": "CY"
-        }
+        form_data = {"id": self.cycling.id, "type": "CY"}
         response = self.client.post(self.url, form_data)
         self.assertNotEqual(response.status_code, 200)
         self.assertTrue(Cycling.objects.filter(id=self.cycling.id).exists())
 
     def test_delete_power_training_another_user(self):
         self.client.force_login(self.another_user)
-        form_data = {
-            "id": self.power_training.id,
-            "type": "PW"
-        }
+        form_data = {"id": self.power_training.id, "type": "PW"}
         response = self.client.post(self.url, form_data)
         self.assertNotEqual(response.status_code, 200)
-        self.assertTrue(PowerTraining.objects
-                        .filter(id=self.power_training.id).exists())
+        self.assertTrue(
+            PowerTraining.objects.filter(id=self.power_training.id).exists()
+        )
 
 
-class CreateDishCountViewTests(LoginRequiredPostMixin,
-                               UserRequiredMixin,
-                               TestCase):
+class CreateDishCountViewTests(
+    LoginRequiredPostMixin,
+    UserRequiredMixin,
+    TestCase
+):
     url = reverse("api:create-dish-count")
 
     def setUp(self):
@@ -443,15 +444,11 @@ class CreateDishCountViewTests(LoginRequiredPostMixin,
             fats=20,
             protein=10,
             carbohydrates=10,
-            user=self.user
+            user=self.user,
         )
 
     def test_create_dish_count(self):
-        form_data = {
-            "dish": self.dish.id,
-            "meal": self.meal.id,
-            "weight": 400
-        }
+        form_data = {"dish": self.dish.id, "meal": self.meal.id, "weight": 400}
         response = self.client.post(self.url, form_data)
         self.assertEqual(response.status_code, 200)
         dish_count_query_set = self.meal.dishes.filter(id=self.dish.id)
@@ -463,19 +460,17 @@ class CreateDishCountViewTests(LoginRequiredPostMixin,
 
     def test_create_dish_count_another_user(self):
         self.client.force_login(self.another_user)
-        form_data = {
-            "dish": self.dish.id,
-            "meal": self.meal.id,
-            "weight": 400
-        }
+        form_data = {"dish": self.dish.id, "meal": self.meal.id, "weight": 400}
         response = self.client.post(self.url, form_data)
         self.assertNotEqual(response.status_code, 200)
         self.assertFalse(self.meal.dishes.filter(id=self.dish.id).exists())
 
 
-class UpdateDishCountViewTests(LoginRequiredPostMixin,
-                               UserRequiredMixin,
-                               TestCase):
+class UpdateDishCountViewTests(
+    LoginRequiredPostMixin,
+    UserRequiredMixin,
+    TestCase
+):
     url = reverse("api:update-dish-count")
 
     def setUp(self):
@@ -490,20 +485,18 @@ class UpdateDishCountViewTests(LoginRequiredPostMixin,
             fats=20,
             protein=10,
             carbohydrates=10,
-            user=self.user
+            user=self.user,
         )
         self.dish_count_weight = 400
         self.dish_count = DishCount.objects.create(
-            dish=self.dish,
-            meal=self.meal,
-            weight=self.dish_count_weight
+            dish=self.dish, meal=self.meal, weight=self.dish_count_weight
         )
 
     def test_update_dish_count(self):
         form_data = {
             "dish_count": self.dish_count.id,
             "meal": self.meal.id,
-            "weight": 999
+            "weight": 999,
         }
 
         response = self.client.post(self.url, form_data)
@@ -518,7 +511,7 @@ class UpdateDishCountViewTests(LoginRequiredPostMixin,
         form_data = {
             "dish_count": self.dish_count.id,
             "meal": self.meal.id,
-            "weight": 999
+            "weight": 999,
         }
         response = self.client.post(self.url, form_data)
         self.dish_count.refresh_from_db()
@@ -528,9 +521,11 @@ class UpdateDishCountViewTests(LoginRequiredPostMixin,
         self.assertEqual(self.dish_count.meal, self.meal)
 
 
-class DeleteDishCountViewTests(LoginRequiredPostMixin,
-                               UserRequiredMixin,
-                               TestCase):
+class DeleteDishCountViewTests(
+    LoginRequiredPostMixin,
+    UserRequiredMixin,
+    TestCase
+):
     url = reverse("api:delete-dish-count")
 
     def setUp(self):
@@ -545,13 +540,11 @@ class DeleteDishCountViewTests(LoginRequiredPostMixin,
             fats=20,
             protein=10,
             carbohydrates=10,
-            user=self.user
+            user=self.user,
         )
         self.dish_count_weight = 400
         self.dish_count = DishCount.objects.create(
-            dish=self.dish,
-            meal=self.meal,
-            weight=self.dish_count_weight
+            dish=self.dish, meal=self.meal, weight=self.dish_count_weight
         )
 
     def test_delete_dish_count(self):
@@ -560,8 +553,9 @@ class DeleteDishCountViewTests(LoginRequiredPostMixin,
         }
         response = self.client.post(self.url, form_data)
         self.assertEqual(response.status_code, 200)
-        self.assertFalse(self.meal.dishes
-                         .filter(id=self.dish_count.id).exists())
+        self.assertFalse(self.meal.dishes.filter(
+            id=self.dish_count.id
+        ).exists())
 
     def test_delete_dish_count_another_user(self):
         self.client.force_login(self.another_user)
@@ -570,13 +564,16 @@ class DeleteDishCountViewTests(LoginRequiredPostMixin,
         }
         response = self.client.post(self.url, form_data)
         self.assertNotEqual(response.status_code, 200)
-        self.assertTrue(self.meal.dishes
-                        .filter(id=self.dish_count.id).exists())
+        self.assertTrue(self.meal.dishes.filter(
+            id=self.dish_count.id
+        ).exists())
 
 
-class UpdateApproachViewTests(LoginRequiredPostMixin,
-                              UserRequiredMixin,
-                              TestCase):
+class UpdateApproachViewTests(
+    LoginRequiredPostMixin,
+    UserRequiredMixin,
+    TestCase
+):
     url = reverse("api:update-approach")
 
     def setUp(self):
@@ -590,15 +587,14 @@ class UpdateApproachViewTests(LoginRequiredPostMixin,
             name="Test exercise",
         )
         self.power_training_exercise = PowerTrainingExercise.objects.create(
-            exercise=self.exercise,
-            power_training=self.power_training
+            exercise=self.exercise, power_training=self.power_training
         )
         self.approach_weight = 100
         self.approach_repeats = 22
         self.approach = Approach.objects.create(
             training=self.power_training_exercise,
             weight=100,
-            repeats=self.approach_repeats
+            repeats=self.approach_repeats,
         )
 
     def test_update_approach(self):
@@ -606,7 +602,7 @@ class UpdateApproachViewTests(LoginRequiredPostMixin,
             "weight": 122,
             "id": self.approach.id,
             "training": self.approach.training.id,
-            "repeats": 22
+            "repeats": 22,
         }
         response = self.client.post(self.url, form_data)
         self.approach.refresh_from_db()
@@ -616,11 +612,7 @@ class UpdateApproachViewTests(LoginRequiredPostMixin,
 
     def test_update_approach_another_user(self):
         self.client.force_login(self.another_user)
-        form_data = {
-            "weight": 122,
-            "id": self.approach.id,
-            "repeats": 22
-        }
+        form_data = {"weight": 122, "id": self.approach.id, "repeats": 22}
         response = self.client.post(self.url, form_data)
         self.approach.refresh_from_db()
         self.assertNotEqual(response.status_code, 200)
@@ -628,9 +620,11 @@ class UpdateApproachViewTests(LoginRequiredPostMixin,
         self.assertEqual(self.approach.repeats, self.approach_repeats)
 
 
-class DeleteExerciseViewTests(LoginRequiredPostMixin,
-                              UserRequiredMixin,
-                              TestCase):
+class DeleteExerciseViewTests(
+    LoginRequiredPostMixin,
+    UserRequiredMixin,
+    TestCase
+):
     url = reverse("api:delete-exercise")
 
     def setUp(self):
@@ -641,26 +635,24 @@ class DeleteExerciseViewTests(LoginRequiredPostMixin,
         )
 
     def test_delete_exercise(self):
-        form_data = {
-            "exercise_id": self.exercise.id
-        }
+        form_data = {"exercise_id": self.exercise.id}
         response = self.client.post(self.url, form_data)
         self.assertEqual(response.status_code, 200)
-        self.assertFalse(Exercise.objects
-                         .filter(id=self.exercise.id).exists())
+        self.assertFalse(Exercise.objects.filter(id=self.exercise.id).exists())
 
     def test_delete_exercise_another_user(self):
         self.client.force_login(self.another_user)
-        form_data = {
-            "exercise_id": self.exercise.id
-        }
+        form_data = {"exercise_id": self.exercise.id}
         response = self.client.post(self.url, form_data)
         self.assertNotEqual(response.status_code, 200)
-        self.assertTrue(Exercise.objects
-                        .filter(id=self.exercise.id).exists())
+        self.assertTrue(Exercise.objects.filter(id=self.exercise.id).exists())
 
 
-class DeleteDishViewTests(LoginRequiredPostMixin, UserRequiredMixin, TestCase):
+class DeleteDishViewTests(
+    LoginRequiredPostMixin,
+    UserRequiredMixin,
+    TestCase
+):
     url = reverse("api:delete-dish")
 
     def setUp(self):
@@ -671,22 +663,18 @@ class DeleteDishViewTests(LoginRequiredPostMixin, UserRequiredMixin, TestCase):
             fats=20,
             protein=10,
             carbohydrates=10,
-            user=self.user
+            user=self.user,
         )
 
     def test_delete_dish(self):
-        form_data = {
-            "id": self.dish.id
-        }
+        form_data = {"id": self.dish.id}
         response = self.client.post(self.url, form_data)
         self.assertEqual(response.status_code, 200)
         self.assertFalse(Dish.objects.filter(id=self.dish.id).exists())
 
     def test_delete_dish_another_user(self):
         self.client.force_login(self.another_user)
-        form_data = {
-            "id": self.dish.id
-        }
+        form_data = {"id": self.dish.id}
         response = self.client.post(self.url, form_data)
         self.assertNotEqual(response.status_code, 200)
         self.assertTrue(Dish.objects.filter(id=self.dish.id).exists())
@@ -720,7 +708,11 @@ class DeleteMealViewTests(LoginRequiredPostMixin, UserRequiredMixin, TestCase):
         self.assertTrue(Meal.objects.filter(id=self.meal.id).exists())
 
 
-class GetTrainingTypeRatio(LoginRequiredGetMixin, UserRequiredMixin, TestCase):
+class GetTrainingTypeRatio(
+    LoginRequiredGetMixin,
+    UserRequiredMixin,
+    TestCase
+):
     url = reverse("api:get-training-type-ratio")
 
     def setUp(self):
@@ -735,13 +727,10 @@ class GetTrainingTypeRatio(LoginRequiredGetMixin, UserRequiredMixin, TestCase):
             start=timezone.now(),
             distance=50,
             climb=150,
-            average_speed=15
+            average_speed=15,
         )
         self.walking = Walking.objects.create(
-            user=self.user,
-            start=timezone.now(),
-            distance=50,
-            average_speed=6
+            user=self.user, start=timezone.now(), distance=50, average_speed=6
         )
 
     def test_get_training_type_ratio_month(self):

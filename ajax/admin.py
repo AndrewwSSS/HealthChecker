@@ -1,15 +1,17 @@
 from django.contrib import admin
 
-from main.models import (User,
-                         PowerTraining,
-                         Cycling,
-                         Jogging,
-                         Walking,
-                         Swimming,
-                         Dish,
-                         Meal,
-                         Exercise,
-                         DishCount)
+from main.models import (
+    User,
+    PowerTraining,
+    Cycling,
+    Jogging,
+    Walking,
+    Swimming,
+    Dish,
+    Meal,
+    Exercise,
+    DishCount,
+)
 
 admin.site.register(User)
 admin.site.register(PowerTraining)

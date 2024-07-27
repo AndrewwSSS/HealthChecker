@@ -1,14 +1,14 @@
 from django.test import TestCase
 from django.utils import timezone
 
-from main.forms import (PowerTrainingForm,
-                        JoggingForm,
-                        ExerciseForm,
-                        CyclingForm,
-                        DishForm)
-from main.models import (User,
-                         Exercise,
-                         Dish)
+from main.forms import (
+    PowerTrainingForm,
+    JoggingForm,
+    ExerciseForm,
+    CyclingForm,
+    DishForm,
+)
+from main.models import User, Exercise, Dish
 
 
 class BaseTrainingFormTests(TestCase):
@@ -43,7 +43,7 @@ class DistanceAverageSpeedTrainingFormTests(TestCase):
             "average_speed": 15.0,
             "distance": 50.0,
             "description": "lorem ipsum",
-            "end": None
+            "end": None,
         }
         form = JoggingForm(data=form_data)
         self.assertTrue(form.is_valid())
@@ -65,9 +65,9 @@ class ExerciseFormTests(TestCase):
             username="Aboba",
             password="<PA54SSWORD>",
         )
-        Exercise.objects.create(name="<NAME>",
-                                description="lorem ipsum",
-                                user=self.user)
+        Exercise.objects.create(
+            name="<NAME>", description="lorem ipsum", user=self.user
+        )
         form_data = {
             "name": "<NAME>",
             "description": "lorem ipsum",

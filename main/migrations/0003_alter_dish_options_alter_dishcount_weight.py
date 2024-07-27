@@ -7,17 +7,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0002_alter_cycling_options_alter_exercise_options_and_more'),
+        ("main", "0002_alter_cycling_options_alter_exercise_options_and_more"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='dish',
-            options={'ordering': ['name']},
+            name="dish",
+            options={"ordering": ["name"]},
         ),
         migrations.AlterField(
-            model_name='dishcount',
-            name='weight',
+            model_name="dishcount",
+            name="weight",
             field=models.IntegerField(
                 validators=[django.core.validators.MinValueValidator(1)]
             ),

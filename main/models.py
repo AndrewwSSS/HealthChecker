@@ -4,48 +4,44 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.db.models import (ForeignKey,
-                              UniqueConstraint,
-                              CheckConstraint,
-                              Q)
+from django.db.models import ForeignKey, UniqueConstraint, CheckConstraint, Q
 from django.utils import timezone
 
 
 def convert_datetime_to_string(value) -> str:
     now = timezone.now()
     if value.date() == (now - timedelta(days=1)).date():
-        return f"Yesterday, {value.strftime("%H:%M")}"
+        return f"Yesterday, {value.strftime('%H:%M')}"
     elif value.date() == now.date():
-        return f"Today, {value.strftime("%H:%M")}"
+        return f"Today, {value.strftime('%H:%M')}"
     else:
         return value.strftime("%d/%m/%Y %H:%M")
 
 
 class User(AbstractUser):
     SEX_CHOICES = (
-        ('F', 'Female',),
-        ('M', 'Male',),
-        ('U', 'Unsure',),
+        (
+            "F",
+            "Female",
+        ),
+        (
+            "M",
+            "Male",
+        ),
+        (
+            "U",
+            "Unsure",
+        ),
     )
-    sex = models.CharField(
-        max_length=1,
-        choices=SEX_CHOICES,
-        null=True
-    )
-    birth_date = models.DateField(null=True,)
-    weight = models.FloatField(
+    sex = models.CharField(max_length=1, choices=SEX_CHOICES, null=True)
+    birth_date = models.DateField(
         null=True,
-        validators=[
-            MinValueValidator(20),
-            MaxValueValidator(400)
-        ]
+    )
+    weight = models.FloatField(
+        null=True, validators=[MinValueValidator(20), MaxValueValidator(400)]
     )
     height = models.IntegerField(
-        null=True,
-        validators=[
-             MinValueValidator(140),
-             MaxValueValidator(250)
-        ]
+        null=True, validators=[MinValueValidator(140), MaxValueValidator(250)]
     )
 
     @property
@@ -63,11 +59,11 @@ class Training(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ['-start']
+        ordering = ["-start"]
         constraints = [
             CheckConstraint(
                 check=Q(start__lt=models.F("end")),
-                name="%(app_label)s_%(class)s_end_date_grater_than_start_date"
+                name="%(app_label)s_%(class)s_end_date_grater_than_start_date",
             ),
         ]
 
@@ -76,39 +72,41 @@ class Training(models.Model):
 
 
 class Approach(models.Model):
-    weight = models.FloatField(default=0,
-                               validators=[MinValueValidator(0)])
+    weight = models.FloatField(default=0, validators=[MinValueValidator(0)])
     repeats = models.IntegerField(validators=[MinValueValidator(1)])
-    training = models.ForeignKey("PowerTrainingExercise",
-                                 on_delete=models.CASCADE,
-                                 related_name="approaches")
+    training = models.ForeignKey(
+        "PowerTrainingExercise",
+        on_delete=models.CASCADE,
+        related_name="approaches"
+    )
 
 
 class Exercise(models.Model):
-    user = models.ForeignKey(get_user_model(),
-                             on_delete=models.CASCADE,
-                             related_name="exercises")
+    user = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="exercises"
+    )
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True)
 
     class Meta:
-        ordering = ['-name']
+        ordering = ["-name"]
 
     def __str__(self):
         return self.name
 
 
 class PowerTrainingExercise(models.Model):
-    exercise = models.ForeignKey(Exercise,
-                                 on_delete=models.CASCADE)
-    power_training = models.ForeignKey("PowerTraining",
-                                       related_name="exercises",
-                                       on_delete=models.CASCADE)
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    power_training = models.ForeignKey(
+        "PowerTraining", related_name="exercises", on_delete=models.CASCADE
+    )
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=["exercise", "power_training"],
-                             name="unique_power_training_exercise"),
+            UniqueConstraint(
+                fields=["exercise", "power_training"],
+                name="unique_power_training_exercise",
+            ),
         ]
 
 
@@ -146,15 +144,17 @@ class Dish(models.Model):
     protein = models.FloatField(validators=[MinValueValidator(0.1)])
     carbohydrates = models.FloatField(validators=[MinValueValidator(0.1)])
     fats = models.FloatField(validators=[MinValueValidator(0.1)])
-    user = models.ForeignKey(get_user_model(),
-                             on_delete=models.CASCADE,
-                             related_name="dishes")
+    user = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="dishes"
+    )
 
     class Meta:
         ordering = ["name"]
         constraints = [
-            UniqueConstraint(fields=["user", "name"],
-                             name="unique_dish_name_for_user")
+            UniqueConstraint(
+                fields=["user", "name"],
+                name="unique_dish_name_for_user"
+            )
         ]
 
     def __str__(self):
@@ -163,9 +163,11 @@ class Dish(models.Model):
 
 class DishCount(models.Model):
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
-    meal = models.ForeignKey("Meal",
-                             on_delete=models.CASCADE,
-                             related_name="dishes")
+    meal = models.ForeignKey(
+        "Meal",
+        on_delete=models.CASCADE,
+        related_name="dishes"
+    )
     weight = models.IntegerField(validators=[MinValueValidator(1)])
 
     class Meta:
@@ -193,9 +195,9 @@ class DishCount(models.Model):
 
 class Meal(models.Model):
     date = models.DateTimeField()
-    user = models.ForeignKey(get_user_model(),
-                             on_delete=models.CASCADE,
-                             related_name="meals")
+    user = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="meals"
+    )
 
     class Meta:
         ordering = ["-date"]
