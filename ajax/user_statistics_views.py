@@ -262,7 +262,7 @@ class GetTotalKMbySwimming(GetTotalKmTraining):
 class GetPFCratio(LoginRequiredMixin, View):
     @staticmethod
     def get(request: HttpRequest) -> JsonResponse:
-        if not (period := get_and_validate_period(request)) or not (
+        if not (period := get_and_validate_period(request)) or (
             meals := get_meals_by_period(period, request.user)
         ):
             return INVALID_DATA_RESPONSE

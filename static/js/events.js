@@ -119,18 +119,20 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function ajax_post(url, data, done_callback, fail_callback, dataType = "json") {
+function ajax_post(url, data, done_callback, fail_callback, method = "POST") {
     $.ajax({
-        type: 'POST',
+        type: method,
         url: url,
         data: data,
-        dataType: dataType,
+        dataType: "json",
         headers: {
             "X-Requested-With": "XMLHttpRequest",
-            "X-CSRFToken": getCookie("csrftoken")
+            "X-CSRFToken": getCookie("csrftoken"),
+            "Authorization": `Token ${getCookie("sessionid")}`
         },
     }).done(done_callback).fail(fail_callback);
 }
+
 
 function ajax_get(url, data_string, done_callback, fail_callback, dataType = "json") {
     $.ajax({
@@ -316,7 +318,7 @@ function chane_password() {
     };
     let done_callback = response => show_toast("Password change successfully", "success")
 
-    ajax_post("/api/change_password", formData, done_callback, FAIL_CALLBACK)
+    ajax_post("/api/user/me/update_password", formData, done_callback, FAIL_CALLBACK, "PUT")
 }
 
 function update_user(){
@@ -335,7 +337,7 @@ function update_user(){
     let done_callback =
             response => show_toast("User updated successfully.", "success");
 
-    ajax_post("/api/user_update", formData, done_callback, FAIL_CALLBACK)
+    ajax_post("/api/user/me", formData, done_callback, FAIL_CALLBACK, "PUT")
 }
 
 

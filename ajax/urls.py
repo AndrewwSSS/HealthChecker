@@ -19,7 +19,8 @@ from ajax.user_statistics_views import (
     GetTotalKMbyWalking,
     GetTrainingsTypeRatioView,
 )
-from ajax.user_views import UpdatePasswordView, UpdateUser
+from ajax.user_views import UpdatePasswordView
+from ajax.user_views import UserUpdateView
 from ajax.views import (
     CreateDishCountView,
     DeleteDishCountView,
@@ -32,12 +33,12 @@ from ajax.views import (
 
 urlpatterns = [
     path(
-        "user_update",
-        UpdateUser.as_view(),
+        "user/me",
+        UserUpdateView.as_view(),
         name="update-user"
     ),
     path(
-        "change_password",
+        "user/me/update_password",
         UpdatePasswordView.as_view(),
         name="change-password"
     ),

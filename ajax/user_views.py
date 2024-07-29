@@ -1,48 +1,43 @@
 from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpRequest, JsonResponse
-from django.views import View
+from rest_framework import status
+from rest_framework.generics import UpdateAPIView
+from rest_framework.response import Response
 
-from ajax.forms import UserUpdateForm
-from ajax.views import SUCCESS_RESPONSE
+from ajax.serializers import ChangePasswordSerializer
+from ajax.serializers import UserUpdateSerializer
 
 
-class UpdatePasswordView(LoginRequiredMixin, View):
-    @staticmethod
-    def post(request: HttpRequest) -> JsonResponse:
-        form = PasswordChangeForm(request.user, request.POST)
-        if form.is_valid():
-            user = form.save()
-            update_session_auth_hash(request, user)
-            return JsonResponse(
-                {
-                    "status": "success",
-                },
-                status=200,
+class UpdatePasswordView(UpdateAPIView):
+    serializer_class = ChangePasswordSerializer
+
+    def get_object(self):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        if not user.check_password(request.data['old_password']):
+            return Response(
+                {"old_password": ["Wrong password."]},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
-        return JsonResponse(
+        user.set_password(request.data.get("new_password1"))
+        user.save()
+        update_session_auth_hash(request, user)
+        return Response(
             {
-                "status": "error",
-                "errors": form.errors,
+                "status": "success",
+                "code": status.HTTP_200_OK
             },
-            status=422,
         )
 
 
-class UpdateUser(LoginRequiredMixin, View):
-    @staticmethod
-    def post(request: HttpRequest) -> JsonResponse:
-        form = UserUpdateForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return SUCCESS_RESPONSE
+class UserUpdateView(UpdateAPIView):
+    serializer_class = UserUpdateSerializer
 
-        return JsonResponse(
-            {
-                "status": "error",
-                "errors": form.errors,
-            },
-            status=422,
-        )
+    def get_object(self):
+        return self.request.user
