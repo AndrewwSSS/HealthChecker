@@ -99,8 +99,12 @@ class UserStatisticService:
         )
 
     def get_trainings(self, training_type: type, period: str = None) -> QuerySet[type]:
+        return self.get_trainings_by_period(period, self.user, training_type)
+
+    @staticmethod
+    def get_trainings_by_period(period: str, user: User, training_type: type) -> QuerySet[type]:
         today = timezone.now().today()
-        queryset = training_type.objects.filter(user=self.user)
+        queryset = training_type.objects.filter(user=user)
         if period == "today":
             q_obj = Q(start__date=today)
         elif period == "this month":
@@ -110,6 +114,8 @@ class UserStatisticService:
         else:
             return queryset
         return queryset.filter(q_obj)
+
+
 
     def get_total_km(self, period: str, training_type: type) -> float:
         if not issubclass(training_type, DistanceAverageSpeedMixin):
