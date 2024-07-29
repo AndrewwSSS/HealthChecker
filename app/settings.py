@@ -28,7 +28,7 @@ STATICFILES_DIRS = [
 
 INSTALLED_APPS = [
     "crispy_forms",
-    "crispy_bootstrap5",
+    "crispy_bootstrap4",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     "ajax",
 ]
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-CRISPY_TEMPLATE_PACK = "bootstrap5"
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
