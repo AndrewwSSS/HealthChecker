@@ -1,18 +1,18 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.forms import ModelForm
 from django.utils import timezone
 
 from main.models import (
-    User,
-    PowerTraining,
-    Exercise,
     Cycling,
     Dish,
+    Exercise,
     Jogging,
-    Swimming,
-    Walking,
     Meal,
+    PowerTraining,
+    Swimming,
+    User,
+    Walking,
 )
 
 

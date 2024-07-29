@@ -1,16 +1,17 @@
 from datetime import timedelta
 
+from django.test import TestCase
 from django.utils import timezone
 
-from django.test import TestCase
-
 from ajax.tests.view_tests import UserRequiredMixin
-from main.models import (User,
-                         PowerTraining,
-                         Dish,
-                         Meal,
-                         DishCount,
-                         Exercise)
+from main.models import (
+    Dish,
+    DishCount,
+    Exercise,
+    Meal,
+    PowerTraining,
+    User,
+)
 
 
 class BaseTestCaseWithUser(TestCase):

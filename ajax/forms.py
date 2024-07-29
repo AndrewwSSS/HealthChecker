@@ -1,7 +1,12 @@
 from django import forms
 from django.contrib.auth.forms import UserChangeForm
 
-from main.models import User, Approach, DishCount, PowerTrainingExercise
+from main.models import (
+    Approach,
+    DishCount,
+    PowerTrainingExercise,
+    User,
+)
 
 
 class UserUpdateForm(UserChangeForm):

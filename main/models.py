@@ -2,9 +2,14 @@ from datetime import timedelta
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import ForeignKey, UniqueConstraint, CheckConstraint, Q
+from django.db.models import (
+    CheckConstraint,
+    ForeignKey,
+    Q,
+    UniqueConstraint,
+)
 from django.utils import timezone
 
 

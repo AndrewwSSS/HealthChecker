@@ -1,22 +1,22 @@
 from datetime import date
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 from django.db.models.functions import TruncDate
-from django.http import HttpRequest
-from django.http import JsonResponse
+from django.http import HttpRequest, JsonResponse
 from django.views import View
 
 from ajax.views import INVALID_DATA_RESPONSE
-from main.models import Cycling
-from main.models import Jogging
-from main.models import Meal
-from main.models import PowerTraining
-from main.models import Swimming
-from main.models import Training
-from main.models import User
-from main.models import Walking
+from main.models import (
+    Cycling,
+    Jogging,
+    Meal,
+    PowerTraining,
+    Swimming,
+    Training,
+    User,
+    Walking,
+)
 
 
 class GetTrainingsTypeRatioView(LoginRequiredMixin, View):

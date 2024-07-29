@@ -1,37 +1,46 @@
 from datetime import datetime
 
-from django.contrib.auth import logout, login as auth_login
+from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
-from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
-from django.shortcuts import redirect, render, get_object_or_404
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseRedirect,
+)
+from django.shortcuts import (
+    get_object_or_404,
+    redirect,
+    render,
+)
 from django.urls import NoReverseMatch
 from django.views import generic
 
 from main.forms import (
-    UserCreateForm,
-    PowerTrainingForm,
-    ExerciseForm,
     CyclingForm,
-    DishForm,
-    SwimmingForm,
-    JoggingForm,
-    WalkingForm,
-    MealForm,
     DateSearchForm,
+    DishForm,
+    ExerciseForm,
+    JoggingForm,
+    MealForm,
     NameSearchForm,
+    PowerTrainingForm,
+    SwimmingForm,
+    UserCreateForm,
     UserLoginForm,
+    WalkingForm,
 )
 from main.models import (
-    User,
-    PowerTraining,
-    Exercise,
     Cycling,
     Dish,
-    Swimming,
+    Exercise,
     Jogging,
-    Walking,
     Meal,
+    PowerTraining,
+    Swimming,
+    User,
+    Walking,
 )
 
 

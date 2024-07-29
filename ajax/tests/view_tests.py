@@ -1,22 +1,22 @@
 from datetime import date
 
-from django.test import TestCase, Client
+from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils import timezone
 
 from main.models import (
-    User,
-    Exercise,
-    PowerTraining,
-    PowerTrainingExercise,
     Approach,
-    Swimming,
-    Walking,
-    Jogging,
     Cycling,
-    Meal,
     Dish,
     DishCount,
+    Exercise,
+    Jogging,
+    Meal,
+    PowerTraining,
+    PowerTrainingExercise,
+    Swimming,
+    User,
+    Walking,
 )
 
 

@@ -3,7 +3,12 @@ from django.urls import reverse
 from django.utils import timezone
 
 from ajax.tests.view_tests import UserRequiredMixin
-from main.models import PowerTraining, Meal, Dish, Exercise
+from main.models import (
+    Dish,
+    Exercise,
+    Meal,
+    PowerTraining,
+)
 
 
 class DateSearchTrainingListViewTests(UserRequiredMixin, TestCase):

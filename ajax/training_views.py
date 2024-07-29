@@ -1,22 +1,20 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpRequest
-from django.http import JsonResponse
+from django.http import HttpRequest, JsonResponse
 from django.shortcuts import get_object_or_404
-from django.views import View
-from django.views import generic
+from django.views import View, generic
 
-from ajax.forms import ApproachForm
-from ajax.forms import PowerExerciseForm
-from ajax.views import INVALID_DATA_RESPONSE
-from ajax.views import SUCCESS_RESPONSE
-from main.models import Approach
-from main.models import Cycling
-from main.models import Exercise
-from main.models import Jogging
-from main.models import PowerTraining
-from main.models import PowerTrainingExercise
-from main.models import Swimming
-from main.models import Walking
+from ajax.forms import ApproachForm, PowerExerciseForm
+from ajax.views import INVALID_DATA_RESPONSE, SUCCESS_RESPONSE
+from main.models import (
+    Approach,
+    Cycling,
+    Exercise,
+    Jogging,
+    PowerTraining,
+    PowerTrainingExercise,
+    Swimming,
+    Walking,
+)
 
 
 class CreatePowerExerciseView(LoginRequiredMixin, View):

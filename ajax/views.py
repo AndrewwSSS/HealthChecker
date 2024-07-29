@@ -1,17 +1,17 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.http import HttpRequest
-from django.http import JsonResponse
+from django.http import HttpRequest, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views import View
 
-from ajax.forms import ApproachForm
-from ajax.forms import DishCountForm
-from main.models import Approach
-from main.models import Dish
-from main.models import DishCount
-from main.models import Exercise
-from main.models import Meal
+from ajax.forms import ApproachForm, DishCountForm
+from main.models import (
+    Approach,
+    Dish,
+    DishCount,
+    Exercise,
+    Meal,
+)
 
 SUCCESS_RESPONSE = JsonResponse(
     {

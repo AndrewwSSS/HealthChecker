@@ -2,13 +2,17 @@ from django.test import TestCase
 from django.utils import timezone
 
 from main.forms import (
-    PowerTrainingForm,
-    JoggingForm,
-    ExerciseForm,
     CyclingForm,
     DishForm,
+    ExerciseForm,
+    JoggingForm,
+    PowerTrainingForm,
 )
-from main.models import User, Exercise, Dish
+from main.models import (
+    Dish,
+    Exercise,
+    User,
+)
 
 
 class BaseTrainingFormTests(TestCase):
