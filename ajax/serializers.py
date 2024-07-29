@@ -14,6 +14,7 @@ class ChangePasswordSerializer(serializers.Serializer):
                     'new_password2': 'Passwords do not match!'
                 }
             )
+
         return attrs
 
 
@@ -30,3 +31,19 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             "height",
             "sex"
         )
+
+
+class PeriodSerializer(serializers.Serializer):
+    period = serializers.CharField(max_length=10)
+
+    def validate(self, attrs):
+        period = attrs.get("period")
+        if not period:
+            raise serializers.ValidationError()
+        if period.lower() not in ("today", "this month", "this year"):
+            raise serializers.ValidationError(
+                {"period": "Invalid period!"}
+            )
+        attrs["period"] = period.lower()
+        return attrs
+

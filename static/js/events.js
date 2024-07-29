@@ -128,7 +128,6 @@ function ajax_post(url, data, done_callback, fail_callback, method = "POST") {
         headers: {
             "X-Requested-With": "XMLHttpRequest",
             "X-CSRFToken": getCookie("csrftoken"),
-            "Authorization": `Token ${getCookie("sessionid")}`
         },
     }).done(done_callback).fail(fail_callback);
 }
