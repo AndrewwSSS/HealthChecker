@@ -42,7 +42,7 @@ urlpatterns = [
         name="change-password"
     ),
     path(
-        "add_power_training_exercise",
+        "power_training_exercises/",
         CreatePowerExerciseView.as_view(),
         name="create-power-training-exercise",
     ),

@@ -2,54 +2,27 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views import View, generic
+from rest_framework.generics import CreateAPIView
 
-from ajax.forms import ApproachForm, PowerExerciseForm
+from ajax.forms import ApproachForm
+from ajax.serializers import CreatePowerTrainingExerciseSerializer
 from ajax.views import INVALID_DATA_RESPONSE, SUCCESS_RESPONSE
 from main.models import (
     Approach,
     Cycling,
-    Exercise,
     Jogging,
     PowerTraining,
     PowerTrainingExercise,
     Swimming,
     Walking,
 )
+from permissions import IsAuthenticatedAndPowerTrainingExerciseOwner
 
 
-class CreatePowerExerciseView(LoginRequiredMixin, View):
-    form_class = PowerExerciseForm
-    model = PowerTrainingExercise
-
-    @staticmethod
-    def post(request: HttpRequest) -> JsonResponse:
-        exercise_id = request.POST.get("exercise", default=None)
-        training_id = request.POST.get("training", default=None)
-
-        if not exercise_id or not training_id:
-            return INVALID_DATA_RESPONSE
-
-        exercise = get_object_or_404(Exercise, pk=exercise_id)
-        power_training = get_object_or_404(
-            PowerTraining,
-            pk=training_id,
-            user=request.user
-        )
-
-        # Check if exercise with same name exists
-        if power_training.exercises.filter(exercise_id=exercise.id).exists():
-            return INVALID_DATA_RESPONSE
-
-        power_training_exercise = PowerTrainingExercise.objects.create(
-            exercise=exercise,
-            power_training_id=training_id
-        )
-        return JsonResponse(
-            {
-                "status": "success",
-                "id": power_training_exercise.id,
-            }
-        )
+class CreatePowerExerciseView(CreateAPIView):
+    queryset = PowerTrainingExercise.objects.all()
+    serializer_class = CreatePowerTrainingExerciseSerializer
+    permission_classes = (IsAuthenticatedAndPowerTrainingExerciseOwner,)
 
 
 class CreateApproachView(LoginRequiredMixin, generic.CreateView):
@@ -126,5 +99,6 @@ class DeleteTrainingView(LoginRequiredMixin, View):
         get_object_or_404(
             training_class,
             pk=training_id,
-            user=request.user).delete()
+            user=request.user
+        ).delete()
         return SUCCESS_RESPONSE

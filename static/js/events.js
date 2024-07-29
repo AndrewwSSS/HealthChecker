@@ -236,7 +236,7 @@ function create_power_exercise() {
     let select_item = document.getElementById("select_exercise")
 
     let formData = {
-        training: document.getElementById("training_id").getAttribute("value"),
+        power_training: document.getElementById("training_id").getAttribute("value"),
         exercise: select_item.options[select_item.selectedIndex].value,
     }
 
@@ -267,7 +267,7 @@ function create_power_exercise() {
         show_toast("Exercise added successfully", "success")
     }
 
-    ajax_post("/api/add_power_training_exercise", formData, done_callback, FAIL_CALLBACK)
+    ajax_post("/api/power_training_exercises/", formData, done_callback, FAIL_CALLBACK)
 }
 
 function delete_power_exercise(event) {

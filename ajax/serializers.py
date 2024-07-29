@@ -1,6 +1,9 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+from main.models import PowerTraining
+from main.models import PowerTrainingExercise
+
 
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(write_only=True)
@@ -47,3 +50,8 @@ class PeriodSerializer(serializers.Serializer):
         attrs["period"] = period.lower()
         return attrs
 
+
+class CreatePowerTrainingExerciseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PowerTrainingExercise
+        fields = ("id", "exercise", "power_training")
