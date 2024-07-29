@@ -1,8 +1,3 @@
-from datetime import date
-
-from django.db.models import Q, QuerySet
-from django.db.models.functions import TruncDate
-from django.http import HttpRequest
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
@@ -12,10 +7,8 @@ from ajax.services import UserStatisticService
 from main.models import (
     Cycling,
     Jogging,
-    Meal,
     Swimming,
     Training,
-    User,
     Walking,
 )
 
