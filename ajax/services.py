@@ -1,7 +1,4 @@
-from django.db.models import (
-    Q,
-    QuerySet,
-)
+from django.db.models import Q, QuerySet
 from django.db.models.functions import TruncDate
 from django.utils import timezone
 
