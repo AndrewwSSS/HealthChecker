@@ -1,8 +1,10 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from main.models import PowerTraining
-from main.models import PowerTrainingExercise
+from main.models import (
+    Approach,
+    PowerTrainingExercise,
+)
 
 
 class ChangePasswordSerializer(serializers.Serializer):
@@ -55,3 +57,14 @@ class CreatePowerTrainingExerciseSerializer(serializers.ModelSerializer):
     class Meta:
         model = PowerTrainingExercise
         fields = ("id", "exercise", "power_training")
+
+
+class ApproachSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Approach
+        fields = (
+            "id",
+            "weight",
+            "repeats",
+            "training"
+        )

@@ -2,10 +2,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views import View, generic
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, DestroyAPIView
 
 from ajax.forms import ApproachForm
-from ajax.serializers import CreatePowerTrainingExerciseSerializer
+from ajax.serializers import ApproachSerializer, CreatePowerTrainingExerciseSerializer
 from ajax.views import INVALID_DATA_RESPONSE, SUCCESS_RESPONSE
 from main.models import (
     Approach,
@@ -16,7 +16,11 @@ from main.models import (
     Swimming,
     Walking,
 )
-from permissions import IsAuthenticatedAndPowerTrainingExerciseOwner
+from permissions import (
+    IsAuthenticatedAndApproachOwner,
+    IsAuthenticatedAndOwnerPermission,
+    IsAuthenticatedAndPowerTrainingExerciseOwner,
+)
 
 
 class CreatePowerExerciseView(CreateAPIView):
@@ -25,80 +29,43 @@ class CreatePowerExerciseView(CreateAPIView):
     permission_classes = (IsAuthenticatedAndPowerTrainingExerciseOwner,)
 
 
-class CreateApproachView(LoginRequiredMixin, generic.CreateView):
-    model = Approach
-    form_class = ApproachForm
-
-    def form_valid(self, form):
-        approach = form.save(commit=False)
-
-        get_object_or_404(
-            PowerTrainingExercise,
-            pk=approach.training.id,
-            power_training__user=self.request.user,
-        )
-        approach.save()
-        return JsonResponse({"id": approach.id}, status=200)
+class CreateApproachView(CreateAPIView):
+    queryset = Approach.objects.all()
+    serializer_class = ApproachSerializer
+    permission_classes = (IsAuthenticatedAndApproachOwner,)
 
 
-class DeletePowerExerciseView(LoginRequiredMixin, View):
-    @staticmethod
-    def post(request: HttpRequest) -> JsonResponse:
-        exercise_id = request.POST.get("exercise", default=None)
-
-        if not exercise_id:
-            return INVALID_DATA_RESPONSE
-
-        get_object_or_404(
-            PowerTrainingExercise,
-            pk=exercise_id,
-            power_training__user=request.user
-        ).delete()
-        return SUCCESS_RESPONSE
+class DeletePowerTrainingExerciseView(DestroyAPIView):
+    queryset = PowerTrainingExercise.objects.all()
+    serializer_class = CreatePowerTrainingExerciseSerializer
+    permission_classes = (IsAuthenticatedAndPowerTrainingExerciseOwner,)
 
 
-class DeleteApproach(LoginRequiredMixin, View):
-    @staticmethod
-    def post(request: HttpRequest) -> JsonResponse:
-        approach = request.POST.get("approach", default=None)
-        exercise = request.POST.get("exercise", default=None)
-
-        if not approach or not exercise:
-            return INVALID_DATA_RESPONSE
-
-        get_object_or_404(
-            Approach,
-            id=approach,
-            training__power_training__user_id=request.user.id,
-            training_id=exercise,
-        ).delete()
-        return SUCCESS_RESPONSE
+class DeleteApproachView(DestroyAPIView):
+    queryset = Approach.objects.all()
+    serializer_class = ApproachSerializer
+    permission_classes = (IsAuthenticatedAndApproachOwner,)
 
 
-class DeleteTrainingView(LoginRequiredMixin, View):
-    @staticmethod
-    def post(request) -> JsonResponse:
-        training_type = request.POST.get("type", default=None)
-        training_id = request.POST.get("id", default=None)
-        if not training_type or not training_id:
-            return INVALID_DATA_RESPONSE
+class DeleteTraining(DestroyAPIView):
+    permission_classes = (IsAuthenticatedAndOwnerPermission,)
 
-        training_class = None
-        if training_type == "PW":
-            training_class = PowerTraining
-        elif training_type == "CY":
-            training_class = Cycling
-        elif training_type == "SW":
-            training_class = Swimming
-        elif training_type == "WK":
-            training_class = Walking
-        elif training_type == "JG":
-            training_class = Jogging
-        else:
-            return INVALID_DATA_RESPONSE
-        get_object_or_404(
-            training_class,
-            pk=training_id,
-            user=request.user
-        ).delete()
-        return SUCCESS_RESPONSE
+
+class DeletePowerTraining(DeleteTraining):
+    queryset = PowerTraining.objects.all()
+
+
+class DeleteCycling(DeleteTraining):
+    queryset = Cycling.objects.all()
+
+
+class DeleteSwimming(DeleteTraining):
+    queryset = Swimming.objects.all()
+
+
+class DeleteJogging(DeleteTraining):
+    queryset = Jogging.objects.all()
+
+
+class DeleteWalking(DeleteTraining):
+    queryset = Walking.objects.all()

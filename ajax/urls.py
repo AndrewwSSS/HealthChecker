@@ -3,9 +3,12 @@ from django.urls import path
 from ajax.training_views import (
     CreateApproachView,
     CreatePowerExerciseView,
-    DeleteApproach,
-    DeletePowerExerciseView,
-    DeleteTrainingView,
+    DeleteApproachView,
+    DeleteCycling,
+    DeletePowerTraining,
+    DeletePowerTrainingExerciseView,
+    DeleteSwimming,
+    DeleteWalking,
 )
 from ajax.user_statistics_views import (
     GetAvgCaloriesPerDayInfo,
@@ -42,32 +45,55 @@ urlpatterns = [
         name="change-password"
     ),
     path(
-        "power_training_exercises/",
+        "power-training-exercises/",
         CreatePowerExerciseView.as_view(),
         name="create-power-training-exercise",
     ),
     path(
-        "delete_power_exercise",
-        DeletePowerExerciseView.as_view(),
-        name="delete-power-exercise",
+        "power-training-exercises/<int:pk>",
+        DeletePowerTrainingExerciseView.as_view(),
+        name="delete-power-training-exercise",
     ),
     path(
-        "delete_approach",
-        DeleteApproach.as_view(),
-        name="delete-approach"),
+        "approaches/<int:pk>",
+        DeleteApproachView.as_view(),
+        name="delete-approach"
+    ),
     path(
-        "add_approach",
+        "approaches/",
         CreateApproachView.as_view(),
-        name="create-approach"),
+        name="create-approach"
+    ),
     path(
-        "trainings/delete_training",
-        DeleteTrainingView.as_view(),
-        name="delete-training",
+        "cycling/<int:pk>",
+        DeleteCycling.as_view(),
+        name="delete-cycling",
+    ),
+    path(
+        "walking/<int:pk>",
+        DeleteWalking.as_view(),
+        name="delete-walking",
+    ),
+    path(
+        "swimming/<int:pk>",
+        DeleteSwimming.as_view(),
+        name="delete-swimming",
+    ),
+    path(
+        "jogging/<int:pk>",
+        DeleteSwimming.as_view(),
+        name="delete-jogging",
+    ),
+    path(
+        "power-trainings/<int:pk>",
+        DeletePowerTraining.as_view(),
+        name="delete-power-training"
     ),
     path(
         "add_dish_to_meal",
         CreateDishCountView.as_view(),
-        name="create-dish-count"),
+        name="create-dish-count"
+    ),
     path(
         "delete_dish_count",
         DeleteDishCountView.as_view(),

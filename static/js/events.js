@@ -1,6 +1,6 @@
 const SUCCESSES_ICON = '<i class="bi bi-check-circle-fill"></i>'
 const ERROR_ICON = '<i class="bi bi-x-circle-fill"></i>'
-const TOAST_SHOW_DURATION = 5000
+const TOAST_SHOW_DURATION = 2000
 const FAIL_CALLBACK = () => {
     show_toast(`Fail to do operation`, "error")
 }
@@ -175,6 +175,7 @@ function delete_training(event) {
     let trainings_container = training_element.parentElement
     let formData = get_training_information(training_element)
 
+
     let success_callback = response => {
         training_element.remove()
         if (trainings_container.querySelectorAll("div").length === 0) {
@@ -183,7 +184,32 @@ function delete_training(event) {
         show_toast("Successfully deleted training", "success")
     }
 
-    ajax_post("/api/trainings/delete_training", formData, success_callback, FAIL_CALLBACK)
+    let endpoint = ""
+    switch (formData.type) {
+        case "PW":
+            endpoint = "power-trainings"
+            break
+        case "WK":
+            endpoint = "walking"
+            break
+        case "JG":
+            endpoint = "jogging"
+            break
+        case "CY":
+            endpoint = "cycling"
+            break
+        case "SW":
+            endpoint = "swimming"
+            break
+    }
+    ajax_post(
+        `/api/${endpoint}/${formData.id}`,
+        null,
+        success_callback,
+        FAIL_CALLBACK,
+        "DELETE"
+    )
+
 }
 
 function create_approach_form(event) {
@@ -228,7 +254,7 @@ function create_or_update_approach(event) {
             show_toast("Approach successfully added.", "success")
         }
 
-        ajax_post("/api/add_approach", formData, done_callback, FAIL_CALLBACK)
+        ajax_post("/api/approaches/", formData, done_callback, FAIL_CALLBACK)
     }
 }
 
@@ -267,7 +293,7 @@ function create_power_exercise() {
         show_toast("Exercise added successfully", "success")
     }
 
-    ajax_post("/api/power_training_exercises/", formData, done_callback, FAIL_CALLBACK)
+    ajax_post("/api/power-training-exercises/", formData, done_callback, FAIL_CALLBACK)
 }
 
 function delete_power_exercise(event) {
@@ -287,7 +313,13 @@ function delete_power_exercise(event) {
         show_toast("Exercise successfully deleted", "success")
     }
 
-    ajax_post("/api/delete_power_exercise", formData, done_callback, FAIL_CALLBACK)
+    ajax_post(
+        `/api/power-training-exercises/${formData.exercise}`,
+        formData,
+        done_callback,
+        FAIL_CALLBACK,
+        "DELETE"
+    )
 }
 
 function delete_approach(event) {
@@ -304,7 +336,13 @@ function delete_approach(event) {
             show_toast("Approach successfully added.", "success")
         }
 
-        ajax_post("/api/delete_approach", formData, done_callback, FAIL_CALLBACK)
+        ajax_post(
+            `/api/approaches/${formData.approach}`,
+            null,
+            done_callback,
+            FAIL_CALLBACK,
+            "DELETE"
+        )
     } else
         li_item.remove()
 }
