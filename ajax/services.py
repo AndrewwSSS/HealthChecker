@@ -1,9 +1,6 @@
-from typing import Type
-
 from django.db.models import (
     Q,
     QuerySet,
-    Sum,
 )
 from django.db.models.functions import TruncDate
 from django.utils import timezone
@@ -15,13 +12,11 @@ from main.models import (
     Meal,
     PowerTraining,
     Swimming,
-    Training,
     User,
     Walking,
 )
 
 FILTER_PERIODS = ("today", "this month", "this year")
-DISTANCE_TRAINING_MODELS = (Cycling, Walking, Jogging, Swimming)
 
 
 class UserStatisticService:

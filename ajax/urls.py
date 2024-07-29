@@ -19,8 +19,7 @@ from ajax.user_statistics_views import (
     GetTotalKMbyWalking,
     GetTrainingsTypeRatioView,
 )
-from ajax.user_views import UpdatePasswordView
-from ajax.user_views import UserUpdateView
+from ajax.user_views import UpdatePasswordView, UserUpdateView
 from ajax.views import (
     CreateDishCountView,
     DeleteDishCountView,

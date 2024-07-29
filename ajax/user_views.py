@@ -3,8 +3,7 @@ from rest_framework import status
 from rest_framework.generics import UpdateAPIView
 from rest_framework.response import Response
 
-from ajax.serializers import ChangePasswordSerializer
-from ajax.serializers import UserUpdateSerializer
+from ajax.serializers import ChangePasswordSerializer, UserUpdateSerializer
 
 
 class UpdatePasswordView(UpdateAPIView):
@@ -41,3 +40,4 @@ class UserUpdateView(UpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
