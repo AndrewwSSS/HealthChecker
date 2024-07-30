@@ -10,8 +10,8 @@ from main.models import (
     Meal,
 )
 from permissions import (
+    IsAuthenticatedAndDishCountOwner,
     IsAuthenticatedAndOwnerPermission,
-    IsAuthenticatedAndDishCountOwner
 )
 
 

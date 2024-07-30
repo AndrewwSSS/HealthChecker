@@ -1,9 +1,13 @@
-from rest_framework.generics import CreateAPIView, DestroyAPIView, UpdateAPIView
+from rest_framework.generics import (
+    CreateAPIView,
+    DestroyAPIView,
+    UpdateAPIView,
+)
 from rest_framework.viewsets import GenericViewSet
 
 from ajax.serializers import (
     ApproachSerializer,
-    CreatePowerTrainingExerciseSerializer
+    CreatePowerTrainingExerciseSerializer,
 )
 from main.models import (
     Approach,

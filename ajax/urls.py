@@ -1,14 +1,14 @@
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework import routers
 
 from ajax.training_views import (
+    ApproachViewSet,
     CreatePowerExerciseView,
     DeleteCycling,
     DeletePowerTraining,
     DeletePowerTrainingExerciseView,
     DeleteSwimming,
     DeleteWalking,
-    ApproachViewSet,
 )
 from ajax.user_statistics_views import (
     GetAvgCaloriesPerDayInfo,
