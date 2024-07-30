@@ -3,7 +3,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
 from ajax.serializers import PeriodSerializer
-from ajax.services import UserStatisticService
+from user.services import UserStatisticService
 from main.models import (
     Cycling,
     Jogging,
