@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from main.models import (
     Approach,
+    DishCount,
     PowerTrainingExercise,
 )
 
@@ -68,3 +69,23 @@ class ApproachSerializer(serializers.ModelSerializer):
             "repeats",
             "training"
         )
+
+
+class CreateDishCountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DishCount
+        fields = [
+            "id",
+            "dish",
+            "weight",
+            "meal"
+        ]
+
+
+class UpdateDishCountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DishCount
+        fields = [
+            "id",
+            "weight"
+        ]

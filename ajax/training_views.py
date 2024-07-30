@@ -1,12 +1,10 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpRequest, JsonResponse
-from django.shortcuts import get_object_or_404
-from django.views import View, generic
-from rest_framework.generics import CreateAPIView, DestroyAPIView
+from rest_framework.generics import CreateAPIView, DestroyAPIView, UpdateAPIView
+from rest_framework.viewsets import GenericViewSet
 
-from ajax.forms import ApproachForm
-from ajax.serializers import ApproachSerializer, CreatePowerTrainingExerciseSerializer
-from ajax.views import INVALID_DATA_RESPONSE, SUCCESS_RESPONSE
+from ajax.serializers import (
+    ApproachSerializer,
+    CreatePowerTrainingExerciseSerializer
+)
 from main.models import (
     Approach,
     Cycling,
@@ -29,7 +27,12 @@ class CreatePowerExerciseView(CreateAPIView):
     permission_classes = (IsAuthenticatedAndPowerTrainingExerciseOwner,)
 
 
-class CreateApproachView(CreateAPIView):
+class ApproachViewSet(
+    GenericViewSet,
+    DestroyAPIView,
+    UpdateAPIView,
+    CreateAPIView,
+):
     queryset = Approach.objects.all()
     serializer_class = ApproachSerializer
     permission_classes = (IsAuthenticatedAndApproachOwner,)
@@ -37,14 +40,7 @@ class CreateApproachView(CreateAPIView):
 
 class DeletePowerTrainingExerciseView(DestroyAPIView):
     queryset = PowerTrainingExercise.objects.all()
-    serializer_class = CreatePowerTrainingExerciseSerializer
     permission_classes = (IsAuthenticatedAndPowerTrainingExerciseOwner,)
-
-
-class DeleteApproachView(DestroyAPIView):
-    queryset = Approach.objects.all()
-    serializer_class = ApproachSerializer
-    permission_classes = (IsAuthenticatedAndApproachOwner,)
 
 
 class DeleteTraining(DestroyAPIView):

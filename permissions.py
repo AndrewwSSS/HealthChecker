@@ -23,3 +23,11 @@ class IsAuthenticatedAndApproachOwner(IsAuthenticated):
             hasattr(obj, "training")
             and obj.training.power_training.user == request.user
         )
+
+
+class IsAuthenticatedAndDishCountOwner(IsAuthenticated):
+    def has_object_permission(self, request, view, obj):
+        return (
+            hasattr(obj, "meal")
+            and obj.meal.user == request.user
+        )

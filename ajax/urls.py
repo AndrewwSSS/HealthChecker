@@ -1,14 +1,14 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework import routers
 
 from ajax.training_views import (
-    CreateApproachView,
     CreatePowerExerciseView,
-    DeleteApproachView,
     DeleteCycling,
     DeletePowerTraining,
     DeletePowerTrainingExerciseView,
     DeleteSwimming,
     DeleteWalking,
+    ApproachViewSet,
 )
 from ajax.user_statistics_views import (
     GetAvgCaloriesPerDayInfo,
@@ -24,16 +24,18 @@ from ajax.user_statistics_views import (
 )
 from ajax.user_views import UpdatePasswordView, UserUpdateView
 from ajax.views import (
-    CreateDishCountView,
-    DeleteDishCountView,
     DeleteDishView,
     DeleteExerciseView,
     DeleteMealView,
-    UpdateApproachView,
-    UpdateDishCountView,
+    DishCountViewSet,
 )
 
+router = routers.DefaultRouter()
+router.register(r"dish-counts", DishCountViewSet, basename="dish-counts")
+router.register(r"approaches", ApproachViewSet, basename="approaches")
+
 urlpatterns = [
+    path('', include(router.urls)),
     path(
         "user/me",
         UserUpdateView.as_view(),
@@ -53,16 +55,6 @@ urlpatterns = [
         "power-training-exercises/<int:pk>",
         DeletePowerTrainingExerciseView.as_view(),
         name="delete-power-training-exercise",
-    ),
-    path(
-        "approaches/<int:pk>",
-        DeleteApproachView.as_view(),
-        name="delete-approach"
-    ),
-    path(
-        "approaches/",
-        CreateApproachView.as_view(),
-        name="create-approach"
     ),
     path(
         "cycling/<int:pk>",
@@ -90,37 +82,17 @@ urlpatterns = [
         name="delete-power-training"
     ),
     path(
-        "add_dish_to_meal",
-        CreateDishCountView.as_view(),
-        name="create-dish-count"
-    ),
-    path(
-        "delete_dish_count",
-        DeleteDishCountView.as_view(),
-        name="delete-dish-count"
-    ),
-    path(
-        "update_approach",
-        UpdateApproachView.as_view(),
-        name="update-approach"
-    ),
-    path(
-        "update_dish_count",
-        UpdateDishCountView.as_view(),
-        name="update-dish-count"
-    ),
-    path(
-        "delete_exercise",
+        "exercises/<int:pk>/",
         DeleteExerciseView.as_view(),
         name="delete-exercise"
     ),
     path(
-        "delete_dish",
+        "dishes/<int:pk>/",
         DeleteDishView.as_view(),
         name="delete-dish"
     ),
     path(
-        "delete_meal",
+        "meals/<int:pk>/",
         DeleteMealView.as_view(),
         name="delete-meal"
     ),

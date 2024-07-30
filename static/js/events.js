@@ -1,6 +1,6 @@
 const SUCCESSES_ICON = '<i class="bi bi-check-circle-fill"></i>'
 const ERROR_ICON = '<i class="bi bi-x-circle-fill"></i>'
-const TOAST_SHOW_DURATION = 2000
+const TOAST_SHOW_DURATION = 1000
 const FAIL_CALLBACK = () => {
     show_toast(`Fail to do operation`, "error")
 }
@@ -242,11 +242,17 @@ function create_or_update_approach(event) {
         training: li_item.parentElement.parentElement.getAttribute("data-exercise-id"),
     }
     if (li_item.hasAttribute("data-approach-id")) {
-        formData.id = li_item.getAttribute("data-approach-id")
+        let id = li_item.getAttribute("data-approach-id")
 
         let done_callback = response => show_toast("Approach successfully added.", "success")
 
-        ajax_post("/api/update_approach", formData, done_callback, FAIL_CALLBACK)
+        ajax_post(
+            `/api/approaches/${id}/`,
+            formData,
+            done_callback,
+            FAIL_CALLBACK,
+            "PUT"
+        )
     } else {
         let done_callback = response => {
             event.target.textContent = "Update"
@@ -429,10 +435,16 @@ function create_or_update_dish(event) {
     }
 
     if (li_element.hasAttribute("data-dish-count-id")) {
-        formData.dish_count = li_element.getAttribute("data-dish-count-id");
+        let dish_count_id = li_element.getAttribute("data-dish-count-id");
         let done_callback = response => show_toast("Successfully updated dish", "success");
 
-        ajax_post("/api/update_dish_count", formData, done_callback, FAIL_CALLBACK)
+        ajax_post(
+            `/api/dish-counts/${dish_count_id}/`,
+            formData,
+            done_callback,
+            FAIL_CALLBACK,
+            "PATCH"
+        )
     } else {
         let done_callback = response => {
             li_element.removeAttribute("data-dish-id")
@@ -441,7 +453,7 @@ function create_or_update_dish(event) {
             show_toast("Successfully added dish", "success")
         }
 
-        ajax_post("/api/add_dish_to_meal", formData, done_callback, FAIL_CALLBACK)
+        ajax_post("/api/dish-counts/", formData, done_callback, FAIL_CALLBACK)
     }
 }
 
@@ -450,9 +462,7 @@ function delete_dish_count(event) {
     let ul_element = li_element.parentElement
 
     if (li_element.hasAttribute("data-dish-count-id")) {
-        let formData = {
-            dish_count: li_element.getAttribute("data-dish-count-id"),
-        }
+        let dish_count = li_element.getAttribute("data-dish-count-id")
 
         let done_callback = response => {
             li_element.remove()
@@ -462,7 +472,13 @@ function delete_dish_count(event) {
             show_toast("Successfully deleted dish", "success")
         }
 
-        ajax_post("/api/delete_dish_count", formData, done_callback, FAIL_CALLBACK)
+        ajax_post(
+            `/api/dish-counts/${dish_count}`,
+            null,
+            done_callback,
+            FAIL_CALLBACK,
+            "DELETE"
+        )
 
     } else
         li_element.remove()
@@ -482,9 +498,7 @@ function delete_exercise(event) {
     let element = event.target.parentElement.parentElement.parentElement
     let container = element.parentElement
 
-    let formData = {
-        exercise_id: element.dataset.id,
-    }
+    let id = element.dataset.id
 
     let success_callback = response => {
         element.remove()
@@ -494,8 +508,13 @@ function delete_exercise(event) {
         show_toast("Successfully deleted exercise", "success")
     }
 
-    ajax_post("/api/delete_exercise", formData, success_callback, FAIL_CALLBACK)
-
+    ajax_post(
+        `/api/exercises/${id}/`,
+        null,
+        success_callback,
+        FAIL_CALLBACK,
+        "DELETE"
+    )
 }
 
 function delete_dish(event) {
@@ -503,9 +522,7 @@ function delete_dish(event) {
     let dish_element = event.target.parentElement.parentElement.parentElement
     let container = dish_element.parentElement
 
-    let formData = {
-        id: dish_element.dataset.id,
-    }
+    let id = dish_element.dataset.id
 
     let success_callback = response => {
         dish_element.remove()
@@ -515,7 +532,13 @@ function delete_dish(event) {
         show_toast("Successfully deleted dish", "success")
     }
 
-    ajax_post("/api/delete_dish", formData, success_callback, FAIL_CALLBACK)
+    ajax_post(
+        `/api/dishes/${id}/`,
+        null,
+        success_callback,
+        FAIL_CALLBACK,
+        "DELETE"
+    )
 }
 
 function delete_meal(event) {
@@ -523,9 +546,7 @@ function delete_meal(event) {
     let meal_element = event.target.parentElement.parentElement.parentElement
     let container = meal_element.parentElement
 
-    let formData = {
-        id: meal_element.dataset.id
-    }
+    let id = meal_element.dataset.id
 
     let success_callback = response => {
         meal_element.remove()
@@ -535,7 +556,13 @@ function delete_meal(event) {
         show_toast("Successfully deleted meal")
     }
 
-    ajax_post("/api/delete_meal", formData, success_callback, FAIL_CALLBACK)
+    ajax_post(
+        `/api/meals/${id}/`,
+        null,
+        success_callback,
+        FAIL_CALLBACK,
+        "DELETE"
+    )
 
 }
 
