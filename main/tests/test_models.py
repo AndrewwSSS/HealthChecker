@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.test import TestCase
 from django.utils import timezone
 
-from ajax.tests.view_tests import UserRequiredMixin
+from main.tests.test_views import UserRequiredMixin
 from main.models import (
     Dish,
     DishCount,

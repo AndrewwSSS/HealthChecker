@@ -2,13 +2,26 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from ajax.tests.view_tests import UserRequiredMixin
 from main.models import (
     Dish,
     Exercise,
     Meal,
-    PowerTraining,
+    PowerTraining, User,
 )
+
+
+class UserRequiredMixin(object):
+    def setUp(self):
+        self.user_password = "<PASSWO32RD>"
+        self.user = User.objects.create_user(
+            username="testuser",
+            password=self.user_password,
+        )
+        self.another_user = User.objects.create_user(
+            username="Aboba_user",
+            password="<PASS432WORD>",
+        )
+        self.client.force_login(self.user)
 
 
 class DateSearchTrainingListViewTests(UserRequiredMixin, TestCase):
@@ -26,7 +39,7 @@ class DateSearchTrainingListViewTests(UserRequiredMixin, TestCase):
     def test_search_power_training_by_date(self):
         url = reverse("main:power-trainings-list")
         date = timezone.now().date()
-        response = self.client.get(url + f"?date={date}")
+        response = self.client.get(url + f"?start_date={date}")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, str(self.power_training_1))
         self.assertNotContains(response, str(self.power_training_2))
@@ -44,10 +57,10 @@ class DateSearchListViewMixin(UserRequiredMixin, TestCase):
             date=timezone.now() - timezone.timedelta(days=1),
         )
 
-    def test_search_power_training_by_date(self):
+    def test_search_meals_by_date(self):
         url = reverse("main:meal-list")
         today = timezone.now().date()
-        response = self.client.get(url + f"?date={today}")
+        response = self.client.get(url + f"?start_date={today}")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, str(self.meal_1))
         self.assertNotContains(response, str(self.meal_2))
