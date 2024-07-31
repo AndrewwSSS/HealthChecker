@@ -70,8 +70,16 @@ class ApproachSerializer(serializers.ModelSerializer):
             "training"
         )
 
+    def validate(self, attrs):
+        training = attrs.get("training")
+        if not training:
+            return attrs
+        if self.context["request"].user != training.power_training.user:
+            raise serializers.ValidationError({"training": "Not allowed user"})
+        return attrs
 
-class CreateDishCountSerializer(serializers.ModelSerializer):
+
+class DishCountSerializer(serializers.ModelSerializer):
     class Meta:
         model = DishCount
         fields = [
@@ -80,6 +88,14 @@ class CreateDishCountSerializer(serializers.ModelSerializer):
             "weight",
             "meal"
         ]
+
+    def validate(self, attrs):
+        meal = attrs.get("meal")
+        if not meal:
+            return attrs
+        if self.context["request"].user != meal.user:
+            raise serializers.ValidationError({"meal": "Not allowed user"})
+        return attrs
 
 
 class UpdateDishCountSerializer(serializers.ModelSerializer):
