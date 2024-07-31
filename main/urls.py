@@ -32,6 +32,7 @@ from main.views import (
     logout_view,
 )
 
+
 urlpatterns = [
     path(
         "",
