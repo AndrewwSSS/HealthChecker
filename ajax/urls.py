@@ -9,6 +9,7 @@ from ajax.training_views import (
     DeletePowerTrainingExerciseView,
     DeleteSwimming,
     DeleteWalking,
+    DeleteJogging,
 )
 
 from ajax.views import (
@@ -35,27 +36,27 @@ urlpatterns = [
         name="delete-power-training-exercise",
     ),
     path(
-        "cycling/<int:pk>",
+        "cycling/<int:pk>/",
         DeleteCycling.as_view(),
         name="delete-cycling",
     ),
     path(
-        "walking/<int:pk>",
+        "walking/<int:pk>/",
         DeleteWalking.as_view(),
         name="delete-walking",
     ),
     path(
-        "swimming/<int:pk>",
+        "swimming/<int:pk>/",
         DeleteSwimming.as_view(),
         name="delete-swimming",
     ),
     path(
-        "jogging/<int:pk>",
-        DeleteSwimming.as_view(),
+        "jogging/<int:pk>/",
+        DeleteJogging.as_view(),
         name="delete-jogging",
     ),
     path(
-        "power-trainings/<int:pk>",
+        "power-trainings/<int:pk>/",
         DeletePowerTraining.as_view(),
         name="delete-power-training"
     ),
