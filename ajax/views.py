@@ -2,7 +2,7 @@ from rest_framework import mixins
 from rest_framework.generics import DestroyAPIView
 from rest_framework.viewsets import GenericViewSet
 
-from ajax.serializers import CreateDishCountSerializer
+from ajax.serializers import DishCountSerializer
 from main.models import (
     Dish,
     DishCount,
@@ -23,7 +23,7 @@ class DishCountViewSet(
 ):
     queryset = DishCount.objects.all()
     permission_classes = (IsAuthenticatedAndDishCountOwner,)
-    serializer_class = CreateDishCountSerializer
+    serializer_class = DishCountSerializer
 
 
 class DeleteExerciseView(DestroyAPIView):
