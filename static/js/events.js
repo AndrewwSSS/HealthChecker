@@ -447,7 +447,6 @@ function create_or_update_dish(event) {
         )
     } else {
         let done_callback = response => {
-            li_element.removeAttribute("data-dish-id")
             li_element.setAttribute("data-dish-count-id", response["id"]);
             event.target.textContent = "Update"
             show_toast("Successfully added dish", "success")
