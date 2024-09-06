@@ -71,11 +71,6 @@ urlpatterns = [
         DeleteDishView.as_view(),
         name="delete-dish"
     ),
-    # path(
-    #     "meals/<int:pk>/",
-    #     MealViewSet.as_view(),
-    #     name="delete-meal"
-    # ),
 ]
 
 app_name = "ajax"
