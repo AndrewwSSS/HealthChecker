@@ -86,7 +86,7 @@ class DishCountSerializer(serializers.ModelSerializer):
             "id",
             "dish",
             "weight",
-            "meal"
+            "meal",
         ]
 
     def validate(self, attrs):
@@ -96,12 +96,3 @@ class DishCountSerializer(serializers.ModelSerializer):
         if self.context["request"].user != meal.user:
             raise serializers.ValidationError({"meal": "Not allowed user"})
         return attrs
-
-
-class UpdateDishCountSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DishCount
-        fields = [
-            "id",
-            "weight"
-        ]
