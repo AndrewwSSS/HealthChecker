@@ -15,13 +15,14 @@ from ajax.training_views import (
 from ajax.views import (
     DeleteDishView,
     DeleteExerciseView,
-    DeleteMealView,
+    MealViewSet,
     DishCountViewSet,
 )
 
 router = routers.DefaultRouter()
 router.register(r"dish-counts", DishCountViewSet, basename="dish-counts")
 router.register(r"approaches", ApproachViewSet, basename="approaches")
+router.register(r"meals", MealViewSet, basename="meals")
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -70,11 +71,11 @@ urlpatterns = [
         DeleteDishView.as_view(),
         name="delete-dish"
     ),
-    path(
-        "meals/<int:pk>/",
-        DeleteMealView.as_view(),
-        name="delete-meal"
-    ),
+    # path(
+    #     "meals/<int:pk>/",
+    #     MealViewSet.as_view(),
+    #     name="delete-meal"
+    # ),
 ]
 
 app_name = "ajax"

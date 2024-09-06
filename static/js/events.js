@@ -424,6 +424,13 @@ function create_dish_count_form(event) {
 
 }
 
+function update_meal_detail_info(response) {
+    document.getElementById("total_calories").value = response["calories"];
+    document.getElementById("total_fats").value = response["fats"];
+    document.getElementById("total_protein").value = response["protein"];
+    document.getElementById("total_carbohydrates").value = response["carbohydrates"];
+}
+
 function create_or_update_dish(event) {
     let li_element = event.target.parentElement.parentElement.parentElement;
     let weight = this.parentElement.querySelector('input[name="weight"]').value;
@@ -436,7 +443,10 @@ function create_or_update_dish(event) {
 
     if (li_element.hasAttribute("data-dish-count-id")) {
         let dish_count_id = li_element.getAttribute("data-dish-count-id");
-        let done_callback = response => show_toast("Successfully updated dish", "success");
+        let done_callback = response => {
+            update_meal_detail_info(response)
+            show_toast("Successfully updated dish", "success");
+        }
 
         ajax_post(
             `/api/dish-counts/${dish_count_id}/`,
@@ -447,6 +457,7 @@ function create_or_update_dish(event) {
         )
     } else {
         let done_callback = response => {
+            update_meal_detail_info(response)
             li_element.setAttribute("data-dish-count-id", response["id"]);
             event.target.textContent = "Update"
             show_toast("Successfully added dish", "success")
@@ -454,6 +465,13 @@ function create_or_update_dish(event) {
 
         ajax_post("/api/dish-counts/", formData, done_callback, FAIL_CALLBACK)
     }
+}
+
+function get_item_id_from_url(){
+    const path = window.location.pathname;
+
+    const segments = path.split('/');
+    return segments[segments.length - 1]
 }
 
 function delete_dish_count(event) {
@@ -464,15 +482,15 @@ function delete_dish_count(event) {
         let dish_count = li_element.getAttribute("data-dish-count-id")
 
         let done_callback = response => {
+            update_meal_detail_info(response)
             li_element.remove()
             if (ul_element.querySelectorAll("li").length === 0) {
                 ul_element.innerHTML = "<h6 class='card-title' id='no-dish-message'>No dishes yet</h6>"
             }
-            show_toast("Successfully deleted dish", "success")
         }
 
         ajax_post(
-            `/api/dish-counts/${dish_count}`,
+            `/api/dish-counts/${dish_count}/`,
             null,
             done_callback,
             FAIL_CALLBACK,
