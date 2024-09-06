@@ -1,3 +1,6 @@
+import enum
+from typing import Type
+
 from django.db.models import Q, QuerySet
 from django.db.models.functions import TruncDate
 from django.utils import timezone
@@ -12,17 +15,36 @@ from main.models import (
     User,
     Walking,
 )
+from main.models import Training
+
+
+class PERIODS(enum.Enum):
+    TODAY = "today"
+    THIS_MONTH = "this month"
+    THIS_YEAR = "this year"
+
 
 FILTER_PERIODS = ("today", "this month", "this year")
 
 
-class UserStatisticService:
+class UserBasedStatisticService:
     def __init__(self, user: User) -> None:
         self.user = user
 
+
+class MealStatisticService(UserBasedStatisticService):
+    @staticmethod
+    def clean_period(period: str) -> str:
+        if not isinstance(period, str):
+            raise TypeError("period must be str")
+        period = period.lower()
+        if period not in FILTER_PERIODS:
+            raise ValueError("period must be one of {}".format(FILTER_PERIODS))
+        return period
+
     def get_user_meals(
-            self,
-            period: str
+        self,
+        period: str
     ) -> QuerySet[Meal] | None:
         today = timezone.now().today()
 
@@ -44,15 +66,6 @@ class UserStatisticService:
             .distinct()
             .count()
         )
-
-    @staticmethod
-    def clean_period(period: str) -> str:
-        if not isinstance(period, str):
-            raise TypeError("period must be str")
-        period = period.lower()
-        if period not in FILTER_PERIODS:
-            raise ValueError("period must be one of {}".format(FILTER_PERIODS))
-        return period
 
     def get_avg_macronutrient(self, period: str, calc_total: callable) -> float:
         period = self.clean_period(period)
@@ -90,35 +103,6 @@ class UserStatisticService:
             lambda meals: sum(meal.get_total_calories() for meal in meals)
         )
 
-    def get_trainings(self, training_type: type, period: str = None) -> QuerySet[type]:
-        return self.get_trainings_by_period(period, self.user, training_type)
-
-    @staticmethod
-    def get_trainings_by_period(period: str, user: User, training_type: type) -> QuerySet[type]:
-        today = timezone.now().today()
-        queryset = training_type.objects.filter(user=user)
-        if period == "today":
-            q_obj = Q(start__date=today)
-        elif period == "this month":
-            q_obj = Q(start__month=today.month, start__year=today.year)
-        elif period == "this year":
-            q_obj = Q(start__year=today.year)
-        else:
-            return queryset
-        return queryset.filter(q_obj)
-
-
-
-    def get_total_km(self, period: str, training_type: type) -> float:
-        if not issubclass(training_type, DistanceAverageSpeedMixin):
-            raise TypeError("training must be DistanceAverageSpeedMixin")
-
-        trainings = self.get_trainings(
-            training_type,
-            self.clean_period(period),
-        )
-        return sum(training.distance for training in trainings)
-
     def get_pfc_ratio(self, period: str) -> list[dict]:
         period = self.clean_period(period)
         meals = self.get_user_meals(period)
@@ -146,6 +130,60 @@ class UserStatisticService:
                 "value": fats
             },
         ]
+
+
+class UserStatisticService(UserBasedStatisticService):
+    def get_user_meals(
+        self,
+        period: str
+    ) -> QuerySet[Meal] | None:
+        today = timezone.now().today()
+
+        if period == "today":
+            q_obj = Q(date__date=today)
+        elif period == "this month":
+            q_obj = Q(date__month=today.month, date__year=today.year)
+        elif period == "this year":
+            q_obj = Q(date__year=today.year)
+        else:
+            return None
+        return self.user.meals.filter(q_obj)
+
+    @staticmethod
+    def clean_period(period: str) -> str:
+        if not isinstance(period, str):
+            raise TypeError("period must be str")
+        period = period.lower()
+        if period not in FILTER_PERIODS:
+            raise ValueError("period must be one of {}".format(FILTER_PERIODS))
+        return period
+
+    def get_trainings(self, training_type: Type[Training], period: str = None) -> QuerySet[type]:
+        return self.get_trainings_by_period(period, self.user, training_type)
+
+    @staticmethod
+    def get_trainings_by_period(period: str, user: User, training_type: Type[Training]) -> QuerySet[type]:
+        today = timezone.now().today()
+        queryset = training_type.objects.filter(user=user)
+        if period == "today":
+            q_obj = Q(start__date=today)
+        elif period == "this month":
+            q_obj = Q(start__month=today.month, start__year=today.year)
+        elif period == "this year":
+            q_obj = Q(start__year=today.year)
+        else:
+            return queryset
+        return queryset.filter(q_obj)
+
+    def get_total_km(self, period: str, training_type: Type[DistanceAverageSpeedMixin]) -> float:
+        if not issubclass(training_type, DistanceAverageSpeedMixin):
+            raise TypeError("training must be DistanceAverageSpeedMixin")
+
+        trainings = self.get_trainings(
+            training_type,
+            self.clean_period(period),
+        )
+        return sum(training.distance for training in trainings)
 
     def get_trainings_type_ratio(self, period: str) -> list[dict]:
         period = self.clean_period(period)
