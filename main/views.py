@@ -17,10 +17,10 @@ from django.shortcuts import (
 from django.urls import NoReverseMatch
 from django.views import generic
 
+from main.forms import CreateDishForm
 from main.forms import (
     CyclingForm,
     DateSearchForm,
-    DishForm,
     ExerciseForm,
     JoggingForm,
     MealForm,
@@ -31,6 +31,7 @@ from main.forms import (
     UserLoginForm,
     WalkingForm,
 )
+from main.forms import UpdateDishForm
 from main.models import (
     Cycling,
     Dish,
@@ -255,7 +256,7 @@ class DishListView(NameSearchListView):
 
 class CreateDishView(CreateElementWithUserFieldView):
     model = Dish
-    form_class = DishForm
+    form_class = CreateDishForm
     template_name = "main/dish/create-dish.html"
     success_url = "main:dish-list"
 
@@ -268,9 +269,15 @@ class CreateDishView(CreateElementWithUserFieldView):
 
 class UpdateDishView(UpdateElementWithUserFieldView):
     model = Dish
-    form_class = DishForm
+    form_class = UpdateDishForm
     template_name = "main/dish/update-dish.html"
     success_url = "main:dish-list"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+
+        return kwargs
 
 
 # Trainings list view
