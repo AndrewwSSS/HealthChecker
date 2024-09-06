@@ -116,12 +116,25 @@ class DishForm(ModelForm):
                 "and fats must be less than 100"
             )
 
+        return cleaned_data
+
+
+class CreateDishForm(DishForm):
+    def clean(self):
+        cleaned_data = super().clean()
+        name = cleaned_data.get("name")
+        Dish.validate_name(self.user, name, forms.ValidationError)
+
+
+class UpdateDishForm(DishForm):
+    def clean(self):
+        cleaned_data = super().clean()
         name = cleaned_data.get("name")
 
-        if self.user.dishes.filter(name__iexact=name).exists():
-            raise forms.ValidationError("Dish with this name already exists")
+        if self.instance.name == name:
+            return
 
-        return cleaned_data
+        Dish.validate_name(self.user, name, forms.ValidationError)
 
 
 class JoggingForm(DistanceAverageSpeedTrainingForm):
