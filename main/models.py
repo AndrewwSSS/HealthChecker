@@ -1,5 +1,7 @@
 from datetime import timedelta
+from typing import Type
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -164,6 +166,15 @@ class Dish(models.Model):
 
     def __str__(self):
         return self.name
+
+    @staticmethod
+    def validate_name(
+        user: settings.AUTH_USER_MODEL,
+        name: str,
+        error_type: Type[Exception]
+    ) -> None:
+        if user.dishes.filter(name__iexact=name).exists():
+            raise error_type("Dish with this name already exists")
 
 
 class DishCount(models.Model):
