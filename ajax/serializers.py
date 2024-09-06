@@ -6,6 +6,7 @@ from main.models import (
     DishCount,
     PowerTrainingExercise,
 )
+from main.models import Meal
 
 
 class ChangePasswordSerializer(serializers.Serializer):
@@ -87,6 +88,16 @@ class DishCountSerializer(serializers.ModelSerializer):
             "dish",
             "weight",
             "meal",
+            "fats",
+            "protein",
+            "calories",
+            "carbohydrates"
+        ]
+        read_only_fields = [
+            "fats",
+            "protein",
+            "calories",
+            "carbohydrates"
         ]
 
     def validate(self, attrs):
@@ -96,3 +107,23 @@ class DishCountSerializer(serializers.ModelSerializer):
         if self.context["request"].user != meal.user:
             raise serializers.ValidationError({"meal": "Not allowed user"})
         return attrs
+
+
+class MealSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Meal
+        fields = [
+            "id",
+            "date",
+            "user",
+            "fats",
+            "protein",
+            "calories",
+            "carbohydrates"
+        ]
+        read_only_fields = [
+            "fats",
+            "protein",
+            "calories",
+            "carbohydrates"
+        ]
