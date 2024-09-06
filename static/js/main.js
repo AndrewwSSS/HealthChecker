@@ -29,7 +29,6 @@
     on('click', '.toggle-sidebar-btn', function() {
         select('body').classList.toggle('toggle-sidebar')
     })
-    on('click', '.form-check', on_check_sort, true)
     on('click', '.search-bar-toggle', function(e) {
         select('.search-bar').classList.toggle('search-bar-show')
     }, true)
