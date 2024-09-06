@@ -259,6 +259,12 @@ class CreateDishView(CreateElementWithUserFieldView):
     template_name = "main/dish/create-dish.html"
     success_url = "main:dish-list"
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+
+        return kwargs
+
 
 class UpdateDishView(UpdateElementWithUserFieldView):
     model = Dish

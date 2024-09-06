@@ -95,6 +95,10 @@ class CyclingForm(DistanceAverageSpeedTrainingForm):
 
 
 class DishForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(DishForm, self).__init__(*args, **kwargs)
+
     class Meta:
         model = Dish
         fields = ["name", "carbohydrates", "fats", "protein", "calories"]
@@ -112,11 +116,9 @@ class DishForm(ModelForm):
                 "and fats must be less than 100"
             )
 
-        name = cleaned_data.get("name", None)
-        if not name:
-            return cleaned_data
+        name = cleaned_data.get("name")
 
-        if Dish.objects.filter(name=name).exists():
+        if self.user.dishes.filter(name__iexact=name).exists():
             raise forms.ValidationError("Dish with this name already exists")
 
         return cleaned_data
