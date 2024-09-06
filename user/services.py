@@ -66,7 +66,7 @@ class UserBasedStatisticService(ABC):
 
 
 class MealStatisticService(UserBasedStatisticService):
-    def get_user_meals(
+    def get_user_meals_by_period(
         self,
         period: str
     ) -> QuerySet[Meal]:
@@ -86,7 +86,7 @@ class MealStatisticService(UserBasedStatisticService):
 
     def get_avg_macronutrient(self, period: str, calc_total: callable) -> float:
         period = self.clean_period(period)
-        meals = self.get_user_meals(period)
+        meals = self.get_user_meals_by_period(period)
 
         total_weight = calc_total(meals)
         unique_dates_count = self.get_unique_meal_dates_count(meals)
@@ -124,7 +124,7 @@ class MealStatisticService(UserBasedStatisticService):
 
     def get_pfc_ratio(self, period: str) -> list[dict]:
         period = self.clean_period(period)
-        meals = self.get_user_meals(period)
+        meals = self.get_user_meals_by_period(period)
 
         protein = sum(
             meal.get_total_protein() for meal in meals
