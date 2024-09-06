@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from ajax.serializers import PeriodSerializer
 from user.services import MealStatisticService
-from user.services import UserStatisticService
+from user.services import TrainingStatisticService
 from main.models import (
     Cycling,
     Jogging,
@@ -22,7 +22,7 @@ class GetTrainingsTypeRatioView(GenericAPIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        service = UserStatisticService(request.user)
+        service = TrainingStatisticService(request.user)
         return Response(
             {
                 "data": service.get_trainings_type_ratio(
@@ -134,7 +134,7 @@ class GetTotalKmTraining(GenericAPIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        service = UserStatisticService(request.user)
+        service = TrainingStatisticService(request.user)
         response = Response(
             {
                 "data": service.get_total_km(
