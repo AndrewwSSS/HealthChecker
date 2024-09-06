@@ -207,16 +207,20 @@ class Meal(models.Model):
     class Meta:
         ordering = ["-date"]
 
-    def get_total_calories(self):
+    @property
+    def calories(self):
         return sum(dish.calories for dish in self.dishes.all())
 
-    def get_total_fats(self):
+    @property
+    def fats(self):
         return sum(dish.fats for dish in self.dishes.all())
 
-    def get_total_protein(self):
+    @property
+    def protein(self):
         return sum(dish.protein for dish in self.dishes.all())
 
-    def get_total_carbohydrates(self):
+    @property
+    def carbohydrates(self):
         return sum(dish.carbohydrates for dish in self.dishes.all())
 
     def __str__(self):

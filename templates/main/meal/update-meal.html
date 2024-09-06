@@ -39,6 +39,50 @@
                          value="{{ meal.date|date:"Y-m-d" }}T{{ meal.date|time:"G:i" }}">
                 </div>
               </div>
+              <div class="row mb-3">
+                <label for="total_calories" class="col-md-3 col-lg-3 col-form-label text-center">
+                  Calories
+                </label>
+                <div class="col-md-9 col-lg-9">
+                  <input type="text"
+                         id="total_calories"
+                         class="form-control"
+                         value="{{ meal.calories }}" disabled>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="total_fats" class="col-md-3 col-lg-3 col-form-label text-center">
+                  Fats
+                </label>
+                <div class="col-md-9 col-lg-9">
+                  <input type="text"
+                         id="total_fats"
+                         class="form-control"
+                         value="{{ meal.fats }}" disabled>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="total_protein" class="col-md-3 col-lg-3 col-form-label text-center">
+                  Protein
+                </label>
+                <div class="col-md-9 col-lg-9">
+                  <input type="text"
+                         id="total_protein"
+                         class="form-control"
+                         value="{{ meal.protein }}" disabled>
+                </div>
+              </div>
+            <div class="row mb-3">
+                <label for="total_carbohydrates" class="col-md-3 col-lg-3 col-form-label text-center">
+                  Carbohydrates
+                </label>
+                <div class="col-md-9 col-lg-9">
+                  <input type="text"
+                         id="total_carbohydrates"
+                         class="form-control"
+                         value="{{ meal.carbohydrates }}" disabled>
+                </div>
+              </div>
               <div class="text-center">
                 <input class="btn btn-success" type="submit" value="update"/>
               </div>

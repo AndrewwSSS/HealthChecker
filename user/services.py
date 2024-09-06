@@ -99,7 +99,7 @@ class MealStatisticService(UserBasedStatisticService):
     def get_avg_carbohydrates(self, period: str) -> float:
         return self.get_avg_macronutrient(
             period, lambda meals: sum(
-                meal.get_total_carbohydrates()
+                meal.carbohydrates
                 for meal in meals
             )
         )
@@ -107,19 +107,19 @@ class MealStatisticService(UserBasedStatisticService):
     def get_avg_protein(self, period: str) -> float:
         return self.get_avg_macronutrient(
             period,
-            lambda meals: sum(meal.get_total_protein() for meal in meals)
+            lambda meals: sum(meal.protein for meal in meals)
         )
 
     def get_avg_fats(self, period: str) -> float:
         return self.get_avg_macronutrient(
             period,
-            lambda meals: sum(meal.get_total_fats() for meal in meals)
+            lambda meals: sum(meal.fats for meal in meals)
         )
 
     def get_avg_calories(self, period: str) -> float:
         return self.get_avg_macronutrient(
             period,
-            lambda meals: sum(meal.get_total_calories() for meal in meals)
+            lambda meals: sum(meal.calories for meal in meals)
         )
 
     def get_pfc_ratio(self, period: str) -> list[dict]:
@@ -127,13 +127,13 @@ class MealStatisticService(UserBasedStatisticService):
         meals = self.get_user_meals_by_period(period)
 
         protein = sum(
-            meal.get_total_protein() for meal in meals
+            meal.protein for meal in meals
         )
         carbohydrates = sum(
-            meal.get_total_carbohydrates() for meal in meals
+            meal.carbohydrates for meal in meals
         )
         fats = sum(
-            meal.get_total_fats() for meal in meals
+            meal.fats for meal in meals
         )
         return [
             {

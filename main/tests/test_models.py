@@ -164,13 +164,13 @@ class MealTests(BaseTestCaseWithUser):
                          self.meal_3.date.strftime("%d/%m/%Y %H:%M"))
 
     def test_total_calories(self):
-        self.assertEqual(self.meal_1.get_total_calories(),
+        self.assertEqual(self.meal_1.calories,
                          150)
-        self.assertEqual(self.meal_2.get_total_calories(),
+        self.assertEqual(self.meal_2.calories,
                          600)
-        self.assertEqual(self.meal_3.get_total_calories(),
+        self.assertEqual(self.meal_3.calories,
                          90)
-        self.assertEqual(self.meal_4.get_total_calories(),
+        self.assertEqual(self.meal_4.calories,
                          0)
 
     def test_total_fats(self):
@@ -194,13 +194,13 @@ class MealTests(BaseTestCaseWithUser):
                          0)
 
     def test_total_carbohydrates(self):
-        self.assertEqual(self.meal_1.get_total_carbohydrates(),
+        self.assertEqual(self.meal_1.carbohydrates,
                          30)
-        self.assertEqual(self.meal_2.get_total_carbohydrates(),
+        self.assertEqual(self.meal_2.carbohydrates,
                          40)
-        self.assertEqual(self.meal_3.get_total_carbohydrates(),
+        self.assertEqual(self.meal_3.carbohydrates,
                          30)
-        self.assertEqual(self.meal_4.get_total_carbohydrates(),
+        self.assertEqual(self.meal_4.carbohydrates,
                          0)
 
 

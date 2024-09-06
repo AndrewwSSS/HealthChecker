@@ -6,6 +6,7 @@ from main.models import (
     DishCount,
     PowerTrainingExercise,
 )
+from main.models import Meal
 
 
 class ChangePasswordSerializer(serializers.Serializer):
@@ -86,7 +87,17 @@ class DishCountSerializer(serializers.ModelSerializer):
             "id",
             "dish",
             "weight",
-            "meal"
+            "meal",
+            "fats",
+            "protein",
+            "calories",
+            "carbohydrates"
+        ]
+        read_only_fields = [
+            "fats",
+            "protein",
+            "calories",
+            "carbohydrates"
         ]
 
     def validate(self, attrs):
@@ -98,10 +109,21 @@ class DishCountSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class UpdateDishCountSerializer(serializers.ModelSerializer):
+class MealSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DishCount
+        model = Meal
         fields = [
             "id",
-            "weight"
+            "date",
+            "user",
+            "fats",
+            "protein",
+            "calories",
+            "carbohydrates"
+        ]
+        read_only_fields = [
+            "fats",
+            "protein",
+            "calories",
+            "carbohydrates"
         ]
