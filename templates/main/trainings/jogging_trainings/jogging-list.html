@@ -1,0 +1,24 @@
+{% extends "base_training_list.html" %}
+{% block title %}Joggin trainings{% endblock %}
+{% block create_url %}{% url "main:create-jogging-training" %}{% endblock %}
+{% block trainings %}
+  {% for jogging in jogging_list %}
+    <a href="{% url "main:update-jogging-training" jogging.id %}"
+       data-training-id="{{ jogging.id }}"
+       data-training-type="JG"
+       class="training-element col-lg-4">
+      <div class="alert alert-primary fade show">
+        <div class="d-flex justify-content-between">
+          <span>
+            {{ jogging }}
+          </span>
+          <i class="fa-solid fa-xmark delete-element-icon delete-training-icon"></i>
+        </div>
+      </div>
+    </a>
+  {% empty %}
+    <h6 class="card-title">
+      No trainings yet
+    </h6>
+  {% endfor %}
+{% endblock %}

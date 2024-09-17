@@ -1,0 +1,24 @@
+{% extends "base_training_list.html" %}
+{% block title %}Swimming trainings{% endblock %}
+{% block create_url %}{% url "main:create-swimming-training" %}{% endblock %}
+{% block trainings %}
+  {% for swimming in swimming_list %}
+    <a href="{% url "main:update-swimming-training" swimming.id %}"
+       data-training-id="{{ swimming.id }}"
+       data-training-type="SW"
+       class="training-element col-lg-4">
+      <div class="alert alert-primary fade show">
+        <div class="d-flex justify-content-between">
+            <span>
+              {{ swimming }}
+            </span>
+          <i class="fa-solid fa-xmark delete-element-icon delete-training-icon"></i>
+        </div>
+      </div>
+    </a>
+  {% empty %}
+    <h6 class="card-title">
+      No trainings yet
+    </h6>
+  {% endfor %}
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="section">
+    <div class="row justify-content-center">
+      <div class="col-lg-4">
+        {% include "includes/date_search_form.html" %}
+      </div>
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title-container">
+              <h5 class="card-title">
+                Meals
+              </h5>
+              <div class="d-flex h-50">
+                <a href="{% url "main:create-meal" %}">
+                  <i class="fa-solid fa-plus create-training-icon"></i>
+                </a>
+              </div>
+            </div>
+            <div class="meal-container row">
+              {% for meal in meal_list%}
+                <a href="{% url "main:update-meal" meal.id %}"
+                   data-id="{{ meal.id }}"
+                   class="col-lg-4">
+                  <div class="alert alert-primary fade show">
+                    <div class="d-flex justify-content-between">
+                      <span>
+                        {{ meal }}
+                      </span>
+                      <i class="fa-solid fa-xmark delete-element-icon delete-meal-icon"></i>
+                    </div>
+                  </div>
+                </a>
+              {% empty %}
+                <h6 class="card-title">
+                  No meals yet
+                </h6>
+              {% endfor %}
+              {% include "includes/pagination.html" %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

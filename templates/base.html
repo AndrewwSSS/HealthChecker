@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>HealthChecker</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  {% include "includes/basic_includes.html" %}
+  {% block addition_js %}{% endblock %}
+</head>
+
+<body>
+
+<!-- ======= Header ======= -->
+<header id="header" class="header fixed-top d-flex align-items-center">
+  <div class="d-flex align-items-center justify-content-between">
+    <i class="fa-brands fa-grunt" style="font-size: 25px; font-weight: bold; margin-right: 10px"></i>
+    <a href="/home" class="logo d-flex align-items-center">
+      <span class="d-none d-lg-block">
+        HealthChecker
+      </span>
+    </a>
+    <i class="bx bxs-dock-left toggle-sidebar-btn"></i>
+  </div>
+
+  <nav class="header-nav ms-auto">
+    <ul class="d-flex align-items-center">
+      <li class="nav-item d-block d-lg-none">
+        <a class="nav-link nav-icon search-bar-toggle " href="#">
+          <i class="bi bi-search"></i>
+        </a>
+      </li>
+
+      <li class="nav-item dropdown pe-3">
+        <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+          <i class="bi bi-person profileIcon"></i>
+          <span class="d-none d-md-block dropdown-toggle ps-2">{{ user.username }}</span>
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+          <li>
+            <a class="dropdown-item d-flex align-items-center" href="{% url "main:user-profile" %}">
+              <i class="bi bi-person"></i>
+              <span>My Profile</span>
+            </a>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+
+          <li>
+            <a class="dropdown-item d-flex align-items-center" href="{% url "main:user-profile" %}">
+              <i class="bi bi-gear"></i>
+              <span>Account Settings</span>
+            </a>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+
+          <li>
+            <a class="dropdown-item d-flex align-items-center" href="{% url "main:logout" %}">
+              <i class="bi bi-box-arrow-right"></i>
+              <span>Sign Out</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<!-- ======= Sidebar ======= -->
+<aside id="sidebar" class="sidebar">
+  <ul class="sidebar-nav" id="sidebar-nav">
+    <li class="nav-item">
+      <a class="nav-link " href="/home">
+        <i class="bi bi-grid"></i>
+        <span>
+          Main page
+        </span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+        <i class="bi bi-menu-button-wide"></i>
+        <span>
+          Trainings
+        </span>
+        <i class="bi bi-chevron-down ms-auto"></i>
+      </a>
+      <ul id="components-nav" class="nav-content" data-bs-parent="#sidebar-nav">
+        <li>
+          <a href="{% url "main:power-trainings-list"%}">
+            <i class="fa-solid fa-dumbbell"></i>
+            <span>
+              Power trainings
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="{% url "main:cycling-training-list"%}">
+            <i class="fa-solid fa-person-biking"></i>
+            <span>
+              Cycling trainings
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="{% url "main:swimming-training-list"%}">
+            <i class="fa-solid fa-person-swimming"></i>
+            <span>
+              Swimming trainings
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="{% url "main:jogging-training-list"%}">
+            <i class="fa-solid fa-person-running"></i>
+            <span>
+              Jogging trainings
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="{% url "main:walking-training-list"%}">
+            <i class="fa-solid fa-person-walking"></i>
+            <span>
+              Walking trainings
+            </span>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+
+    <li class="nav-item">
+      <a class="nav-link collapsed" data-bs-target="#foodComponent" data-bs-toggle="collapse" href="#">
+        <i class="fa-solid fa-burger"></i>
+        <span>
+          Food
+        </span>
+        <i class="bi bi-chevron-down ms-auto"></i>
+      </a>
+        <ul id="foodComponent" class="nav-content " data-bs-parent="#sidebar-nav">
+        <li>
+          <a href="{% url "main:dish-list"%}">
+            <i class="fa-solid fa-bowl-food"></i>
+            <span>
+              Dishes
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="{% url "main:meal-list"%}">
+            <i class="fa-solid fa-drumstick-bite"></i>
+            <span>
+              Meals
+            </span>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="{% url "main:exercises-list" %}">
+        <i class="fa-regular fa-rectangle-list"></i>
+        <span>
+          Exercises
+        </span>
+      </a>
+    </li>
+  </ul>
+
+</aside>
+
+<!-- ====== Main content ======= -->
+<main id="main" class="main">
+{% block content %}
+    <div class="pagetitle">
+      <h1>Home page</h1>
+    </div>
+    <section class="section dashboard">
+      <div class="row">
+        <!-- Left side columns -->
+        <div class="col-lg-8">
+          <div class="row">
+            <!-- Average calories Card -->
+            <div class="col-xxl-6 col-md-6">
+              <div class="card info-card sales-card">
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+                    <li><span class="dropdown-item avg-calories-filter">Today</span></li>
+                    <li><span class="dropdown-item avg-calories-filter">This Month</span></li>
+                    <li><span class="dropdown-item avg-calories-filter">This Year</span></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Avg calories <span id="avg-calories-filter-name">| Today</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="fa-solid fa-utensils"></i>
+                    </div>
+                    <div class="ps-3 align-center">
+                      <h6 id="calories-container">-</h6>
+                      <span class="text-muted small pt-2 ps-1">per day</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Average protein Card -->
+            <div class="col-xxl-6 col-md-6">
+              <div class="card info-card revenue-card">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><span class="dropdown-item avg-protein-filter">Today</span></li>
+                    <li><span class="dropdown-item avg-protein-filter">This Month</span></li>
+                    <li><span class="dropdown-item avg-protein-filter">This Year</span></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Protein <span id="avg-protein-filter-name">| This Month</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="fa-solid fa-drumstick-bite"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 id="protein-container">-</h6>
+                      <span class="text-muted small pt-2 ps-1">per day</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Average carbohydrates Card -->
+            <div class="col-xxl-6 col-md-6">
+
+              <div class="card info-card customers-card">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><span class="dropdown-item avg-carbohydrates-filter">Today</span></li>
+                    <li><span class="dropdown-item avg-carbohydrates-filter">This Month</span></li>
+                    <li><span class="dropdown-item avg-carbohydrates-filter">This Year</span></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Carbohydrates <span id="avg-carbohydrates-filter-name">| This Year</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="fa-solid fa-bread-slice"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 id="carbohydrates-container">-</h6>
+                      <span class="text-muted small pt-2 ps-1">per day</span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+
+            <!-- BMI Card -->
+            <div class="col-xxl-6 col-md-6">
+              <div class="card info-card customers-card">
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><span class="dropdown-item avg-fats-filter">Today</span></li>
+                    <li><span class="dropdown-item avg-fats-filter">This Month</span></li>
+                    <li><span class="dropdown-item avg-fats-filter">This Year</span></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Fats <span id="avg-fats-filter-name">| This Year</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="fa-solid fa-burger"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 id="fats-container">-</h6>
+                      <span class="text-muted small pt-2 ps-1">per day</span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+          <div class="row mt-4">
+            <div class="col-xxl-6 col-md-6">
+              <div class="card info-card sales-card">
+                <div class="card-body">
+                  <h5 class="card-title">BMI (body mass index)</h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="fa-solid fa-weight-hanging"></i>
+                    </div>
+                    <div class="ps-3 align-center">
+                      <h6>{% if user.body_mass_index %}{{ user.body_mass_index }}{% else %}-{% endif %}</h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cycling total km Card -->
+            <div class="col-xxl-6 col-md-6">
+              <div class="card info-card revenue-card">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><span class="dropdown-item total-km-cycling-filter">Today</span></li>
+                    <li><span class="dropdown-item total-km-cycling-filter">This Month</span></li>
+                    <li><span class="dropdown-item total-km-cycling-filter">This Year</span></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Cycling<span id="total-km-cycling-filter-name"> | This Month</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="fa-solid fa-bicycle"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 id="cycling-km-container">-</h6>
+                      <span class="text-muted small pt-2 ps-1">km</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Walking total km Card -->
+            <div class="col-xxl-6 col-md-6">
+              <div class="card info-card revenue-card">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><span class="dropdown-item total-km-walking-filter">Today</span></li>
+                    <li><span class="dropdown-item total-km-walking-filter">This Month</span></li>
+                    <li><span class="dropdown-item total-km-walking-filter">This Year</span></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Walking<span id="total-km-walking-filter-name"> | This Month</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="fa-solid fa-person-walking-dashed-line-arrow-right"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 id="walking-km-container">-</h6>
+                      <span class="text-muted small pt-2 ps-1">km</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Jogging total km Card -->
+            <div class="col-xxl-6 col-md-6">
+              <div class="card info-card revenue-card">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><span class="dropdown-item total-km-jogging-filter">Today</span></li>
+                    <li><span class="dropdown-item total-km-jogging-filter">This Month</span></li>
+                    <li><span class="dropdown-item total-km-jogging-filter">This Year</span></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Jogging<span id="total-km-jogging-filter-name"> | This Month</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="fa-solid fa-person-running"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 id="jogging-km-container">-</h6>
+                      <span class="text-muted small pt-2 ps-1">km</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Swimming total km Card -->
+            <div class="col-xxl-6 col-md-6">
+              <div class="card info-card revenue-card">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><span class="dropdown-item total-km-swimming-filter">Today</span></li>
+                    <li><span class="dropdown-item total-km-swimming-filter">This Month</span></li>
+                    <li><span class="dropdown-item total-km-swimming-filter">This Year</span></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Swimming<span id="total-km-swimming-filter-name"> | This Month</span></h5>
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="fa-solid fa-water"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 id="swimming-km-container">-</h6>
+                      <span class="text-muted small pt-2 ps-1">km</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right side columns -->
+        <div class="col-lg-4">
+          <!-- Trainings types ratio chart  -->
+          <div class="card">
+            <div class="filter">
+              <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start">
+                  <h6>Filter</h6>
+                </li>
+                <li>
+                  <span class="dropdown-item training-ratio-filter" >Today</span>
+                </li>
+                <li>
+                  <span class="dropdown-item training-ratio-filter">This Month</span>
+                </li>
+                <li>
+                  <span class="dropdown-item training-ratio-filter">This Year</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="card-body pb-0">
+              <h5 class="card-title">
+                Trainings types ratio
+                <span id="training-ratio-span">| Today</span>
+              </h5>
+
+              <div id="training-types-ratio" style="min-height: 400px;" class="echart"></div>
+            </div>
+          </div>
+
+          <!-- PFC ratio chart  -->
+          <div class="card">
+            <div class="filter">
+              <a class="icon" href="#" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start">
+                  <h6>Filter</h6>
+                </li>
+                <li>
+                  <span class="dropdown-item PFC-ratio-filter" >Today</span>
+                </li>
+                <li>
+                  <span class="dropdown-item PFC-ratio-filter">This Month</span>
+                </li>
+                <li>
+                  <span class="dropdown-item PFC-ratio-filter">This Year</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="card-body pb-0">
+              <h5 class="card-title">
+                PFC ratio
+                <span id="PFC-span">| Today</span>
+              </h5>
+
+              <div id="PFC-ratio" style="min-height: 400px;" class="echart"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+{% endblock %}
+</main>
+
+<div id="toastBox"></div>
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center">
+  <i class="bi bi-arrow-up-short"></i>
+</a>
+
+<!-- Vendor JS Files -->
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static "vendor/apexcharts/apexcharts.min.js" %}"></script>
+<script src="{% static "vendor/bootstrap/js/bootstrap.bundle.min.js" %}"></script>
+<script src="{% static "vendor/chart.js/chart.umd.js" %}"></script>
+<script src="{% static "vendor/echarts/echarts.min.js" %}"></script>
+<script src="{% static "vendor/simple-datatables/simple-datatables.js" %}"></script>
+
+<!-- Template Main JS File -->
+<script src="{% static "js/dependencies.js" %}"></script>
+<script src="{% static "js/user_events.js" %}"></script>
+<script src="{% static "js/training_events.js" %}"></script>
+<script src="{% static "js/meal_events.js" %}"></script>
+<script src="{% static "js/statistics_events.js" %}"></script>
+<script src="{% static "js/main.js" %}"></script>
+
+</body>
+</html>

@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="pagetitle">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="{% url "main:power-trainings-list" %}">Power trainings list</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="#">Update</a>
+        </li>
+      </ol>
+    </nav>
+  </div>
+  <section class="section">
+    <div class="row justify-content-center">
+      <div class="col-lg-4">
+        <div class="card">
+          <div class="card-body pt3">
+            <div class="row">
+              <form method="post">
+                {% csrf_token %}
+                <h5 class="card-title">
+                  Update training
+                </h5>
+                <div class="row mb-3">
+                  <label for="inputStartDate" class="col-md-4 col-lg-4 col-form-label text-center">
+                    Start date
+                  </label>
+                  <div class="col-md-8 col-lg-8">
+                    <input type="datetime-local"
+                           id="inputStartDate"
+                           name="start"
+                           class="form-control"
+                           value="{{ object.start|date:"Y-m-d" }}T{{ object.start|time:"G:i" }}">
+                  </div>
+
+                </div>
+                <div class="row mb-3">
+                  <label for="inputEndDate" class="col-md-4 col-lg-4 col-form-label text-center">
+                    End date
+                  </label>
+                  <div class="col-md-8 col-lg-8">
+                    <input type="datetime-local"
+                           id="inputEndDate"
+                           name="end"
+                           class="form-control"
+                           value="{{ object.end|date:"Y-m-d" }}T{{ object.end|time:"G:i" }}">
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="addDescription" class="col-md-4 col-lg-4 col-form-label text-center">
+                    Description
+                  </label>
+                  <div class="col-md-11 col-lg-11 justify-content-center">
+                    <textarea class="form-control" id="addDescription" name="description">{{ powertraining.description }}</textarea>
+                  </div>
+
+                </div>
+                <div class="text-center">
+                  <input type="submit" class="btn btn-success">
+                </div>
+                <input type="hidden" value="{{ user.id }}" name="user">
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-body gap-3" id="card_update_power_training">
+            <div class="card-title-container mb-3">
+              <h5 class="card-title">
+                Exercises
+              </h5>
+              <div class="card-title-container gap-3">
+                <select class="form-select" id="select_exercise">
+                  {% for exercise in exercises %}
+                    <option value="{{ exercise.id }}">{{ exercise.name }}</option>
+                  {% empty %}
+                    <option value="-1">No exercises yet</option>
+                  {% endfor %}
+                </select>
+                <i class="fa-solid fa-plus create-icon" id="addExercise"></i>
+              </div>
+            </div>
+            <div id="exercise-container">
+              {% for exercise in powertraining.exercises.all %}
+                <div data-exercise-id="{{ exercise.id }}">
+                  <div class="card-title-container mb-3">
+                    <div class="d-flex gap-3">
+                        <span>
+                          {{ exercise.exercise.name }}
+                        </span>
+                        <i class="fa-solid fa-plus addApproach create-icon"></i>
+                      </div>
+
+                    <div class="card-title-container gap-2">
+                      <i class="fa-solid fa-xmark delete-element-icon delete-exercise"></i>
+                    </div>
+                  </div>
+                  <ul class="list-group mb-3" style="margin-left: 40px">
+                    {% for approach in exercise.approaches.all %}
+                      <li class="list-group-item" data-approach-id="{{ approach.id }}">
+                        <div class="d-flex">
+                          <div class="card-title-container gap-2 justify-content-between">
+                            <span>Weight</span>
+                            <input type="number"
+                                   class="form-control"
+                                   name="weight"
+                                   value="{{ approach.weight }}"/>
+                            <span>Repeats</span>
+                            <input type="number"
+                                   class="form-control"
+                                   name="repeats"
+                                   value="{{ approach.repeats }}"/>
+                            <button class="btn btn-primary saveApproach">Update</button>
+                            <i class="bi bi-x-circle-fill deleteApproach deleteIcon"></i>
+                          </div>
+                        </div>
+
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% empty %}
+                <h6 class="card-title" id="no-exercises-message">
+                  No exercises yet
+                </h6>
+              {% endfor %}
+            </div>
+            <input type="hidden" value="{{ powertraining.id }}" id="training_id">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

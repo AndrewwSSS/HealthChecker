@@ -1,0 +1,26 @@
+{% extends "base_training_list.html" %}
+{% block title %}Walking trainings{% endblock %}
+{% block create_url %}{% url "main:create-walking-training" %}{% endblock %}
+{% block trainings %}
+  <div class="walking-container row">
+    {% for walking in walking_list %}
+      <a href="{% url "main:update-walking-training" walking.id %}"
+         data-training-id="{{ walking.id }}"
+         data-training-type="WK"
+         class="training-element col-lg-4">
+        <div class="alert alert-primary fade show">
+          <div class="d-flex justify-content-between">
+          <span>
+             {{ walking }}
+          </span>
+            <i class="fa-solid fa-xmark delete-element-icon delete-training-icon"></i>
+          </div>
+        </div>
+      </a>
+    {% empty %}
+      <h6 class="card-title">
+        No trainings yet
+      </h6>
+    {% endfor %}
+  </div>
+{% endblock %}

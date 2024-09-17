@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load tz %}
+{% block content %}
+  <div class="pagetitle">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="{% url "main:meal-list" %}">Meals list</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="#">Update</a>
+        </li>
+      </ol>
+    </nav>
+  </div>
+  <section class="section">
+    <div class="row justify-content-center">
+      <div class="col-lg-4">
+        <div class="card">
+          <div class="card-body pt3">
+            <h5 class="card-title">
+              Properties
+            </h5>
+            <form action="" method="post">
+              {% if form.errors %}
+                {{ form.errors }}
+              {% endif %}
+              {% csrf_token %}
+              <div class="row mb-3">
+                <label for="inputStartDate" class="col-md-3 col-lg-3 col-form-label text-center">
+                  date
+                </label>
+                <div class="col-md-9 col-lg-9">
+                  <input type="datetime-local"
+                         placeholder="mm/dd/yyyy H:M:S"
+                         id="inputStartDate"
+                         name="date"
+                         class="form-control"
+                         value="{{ meal.date|date:"Y-m-d" }}T{{ meal.date|time:"G:i" }}">
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="total_calories" class="col-md-3 col-lg-3 col-form-label text-center">
+                  Calories
+                </label>
+                <div class="col-md-9 col-lg-9">
+                  <input type="text"
+                         id="total_calories"
+                         class="form-control"
+                         value="{{ meal.calories }}" disabled>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="total_fats" class="col-md-3 col-lg-3 col-form-label text-center">
+                  Fats
+                </label>
+                <div class="col-md-9 col-lg-9">
+                  <input type="text"
+                         id="total_fats"
+                         class="form-control"
+                         value="{{ meal.fats }}" disabled>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="total_protein" class="col-md-3 col-lg-3 col-form-label text-center">
+                  Protein
+                </label>
+                <div class="col-md-9 col-lg-9">
+                  <input type="text"
+                         id="total_protein"
+                         class="form-control"
+                         value="{{ meal.protein }}" disabled>
+                </div>
+              </div>
+            <div class="row mb-3">
+                <label for="total_carbohydrates" class="col-md-3 col-lg-3 col-form-label text-center">
+                  Carbohydrates
+                </label>
+                <div class="col-md-9 col-lg-9">
+                  <input type="text"
+                         id="total_carbohydrates"
+                         class="form-control"
+                         value="{{ meal.carbohydrates }}" disabled>
+                </div>
+              </div>
+              <div class="text-center">
+                <input class="btn btn-success" type="submit" value="update"/>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-body gap-3" id="card_update_power_training">
+            <div class="card-title-container mb-3">
+              <h5 class="card-title">
+                Dishes
+              </h5>
+              <div class="card-title-container gap-3">
+                <select class="form-select" id="select_dish">
+                  {% for dish in user.dishes.all %}
+                    <option value="{{ dish.id }}">{{ dish.name }}</option>
+                  {% empty %}
+                    <option value="-1">No dishes yet</option>
+                  {% endfor %}
+                </select>
+                <i id="addDish" class="fa-solid fa-plus create-training-icon"></i>
+              </div>
+            </div>
+            <ul class="list-group mb-3"  id="meal_list_group">
+              {% for dish_count in meal.dishes.all %}
+                <li class="list-group-item" data-dish-count-id="{{ dish_count.id }}" data-dish-id="{{ dish_count.dish.id }}">
+                  <div class="d-flex">
+                    <div class="card-title-container gap-2 justify-content-between">
+                      <input type="text"
+                             class="form-control"
+                             value="{{ dish_count.dish.name }}"
+                             disabled>
+                      <span>Weight</span>
+                      <input type="number"
+                             class="form-control weightInput"
+                             name="weight"
+                             value="{{ dish_count.weight }}"/>
+                      <button class="btn btn-primary create-or-update-dish-count">Update</button>
+                      <i class="bi bi-x-circle-fill deleteDishCount deleteIcon"></i>
+                    </div>
+                  </div>
+                </li>
+              {% empty %}
+                <h6 class="card-title" id="no-dish-message">
+                  No dishes yet
+                </h6>
+              {% endfor %}
+            </ul>
+            <input type="hidden" value="{{ meal.id }}" id="meal_id">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
