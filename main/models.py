@@ -12,6 +12,10 @@ from django.db.models import (
     Q,
     UniqueConstraint,
 )
+from django.db.models import ExpressionWrapper
+from django.db.models import F
+from django.db.models import FloatField
+from django.db.models import Sum
 from django.utils import timezone
 
 
@@ -220,19 +224,41 @@ class Meal(models.Model):
 
     @property
     def calories(self):
-        return sum(dish.calories for dish in self.dishes.all())
+        return self.dishes.annotate(
+            calories=ExpressionWrapper(
+                F("dish__calories") * F("weight") / 100,
+                output_field=FloatField()
+            )
+        ).aggregate(total_calories=Sum("calories", default=0))["total_calories"]
 
     @property
     def fats(self):
-        return sum(dish.fats for dish in self.dishes.all())
+        return self.dishes.annotate(
+            fats=ExpressionWrapper(
+                F("dish__fats") * F("weight") / 100,
+                output_field=FloatField()
+            )
+        ).aggregate(total_fats=Sum("fats", default=0))["total_fats"]
 
     @property
     def protein(self):
-        return sum(dish.protein for dish in self.dishes.all())
+        return self.dishes.annotate(
+            protein=ExpressionWrapper(
+                F("dish__protein") * F("weight") / 100,
+                output_field=FloatField()
+            )
+        ).aggregate(total_protein=Sum("protein", default=0))["total_protein"]
 
     @property
     def carbohydrates(self):
-        return sum(dish.carbohydrates for dish in self.dishes.all())
+        return self.dishes.annotate(
+            carbohydrates=ExpressionWrapper(
+                F("dish__carbohydrates") * F("weight") / 100,
+                output_field=FloatField()
+            )
+        ).aggregate(
+            total_carbohydrates=Sum("carbohydrates", default=0)
+        )["total_carbohydrates"]
 
     def __str__(self):
         return convert_datetime_to_string(self.date)
